@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="kubeadm,demo,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Demo环境准备  master: 192.168.48.200 node01: 192.168.48.201 node02: 192.168.48.202 node03: 192.168.48.203    nfs  列出一些常用的demo，只是yaml模板示范，有的yaml模板需要相应的image支持 demo pod编写demo-pod配置yaml文件 1234567891011121314">
+<meta name="keywords" content="kubeadm,demo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="02.demo">
+<meta property="og:url" content="http://yoursite.com/2019/04/01/02.demo/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="Demo环境准备  master: 192.168.48.200 node01: 192.168.48.201 node02: 192.168.48.202 node03: 192.168.48.203    nfs  列出一些常用的demo，只是yaml模板示范，有的yaml模板需要相应的image支持 demo pod编写demo-pod配置yaml文件 1234567891011121314">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-13T05:17:56.894Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="02.demo">
+<meta name="twitter:description" content="Demo环境准备  master: 192.168.48.200 node01: 192.168.48.201 node02: 192.168.48.202 node03: 192.168.48.203    nfs  列出一些常用的demo，只是yaml模板示范，有的yaml模板需要相应的image支持 demo pod编写demo-pod配置yaml文件 1234567891011121314">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/01/02.demo/">
+
+
+
+
+
+  <title>02.demo | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/01/02.demo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">02.demo</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-01T19:00:41+08:00">
+                2019-04-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubeadm/" itemprop="url" rel="index">
+                    <span itemprop="name">kubeadm</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kubeadm/demo/" itemprop="url" rel="index">
+                    <span itemprop="name">demo</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h1><p>环境准备</p>
+<ol>
+<li>master: 192.168.48.200</li>
+<li>node01: 192.168.48.201</li>
+<li>node02: 192.168.48.202</li>
+<li>node03: 192.168.48.203    nfs</li>
+</ol>
+<p>列出一些常用的demo，只是yaml模板示范，有的yaml模板需要相应的image支持</p>
+<h2 id="demo-pod"><a href="#demo-pod" class="headerlink" title="demo pod"></a>demo pod</h2><p>编写demo-pod配置yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">vim demo-pod.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600&quot;</span><br></pre></td></tr></table></figure>
+<p>创建demo-pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-pod.yaml</span><br></pre></td></tr></table></figure>
+<p>查看demo-pod运行情况和ip</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl get pod </span><br><span class="line">NAME       READY   STATUS    RESTARTS   AGE</span><br><span class="line">demo-pod   2/2     Running   0          13s</span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide|awk &#123;&apos;print $1,$6&apos;&#125;</span><br><span class="line">NAME IP</span><br><span class="line">demo-pod 10.244.1.3</span><br></pre></td></tr></table></figure>
+<p>测试一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# curl 10.244.1.3</span><br><span class="line">Hello MyApp | Version: v1 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+<p>进入busybox查看文件在不在</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec demo-pod -c busybox -it -- /bin/sh</span><br><span class="line"></span><br><span class="line">/ # cd /usr/share/nginx/html/</span><br><span class="line">/usr/share/nginx/html # ls</span><br><span class="line">test.html</span><br><span class="line">/usr/share/nginx/html # cat test.html </span><br><span class="line">Sun Mar 31 03:48:49 UTC 2019</span><br><span class="line">/usr/share/nginx/html #</span><br></pre></td></tr></table></figure>
+<h2 id="demo-rc"><a href="#demo-rc" class="headerlink" title="demo-rc"></a>demo-rc</h2><p>编写demo-rc yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">vim demo-rc.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ReplicationController</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-rc</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: rc</span><br><span class="line">spec:</span><br><span class="line">  replicas: 2</span><br><span class="line">  selector:</span><br><span class="line">      app: myapp</span><br><span class="line">      type: rc</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      name: myapp-pod</span><br><span class="line">      labels:</span><br><span class="line">        app: myapp</span><br><span class="line">        type: rc</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: myapp</span><br><span class="line">        image: ikubernetes/myapp:v1</span><br><span class="line">        ports:</span><br><span class="line">        - name: http</span><br><span class="line">          containerPort: 80</span><br></pre></td></tr></table></figure>
+<p>创建demo-rc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-rc.yaml</span><br></pre></td></tr></table></figure>
+<p>查看demo-rc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@master deploy_yaml]# kubectl get pod</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          8d</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          8d</span><br><span class="line">demo-rc-l9c8r                  1/1     Running   0          102s</span><br><span class="line">demo-rc-qvdd7                  1/1     Running   0          102s</span><br><span class="line"></span><br><span class="line">[root@master deploy_yaml]# kubectl get rc</span><br><span class="line">NAME      DESIRED   CURRENT   READY   AGE</span><br><span class="line">demo-rc   2         2         2       2m1s</span><br></pre></td></tr></table></figure>
+<h2 id="demo-replicaset"><a href="#demo-replicaset" class="headerlink" title="demo-replicaset"></a>demo-replicaset</h2><p>编写demo-replicaset yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">vim demo-replicaset.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: ReplicaSet</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-replicaset</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: replicaset</span><br><span class="line">spec:</span><br><span class="line">  replicas: 2</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: myapp</span><br><span class="line">      type: replicaset</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      name: myapp-pod</span><br><span class="line">      labels:</span><br><span class="line">        app: myapp</span><br><span class="line">        type: replicaset</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: myapp</span><br><span class="line">        image: ikubernetes/myapp:v1</span><br><span class="line">        ports:</span><br><span class="line">        - name: http</span><br><span class="line">          containerPort: 80</span><br></pre></td></tr></table></figure>
+<p>创建demo-replicaset</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-replicaset.yaml</span><br></pre></td></tr></table></figure>
+<p>查看demo-replicaset</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@master rc_yaml]# kubectl get pod</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   1          31h</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   1          31h</span><br><span class="line">demo-pod                       2/2     Running   4          31h</span><br><span class="line">demo-replicaset-klvqd          1/1     Running   0          82s</span><br><span class="line">demo-replicaset-mcljs          1/1     Running   0          82s</span><br><span class="line"></span><br><span class="line">[root@master rc_yaml]# kubectl get replicaset</span><br><span class="line">NAME                     DESIRED   CURRENT   READY   AGE</span><br><span class="line">demo-deploy-8675c97685   2         2         2       31h</span><br><span class="line">demo-replicaset          2         2         2       111s</span><br></pre></td></tr></table></figure>
+<h2 id="demo-deployment"><a href="#demo-deployment" class="headerlink" title="demo-deployment"></a>demo-deployment</h2><p>编写demo-deployment配置yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">vim demo-deploy.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-deploy</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: deploy</span><br><span class="line">spec:</span><br><span class="line">  replicas: 2</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: myapp</span><br><span class="line">      type: deploy</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      name: myapp-pod</span><br><span class="line">      labels:</span><br><span class="line">        app: myapp</span><br><span class="line">        type: deploy</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: myapp</span><br><span class="line">        image: ikubernetes/myapp:v1</span><br><span class="line">        ports:</span><br><span class="line">        - name: http</span><br><span class="line">          containerPort: 80</span><br></pre></td></tr></table></figure>
+<p>创建demo-ployment</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-deploy.yaml</span><br></pre></td></tr></table></figure>
+<p>查看deplyment</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master deploy_yaml]# kubectl get pod</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE</span><br><span class="line">demo-deploy-55944959b4-p7vq2   1/1     Running   0          4m14s</span><br><span class="line">demo-deploy-55944959b4-pzczg   1/1     Running   0          4m14s</span><br><span class="line">demo-pod                       2/2     Running   0          50m</span><br><span class="line"></span><br><span class="line">[root@master rc_yaml]# kubectl get deployment</span><br><span class="line">NAME          READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">demo-deploy   2/2     2            2           31h</span><br></pre></td></tr></table></figure>
+<h2 id="demo-svc"><a href="#demo-svc" class="headerlink" title="demo-svc"></a>demo-svc</h2><ol>
+<li>type: clusterip  只允许内部访问</li>
+<li>type: nodeport 运行外部访问</li>
+</ol>
+<h3 id="cluster"><a href="#cluster" class="headerlink" title="cluster"></a>cluster</h3><p>编写一个demo-svc-cluster yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">vim demo-svc-cluster.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-svc-clusterip</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    type: svc-clusterip</span><br><span class="line">    app: myapp</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: deploy</span><br><span class="line">  type: ClusterIP</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    targetPort: 80</span><br></pre></td></tr></table></figure>
+<p>创建demo-svc-cluster</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-svc-cluster.yaml</span><br></pre></td></tr></table></figure>
+<p>查看svc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master svc_yaml]# kubectl get svc</span><br><span class="line">NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">kubernetes            ClusterIP   10.96.0.1        &lt;none&gt;        443/TCP        10h</span><br><span class="line">myapp-svc-clusterip   ClusterIP   10.98.148.121    &lt;none&gt;        80/TCP         13m</span><br></pre></td></tr></table></figure>
+<p>测试一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@master svc_yaml]# curl  10.98.148.121</span><br><span class="line">Hello MyApp | Version: v1 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br><span class="line"></span><br><span class="line">[root@master svc_yaml]# while true; do curl 10.98.148.121/hostname.html; sleep 1;done</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br></pre></td></tr></table></figure>
+<h3 id="nodeport"><a href="#nodeport" class="headerlink" title="nodeport"></a>nodeport</h3><p>编写一个demo-svc-nodeport yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">vim demo-svc-nodeport.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-svc-nodeport</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    type: svc-nodeport</span><br><span class="line">    app: myapp</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: deploy</span><br><span class="line">  type: NodePort</span><br><span class="line">  ports:</span><br><span class="line">  - port: 80</span><br><span class="line">    targetPort: 80</span><br><span class="line">    nodePort: 30080</span><br></pre></td></tr></table></figure>
+<p>创建demo-svc-nodeport</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-svc-nodeport.yaml</span><br></pre></td></tr></table></figure>
+<p>查看svc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@master svc_yaml]# kubectl get svc</span><br><span class="line">NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">kubernetes            ClusterIP   10.96.0.1        &lt;none&gt;        443/TCP        10h</span><br><span class="line">myapp-svc-clusterip   ClusterIP   10.98.148.121    &lt;none&gt;        80/TCP         13m</span><br><span class="line">myapp-svc-nodeport    NodePort    10.106.106.242   &lt;none&gt;        80:30080/TCP   95s</span><br></pre></td></tr></table></figure>
+<p>测试一下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master svc_yaml]# curl 192.168.48.200:30080</span><br><span class="line">Hello MyApp | Version: v1 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br><span class="line"></span><br><span class="line">[root@master svc_yaml]# while true; do curl 192.168.48.200:30080/hostname.html; sleep 1;done</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br><span class="line">demo-deploy-8675c97685-vhncn</span><br><span class="line">demo-deploy-8675c97685-w7md2</span><br></pre></td></tr></table></figure>
+<h2 id="demo-ingress"><a href="#demo-ingress" class="headerlink" title="demo-ingress"></a>demo-ingress</h2><p>编写一个demo-ingress  yaml文件，前提需要部署ingress-controller</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">vim demo-ingress.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Ingress</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-myapp</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    type: ingress</span><br><span class="line">    app: myapp</span><br><span class="line">  annotations:</span><br><span class="line">    kubernetes.io/ingress.class: &quot;nginx&quot;</span><br><span class="line">spec:</span><br><span class="line">  rules:</span><br><span class="line">  - host: myapp.magedu.com</span><br><span class="line">    http:</span><br><span class="line">      paths:</span><br><span class="line">      - path:</span><br><span class="line">        backend:</span><br><span class="line">          serviceName: myapp-svc-deploy</span><br><span class="line">          servicePort: 80</span><br></pre></td></tr></table></figure>
+<p>创建demo-ingress</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-ingress.yaml</span><br></pre></td></tr></table></figure>
+<p>查看ingress</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master ingress_yaml]# kubectl get ingress</span><br><span class="line">NAME            HOSTS              ADDRESS   PORTS   AGE</span><br><span class="line">ingress-myapp   myapp.magedu.com             80      8s</span><br></pre></td></tr></table></figure>
+<h2 id="demo-pv"><a href="#demo-pv" class="headerlink" title="demo-pv"></a>demo-pv</h2><p>编写demo-pv yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">vim demo-pv.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-pv01</span><br><span class="line">  labels:</span><br><span class="line">    name: pv01</span><br><span class="line">    type: pv</span><br><span class="line">spec:</span><br><span class="line">  nfs:</span><br><span class="line">    path: /data/volume/v1</span><br><span class="line">    server: node03</span><br><span class="line">  accessModes: [&quot;ReadWriteMany&quot;]</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 5Gi</span><br></pre></td></tr></table></figure>
+<p>创建demo-pv</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-pv.yaml</span><br></pre></td></tr></table></figure>
+<p>查看pv</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master pv_yaml]# kubectl get pv</span><br><span class="line">NAME   CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE</span><br><span class="line">pv01   5Gi        RWX            Retain           Available                                   2m1s</span><br></pre></td></tr></table></figure>
+<h2 id="demo-pvc"><a href="#demo-pvc" class="headerlink" title="demo-pvc"></a>demo-pvc</h2><p>编写demo-pvc yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">vim demo-pvc.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-pvc</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pvc</span><br><span class="line">spec:</span><br><span class="line">  accessModes: [&quot;ReadWriteMany&quot;]</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 1Gi</span><br></pre></td></tr></table></figure>
+<p>创建demo-pvc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-pvc.yaml</span><br></pre></td></tr></table></figure>
+<p>查看pvc</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@master pvc_yaml]# kubectl get pvc</span><br><span class="line">NAME       STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">demo-pvc   Bound    pv01     5Gi        RWX                           70s</span><br><span class="line"></span><br><span class="line">[root@master pvc_yaml]# kubectl get pv</span><br><span class="line">NAME   CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM              STORAGECLASS   REASON   AGE</span><br><span class="line">pv01   5Gi        RWX            Retain           Bound    default/demo-pvc                           9m4</span><br></pre></td></tr></table></figure>
+<h2 id="configmap"><a href="#configmap" class="headerlink" title="configmap"></a>configmap</h2><p>编写configmap yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">vim demo-configmap.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-config</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: configmap</span><br><span class="line">data:</span><br><span class="line">  nginx_port: &quot;80&quot;</span><br><span class="line">  server_name: myapp.magedu.com</span><br><span class="line">  www.conf: |</span><br><span class="line">    server &#123;</span><br><span class="line">    server_name: myapp.magedu.com;</span><br><span class="line">    listen &quot;80&quot;;</span><br><span class="line">    root /usr/share/nginx/www;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>创建demo-configmap</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-configmap.yaml</span><br></pre></td></tr></table></figure>
+<p>查看configmap</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get cm</span><br><span class="line">NAME          DATA   AGE</span><br><span class="line">demo-config   3      70s</span><br></pre></td></tr></table></figure>
+<h2 id="demp-secret"><a href="#demp-secret" class="headerlink" title="demp-secret"></a>demp-secret</h2><p>编写secret yaml文件 内容用base64编码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# echo -n &apos;MyP@ss123&apos;| base64 </span><br><span class="line">TXlQQHNzMTIz</span><br><span class="line"></span><br><span class="line">vim demo-secret.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-secret</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    type: secret</span><br><span class="line">type: Opaque</span><br><span class="line">data:</span><br><span class="line">  password: TXlQQHNzMTIz</span><br></pre></td></tr></table></figure>
+<p>创建demo-secret</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-secret.yaml</span><br></pre></td></tr></table></figure>
+<p>查看secret</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[root@master secret_yaml]# kubectl get secrets </span><br><span class="line">NAME                  TYPE                                  DATA   AGE</span><br><span class="line">default-token-f9699   kubernetes.io/service-account-token   3      12h</span><br><span class="line">demo-secret           Opaque                                1      43s</span><br><span class="line"></span><br><span class="line">[root@master secret_yaml]# kubectl get secrets demo-secret  -o yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  password: TXlQQHNzMTIz</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    kubectl.kubernetes.io/last-applied-configuration: |</span><br><span class="line">      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;data&quot;:&#123;&quot;password&quot;:&quot;TXlQQHNzMTIz&quot;&#125;,&quot;kind&quot;:&quot;Secret&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;labels&quot;:&#123;&quot;type&quot;:&quot;secret&quot;&#125;,&quot;name&quot;:&quot;demo-secret&quot;,&quot;namespace&quot;:&quot;default&quot;&#125;,&quot;type&quot;:&quot;Opaque&quot;&#125;</span><br><span class="line">  creationTimestamp: &quot;2019-03-31T06:58:06Z&quot;</span><br><span class="line">  labels:</span><br><span class="line">    type: secret</span><br><span class="line">  name: demo-secret</span><br><span class="line">  namespace: default</span><br><span class="line">  resourceVersion: &quot;25889&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/default/secrets/demo-secret</span><br><span class="line">  uid: 55c83381-5382-11e9-b057-000c296cdc6e</span><br><span class="line">type: Opaque</span><br><span class="line">[root@master secret_yaml]# echo TXlQQHNzMTIz | base64 -d</span><br><span class="line">MyP@ss123</span><br></pre></td></tr></table></figure>
+<h2 id="demo-role"><a href="#demo-role" class="headerlink" title="demo-role"></a>demo-role</h2><p>编写demo-role yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> vim demo-role.yaml</span><br><span class="line"> </span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: Role</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-role</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    type: role</span><br><span class="line">rules:</span><br><span class="line">- apiGroups:</span><br><span class="line">  - &quot;&quot;</span><br><span class="line">  resources:</span><br><span class="line">  - pods</span><br><span class="line">  verbs:</span><br><span class="line">  - get</span><br><span class="line">  - list</span><br><span class="line">  - watch</span><br></pre></td></tr></table></figure>
+<p>创建demo-role</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-role.yaml</span><br></pre></td></tr></table></figure>
+<p>查看role</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master rbac_yaml]# kubectl get role</span><br><span class="line">NAME        AGE</span><br><span class="line">demo-role   12s</span><br></pre></td></tr></table></figure>
+<h2 id="demo-rolebinding"><a href="#demo-rolebinding" class="headerlink" title="demo-rolebinding"></a>demo-rolebinding</h2><p>编写demo-rolebinding yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">vim demo-rolebinding.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: RoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-rolebinding</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    type: rolebinding</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: Role</span><br><span class="line">  name: demo-role</span><br><span class="line">subjects:</span><br><span class="line">- apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: User</span><br><span class="line">  name: magedu</span><br></pre></td></tr></table></figure>
+<p>创建demo-rolebinding</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-rolebinding.yaml</span><br></pre></td></tr></table></figure>
+<p>查看rolebinding</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get rolebinding</span><br><span class="line">NAME               AGE</span><br><span class="line">demo-rolebinding   2m54s</span><br></pre></td></tr></table></figure>
+<h2 id="demo-clusterrole"><a href="#demo-clusterrole" class="headerlink" title="demo-clusterrole"></a>demo-clusterrole</h2><p>编写demo-clusterrole yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">vim demo-clusterrole.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRole</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-clusterrole</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    type: clusterrole</span><br><span class="line">rules:</span><br><span class="line">- apiGroups:</span><br><span class="line">  - &quot;&quot;</span><br><span class="line">  resources:</span><br><span class="line">  - pods</span><br><span class="line">  verbs:</span><br><span class="line">  - get</span><br><span class="line">  - list</span><br><span class="line">  - watch</span><br></pre></td></tr></table></figure>
+<p>创建demo-clusterrole</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-clusterrole.yaml</span><br></pre></td></tr></table></figure>
+<p>查看clusterrole</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master rbac_yaml]# kubectl get clusterrole</span><br><span class="line">NAME                                                                   AGE</span><br><span class="line">admin                                                                  12h</span><br><span class="line">cluster-admin                                                          12h</span><br><span class="line">demo-clusterrole                                                       92s</span><br><span class="line">edit                                                                   12h</span><br><span class="line">flannel                                                                12h</span><br><span class="line">system:aggregate-to-admin                                              12h</span><br><span class="line">system:aggregate-to-edit                                               12h</span><br></pre></td></tr></table></figure>
+<h2 id="demo-clusterrolebinding"><a href="#demo-clusterrolebinding" class="headerlink" title="demo-clusterrolebinding"></a>demo-clusterrolebinding</h2><p>编写demo-clusterrolebinding yaml 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">vim demo-clusterrolebinding.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: demo-clusterrolebinding</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    type: clusterrolebinding</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: demo-clusterrole</span><br><span class="line">subjects:</span><br><span class="line">- apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: User</span><br><span class="line">  name: magedu</span><br></pre></td></tr></table></figure>
+<p>创建 demo-clusterrolebinding</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f demo-clusterrolebinding.yaml</span><br></pre></td></tr></table></figure>
+<p>查看clusterrolebinding</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get clusterrolebinding</span><br><span class="line">NAME                                                   AGE</span><br><span class="line">cluster-admin                                          12h</span><br><span class="line">demo-clusterrolebinding                                2m42s</span><br><span class="line">flannel                                                12h</span><br><span class="line">kubeadm:kubelet-bootstrap                              12h</span><br><span class="line">kubeadm:node-autoapprove-bootstrap                     12h</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/kubeadm/" rel="tag"> <i class="fa fa-tag"></i> kubeadm</a>
+          
+            <a href="/tags/demo/" rel="tag"> <i class="fa fa-tag"></i> demo</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/31/01.kubeadm install k8s/" rel="next" title="01.kubeadm install k8s">
+                <i class="fa fa-chevron-left"></i> 01.kubeadm install k8s
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/02/03.kubectl command/" rel="prev" title="03.kubectl command">
+                03.kubectl command <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Demo"><span class="nav-number">1.</span> <span class="nav-text">Demo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-pod"><span class="nav-number">1.1.</span> <span class="nav-text">demo pod</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-rc"><span class="nav-number">1.2.</span> <span class="nav-text">demo-rc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-replicaset"><span class="nav-number">1.3.</span> <span class="nav-text">demo-replicaset</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-deployment"><span class="nav-number">1.4.</span> <span class="nav-text">demo-deployment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-svc"><span class="nav-number">1.5.</span> <span class="nav-text">demo-svc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cluster"><span class="nav-number">1.5.1.</span> <span class="nav-text">cluster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nodeport"><span class="nav-number">1.5.2.</span> <span class="nav-text">nodeport</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-ingress"><span class="nav-number">1.6.</span> <span class="nav-text">demo-ingress</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-pv"><span class="nav-number">1.7.</span> <span class="nav-text">demo-pv</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-pvc"><span class="nav-number">1.8.</span> <span class="nav-text">demo-pvc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#configmap"><span class="nav-number">1.9.</span> <span class="nav-text">configmap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demp-secret"><span class="nav-number">1.10.</span> <span class="nav-text">demp-secret</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-role"><span class="nav-number">1.11.</span> <span class="nav-text">demo-role</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-rolebinding"><span class="nav-number">1.12.</span> <span class="nav-text">demo-rolebinding</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-clusterrole"><span class="nav-number">1.13.</span> <span class="nav-text">demo-clusterrole</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo-clusterrolebinding"><span class="nav-number">1.14.</span> <span class="nav-text">demo-clusterrolebinding</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

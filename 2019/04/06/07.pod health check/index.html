@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="pod,health,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Pod Health Check在Kubernetes集群当中，我们可以通过配置liveness probe（存活探针）和readiness probe（可读性探针）来影响容器的生存周期。  使用 liveness probe 来确定你的应用程序是否正在运行，通俗点将就是是否还活着。一般来说，如果你的程序一旦崩溃了， Kubernetes 就会立刻知道这个程序已经终止了，然后就会重启这个程序。而我">
+<meta name="keywords" content="pod,health">
+<meta property="og:type" content="article">
+<meta property="og:title" content="07.pod health check">
+<meta property="og:url" content="http://yoursite.com/2019/04/06/07.pod health check/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="Pod Health Check在Kubernetes集群当中，我们可以通过配置liveness probe（存活探针）和readiness probe（可读性探针）来影响容器的生存周期。  使用 liveness probe 来确定你的应用程序是否正在运行，通俗点将就是是否还活着。一般来说，如果你的程序一旦崩溃了， Kubernetes 就会立刻知道这个程序已经终止了，然后就会重启这个程序。而我">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-06T13:21:51.479Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="07.pod health check">
+<meta name="twitter:description" content="Pod Health Check在Kubernetes集群当中，我们可以通过配置liveness probe（存活探针）和readiness probe（可读性探针）来影响容器的生存周期。  使用 liveness probe 来确定你的应用程序是否正在运行，通俗点将就是是否还活着。一般来说，如果你的程序一旦崩溃了， Kubernetes 就会立刻知道这个程序已经终止了，然后就会重启这个程序。而我">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/06/07.pod health check/">
+
+
+
+
+
+  <title>07.pod health check | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/06/07.pod health check/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">07.pod health check</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-06T19:00:41+08:00">
+                2019-04-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pod/" itemprop="url" rel="index">
+                    <span itemprop="name">pod</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pod/health/" itemprop="url" rel="index">
+                    <span itemprop="name">health</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Pod-Health-Check"><a href="#Pod-Health-Check" class="headerlink" title="Pod Health Check"></a>Pod Health Check</h1><p>在<code>Kubernetes</code>集群当中，我们可以通过配置<code>liveness probe</code>（存活探针）和<code>readiness probe</code>（可读性探针）来影响容器的生存周期。</p>
+<ol>
+<li>使用 liveness probe 来确定你的应用程序是否正在运行，通俗点将就是是否还活着。一般来说，如果你的程序一旦崩溃了， Kubernetes 就会立刻知道这个程序已经终止了，然后就会重启这个程序。而我们的 liveness probe 的目的就是来捕获到当前应用程序还没有终止，还没有崩溃，如果出现了这些情况，那么就重启处于该状态下的容器，使应用程序在存在 bug 的情况下依然能够继续运行下去。</li>
+<li>使用 readiness probe 来确定容器是否已经就绪可以接收流量过来了。这个探针通俗点讲就是说是否准备好了，现在可以开始工作了。只有当 Pod 中的容器都处于就绪状态的时候 kubelet 才会认定该 Pod 处于就绪状态，因为一个 Pod 下面可能会有多个容器。当然 Pod 如果处于非就绪状态，那么我们就会将他从我们的工作队列中移除出来，这样我们的流量就不会被路由到这个 Pod 里面来了。</li>
+</ol>
+<p>这两个探针的支持两种配置方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">exec：执行一段命令</span><br><span class="line">http：检测某个http请求</span><br><span class="line">tcpSocket：检查端口</span><br></pre></td></tr></table></figure>
+<h2 id="liveness-probe"><a href="#liveness-probe" class="headerlink" title="liveness probe"></a>liveness probe</h2><p>准备模板health-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">vim health-pod.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: health-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="exec"><a href="#exec" class="headerlink" title="exec"></a>exec</h3><p>编写exec-health-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">cp health-hook.yaml  exec-health-hook.yaml </span><br><span class="line">vim exec-health-hook.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: exec-health-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;touch /tmp/health; sleep 30; rm -rf /tmp/healthy; sleep 600&quot;</span><br><span class="line">    livenessProbe:</span><br><span class="line">      exec:</span><br><span class="line">        command: [&quot;cat /tmp/health&quot;]</span><br><span class="line">      initialDelaySeconds: 5</span><br><span class="line">      periodSeconds: 5</span><br></pre></td></tr></table></figure>
+<p>创建exec-health-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl apply -f exec-health-hook.yaml </span><br><span class="line">pod/exec-health-pod created</span><br><span class="line"></span><br><span class="line">[root@master pod_yaml]# kubectl get pod</span><br><span class="line">NAME                 READY   STATUS    RESTARTS   AGE</span><br><span class="line">demo-pod             2/2     Running   14         6d5h</span><br><span class="line">demo-pod-ssd         1/1     Running   2          4d21h</span><br><span class="line">exec-health-pod      2/2     Running   0          86s</span><br><span class="line">poststart-hook-pod   2/2     Running   1          86m</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">initialDelaySeconds：第一次执行探针的时候要等待时间</span><br><span class="line">periodSeconds:每隔多久执行一次存活探针</span><br></pre></td></tr></table></figure>
+<p>设置<code>initialDelaySeconds</code>表示在第一次执行探针的时候要等待5秒，这样能够确保我们的容器能够有足够的时间启动起来。设置<code>periodSeconds</code>属性表示让<code>kubelet</code>每隔5秒执行一次存活探针，也就是每5秒执行一次上面的<code>cat /tmp/healthy</code>命令，如果命令执行成功了，将返回0，那么<code>kubelet</code>就会认为当前这个容器是存活的并且很监控，如果返回的是非0值，那么<code>kubelet</code>就会把该容器杀掉然后重启它。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">探针还可以配置如下几个参数</span><br><span class="line">timeoutSeconds：探测超时时间，默认1秒，最小1秒。</span><br><span class="line">successThreshold：探测失败后，最少连续探测成功多少次才被认定为成功。默认是 1，但是如果是`liveness`则必须是 1，最小值是 1。</span><br><span class="line">failureThreshold：探测成功后，最少连续探测失败多少次才被认定为失败。默认是 3，最小值是 1。</span><br></pre></td></tr></table></figure>
+<p>观察是否重启</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl get pod -w</span><br><span class="line">NAME                 READY   STATUS    RESTARTS   AGE</span><br><span class="line">demo-pod             2/2     Running   14         6d5h</span><br><span class="line">demo-pod-ssd         1/1     Running   2          4d21h</span><br><span class="line">exec-health-pod      2/2     Running   0          94s</span><br><span class="line">poststart-hook-pod   2/2     Running   1          86m</span><br><span class="line">exec-health-pod      2/2     Running   1          2m33s</span><br></pre></td></tr></table></figure>
+<h3 id="http"><a href="#http" class="headerlink" title="http"></a>http</h3><p>编写http-health-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">cp health-hook.yaml http-health-hook.yaml </span><br><span class="line">vim http-health-hook.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: http-health-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    livenessProbe:</span><br><span class="line">      httpGet:</span><br><span class="line">        path: /index.html</span><br><span class="line">        port: 80</span><br><span class="line">      initialDelaySeconds: 3</span><br><span class="line">      periodSeconds: 3</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600&quot;</span><br></pre></td></tr></table></figure>
+<p>创建http-health-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl apply -f http-health-hook.yaml </span><br><span class="line">pod/http-health-pod created</span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                 READY   STATUS    RESTARTS   AGE     IP           NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-pod             2/2     Running   15         6d6h    10.244.2.7   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod-ssd         1/1     Running   2          4d22h   10.244.1.7   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">http-health-pod      2/2     Running   0          3m25s   10.244.2.9   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">poststart-hook-pod   2/2     Running   2          148m    10.244.1.8   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">[root@master pod_yaml]# curl 10.244.2.9</span><br><span class="line">Hello MyApp | Version: v1 | &lt;a href=&quot;hostname.html&quot;&gt;Pod Name&lt;/a&gt;</span><br></pre></td></tr></table></figure>
+<p>手动删除index.html文件 观察是否重启</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl exec http-health-pod -c myapp -it -- /bin/sh</span><br><span class="line">/ # cd /usr/share/nginx/html/</span><br><span class="line">/usr/share/nginx/html # rm -rf index.html </span><br><span class="line">/usr/share/nginx/html # command terminated with exit code 137</span><br><span class="line">[root@master pod_yaml]# </span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                 READY   STATUS    RESTARTS   AGE     IP           NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-pod             2/2     Running   15         6d6h    10.244.2.7   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod-ssd         1/1     Running   2          4d22h   10.244.1.7   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">http-health-pod      2/2     Running   1          6m57s   10.244.2.9   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">poststart-hook-pod   2/2     Running   2          151m    10.244.1.8   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="tcpSocket"><a href="#tcpSocket" class="headerlink" title="tcpSocket"></a>tcpSocket</h3><p>编写tcpsocket-health-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">cp health-hook.yaml tcpsocket-health-hook.yaml </span><br><span class="line">vim tcpsocket-health-hook.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: tcpsocket-health-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    livenessProbe:</span><br><span class="line">      tcpSocket:</span><br><span class="line">        port: 80</span><br><span class="line">      initialDelaySeconds: 15</span><br><span class="line">      periodSeconds: 20</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600&quot;</span><br></pre></td></tr></table></figure>
+<p>创建tcpsocket-health-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl apply -f tcpsocket-health-hook.yaml </span><br><span class="line">pod/tcpsocket-health-pod created</span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                   READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-pod               2/2     Running   15         6d6h    10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod-ssd           1/1     Running   2          4d22h   10.244.1.7    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">http-health-pod        2/2     Running   1          14m     10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">poststart-hook-pod     2/2     Running   2          159m    10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">tcpsocket-health-pod   2/2     Running   0          25s     10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<p>手动关掉nginx，查看是否重启</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl exec tcpsocket-health-pod -c myapp -it -- /bin/sh</span><br><span class="line">/ # nginx -s stop</span><br><span class="line">2019/04/06 11:25:42 [notice] 12#12: signal process started</span><br><span class="line">/ # command terminated with exit code 137</span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                   READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-pod               2/2     Running   15         6d6h    10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod-ssd           1/1     Running   2          4d22h   10.244.1.7    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">http-health-pod        2/2     Running   1          16m     10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">poststart-hook-pod     2/2     Running   2          160m    10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">tcpsocket-health-pod   2/2     Running   1          106s    10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="readiness-probe"><a href="#readiness-probe" class="headerlink" title="readiness probe"></a>readiness probe</h2><h3 id="exec-1"><a href="#exec-1" class="headerlink" title="exec"></a>exec</h3><p>编写exec-ready-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">cp exec-health-hook.yaml exec-ready-hook.yaml </span><br><span class="line">vim exec-ready-hook.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: exec-ready-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;touch /tmp/health; sleep 30; rm -rf /tmp/healthy; sleep 600&quot;</span><br><span class="line">    readinessProbe:</span><br><span class="line">      exec:</span><br><span class="line">        command: [&quot;cat /tmp/health&quot;]</span><br><span class="line">      initialDelaySeconds: 5</span><br><span class="line">      periodSeconds: 5</span><br></pre></td></tr></table></figure>
+<p>创建exec-ready-hook.yaml </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl apply -f exec-ready-hook.yaml </span><br><span class="line">pod/exec-health-pod created</span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                   READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-pod               2/2     Running   16         6d6h    10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod-ssd           1/1     Running   2          4d22h   10.244.1.7    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">exec-health-pod        1/2     Running   0          3m30s   10.244.2.10   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">exec-ready-pod         2/2     Running   0          47s     10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">http-health-pod        2/2     Running   1          27m     10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">poststart-hook-pod     2/2     Running   2          172m    10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">tcpsocket-health-pod   2/2     Running   1          13m     10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<p>查看pod是否就绪</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl get pod -o wide -w</span><br><span class="line">NAME                   READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-pod               2/2     Running   16         6d6h    10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod-ssd           1/1     Running   2          4d22h   10.244.1.7    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">exec-health-pod        1/2     Running   0          3m30s   10.244.2.10   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">exec-ready-pod         1/2     Running   0          47s     10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">http-health-pod        2/2     Running   1          27m     10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">poststart-hook-pod     2/2     Running   2          172m    10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">tcpsocket-health-pod   2/2     Running   1          13m     10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">[root@master pod_yaml]# kubectl describe pod exec-ready-pod </span><br><span class="line">Name:               exec-ready-pod</span><br><span class="line">Namespace:          default</span><br><span class="line">Priority:           0</span><br><span class="line">PriorityClassName:  &lt;none&gt;</span><br><span class="line">Node:               node01/192.168.48.201</span><br><span class="line">Start Time:         Sat, 06 Apr 2019 19:36:39 +0800</span><br><span class="line">Labels:             app=myapp</span><br><span class="line">                    type=pod</span><br><span class="line">Annotations:        cni.projectcalico.org/podIP: 10.244.1.11/32</span><br><span class="line">                    kubectl.kubernetes.io/last-applied-configuration:</span><br><span class="line">                      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Pod&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;labels&quot;:&#123;&quot;app&quot;:&quot;myapp&quot;,&quot;type&quot;:&quot;pod&quot;&#125;,&quot;name&quot;:&quot;exec-ready-pod&quot;,&quot;namespace&quot;:&quot;de...</span><br><span class="line">Status:             Running</span><br><span class="line">IP:                 10.244.1.11</span><br><span class="line">Containers:</span><br><span class="line">  myapp:</span><br><span class="line">    Container ID:   docker://1eff9a86d080d66b97444326053bac735f9914c53bff2a42db9eb5d392294b4d</span><br><span class="line">    Image:          ikubernetes/myapp:v1</span><br><span class="line">    Image ID:       docker-pullable://ikubernetes/myapp@sha256:9c3dc30b5219788b2b8a4b065f548b922a34479577befb54b03330999d30d513</span><br><span class="line">    Port:           80/TCP</span><br><span class="line">    Host Port:      0/TCP</span><br><span class="line">    State:          Running</span><br><span class="line">      Started:      Sat, 06 Apr 2019 19:36:40 +0800</span><br><span class="line">    Ready:          True</span><br><span class="line">    Restart Count:  0</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      /var/run/secrets/kubernetes.io/serviceaccount from default-token-f9699 (ro)</span><br><span class="line">  busybox:</span><br><span class="line">    Container ID:  docker://b411a4285635a04810a138d6029025273299023470c45b8ca7f42ddd04a8f0a4</span><br><span class="line">    Image:         busybox:latest</span><br><span class="line">    Image ID:      docker-pullable://busybox@sha256:954e1f01e80ce09d0887ff6ea10b13a812cb01932a0781d6b0cc23f743a874fd</span><br><span class="line">    Port:          &lt;none&gt;</span><br><span class="line">    Host Port:     &lt;none&gt;</span><br><span class="line">    Command:</span><br><span class="line">      /bin/sh</span><br><span class="line">      -c</span><br><span class="line">      touch /tmp/health; sleep 30; rm -rf /tmp/healthy; sleep 600</span><br><span class="line">    State:          Running</span><br><span class="line">      Started:      Sat, 06 Apr 2019 19:37:05 +0800</span><br><span class="line">    Ready:          False</span><br><span class="line">    Restart Count:  0</span><br><span class="line">    Readiness:      exec [cat /tmp/health] delay=5s timeout=1s period=5s #success=1 #failure=3</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      /var/run/secrets/kubernetes.io/serviceaccount from default-token-f9699 (ro)</span><br><span class="line">Conditions:</span><br><span class="line">  Type              Status</span><br><span class="line">  Initialized       True </span><br><span class="line">  Ready             False </span><br><span class="line">  ContainersReady   False </span><br><span class="line">  PodScheduled      True </span><br><span class="line">Volumes:</span><br><span class="line">  default-token-f9699:</span><br><span class="line">    Type:        Secret (a volume populated by a Secret)</span><br><span class="line">    SecretName:  default-token-f9699</span><br><span class="line">    Optional:    false</span><br><span class="line">QoS Class:       BestEffort</span><br><span class="line">Node-Selectors:  &lt;none&gt;</span><br><span class="line">Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s</span><br><span class="line">                 node.kubernetes.io/unreachable:NoExecute for 300s</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason     Age                   From               Message</span><br><span class="line">  ----     ------     ----                  ----               -------</span><br><span class="line">  Normal   Scheduled  3m11s                 default-scheduler  Successfully assigned default/exec-ready-pod to node01</span><br><span class="line">  Normal   Pulled     3m10s                 kubelet, node01    Container image &quot;ikubernetes/myapp:v1&quot; already present on machine</span><br><span class="line">  Normal   Created    3m10s                 kubelet, node01    Created container myapp</span><br><span class="line">  Normal   Started    3m10s                 kubelet, node01    Started container myapp</span><br><span class="line">  Normal   Pulling    3m10s                 kubelet, node01    Pulling image &quot;busybox:latest&quot;</span><br><span class="line">  Normal   Pulled     2m45s                 kubelet, node01    Successfully pulled image &quot;busybox:latest&quot;</span><br><span class="line">  Normal   Created    2m45s                 kubelet, node01    Created container busybox</span><br><span class="line">  Normal   Started    2m45s                 kubelet, node01    Started container busybox</span><br><span class="line">  Warning  Unhealthy  71s (x18 over 2m36s)  kubelet, node01    Readiness probe failed: OCI runtime exec failed: exec failed: container_linux.go:345: starting container process caused &quot;exec: \&quot;cat /tmp/health\&quot;: stat cat /tmp/health: no such file or directory&quot;: unknown</span><br></pre></td></tr></table></figure>
+<h3 id="http-1"><a href="#http-1" class="headerlink" title="http"></a>http</h3><p>编写http-ready-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">cp http-health-hook.yaml http-ready-hook.yaml </span><br><span class="line">vim http-ready-hook.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: http-ready-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    readinessProbe:</span><br><span class="line">      httpGet:</span><br><span class="line">        path: /index.html</span><br><span class="line">        port: 80</span><br><span class="line">      initialDelaySeconds: 3</span><br><span class="line">      periodSeconds: 3</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600&quot;</span><br></pre></td></tr></table></figure>
+<p>创建http-ready-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl apply -f http-ready-hook.yaml </span><br><span class="line">pod/http-ready-pod created</span><br><span class="line">[root@master pod_yaml]# kubectl get pod</span><br><span class="line">NAME                   READY   STATUS    RESTARTS   AGE</span><br><span class="line">demo-pod               2/2     Running   16         6d7h</span><br><span class="line">demo-pod-ssd           1/1     Running   2          4d23h</span><br><span class="line">exec-ready-pod         1/2     Running   2          23m</span><br><span class="line">http-health-pod        2/2     Running   1          50m</span><br><span class="line">http-ready-pod         2/2     Running   0          2m32s</span><br><span class="line">poststart-hook-pod     2/2     Running   3          3h15m</span><br><span class="line">tcpsocket-health-pod   2/2     Running   1          36m</span><br></pre></td></tr></table></figure>
+<p>手动删除index.html文件，查看pod是否就绪</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl exec http-ready-pod -c myapp -it -- /bin/sh</span><br><span class="line">/ # cd /usr/share/nginx/html/</span><br><span class="line">/usr/share/nginx/html # rm -rf index.html </span><br><span class="line">/usr/share/nginx/html # </span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                   READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-pod               2/2     Running   16         6d7h    10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod-ssd           1/1     Running   2          4d23h   10.244.1.7    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">exec-ready-pod         1/2     Running   2          26m     10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">http-health-pod        2/2     Running   1          52m     10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">http-ready-pod         1/2     Running   0          4m58s   10.244.2.11   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">poststart-hook-pod     2/2     Running   3          3h17m   10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">tcpsocket-health-pod   2/2     Running   1          38m     10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">[root@master pod_yaml]# kubectl describe pod http-ready-pod </span><br><span class="line">Name:               http-ready-pod</span><br><span class="line">Namespace:          default</span><br><span class="line">Priority:           0</span><br><span class="line">PriorityClassName:  &lt;none&gt;</span><br><span class="line">Node:               node02/192.168.48.202</span><br><span class="line">Start Time:         Sat, 06 Apr 2019 19:57:42 +0800</span><br><span class="line">Labels:             app=myapp</span><br><span class="line">                    type=pod</span><br><span class="line">Annotations:        cni.projectcalico.org/podIP: 10.244.2.11/32</span><br><span class="line">                    kubectl.kubernetes.io/last-applied-configuration:</span><br><span class="line">                      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Pod&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;labels&quot;:&#123;&quot;app&quot;:&quot;myapp&quot;,&quot;type&quot;:&quot;pod&quot;&#125;,&quot;name&quot;:&quot;http-ready-pod&quot;,&quot;namespace&quot;:&quot;de...</span><br><span class="line">Status:             Running</span><br><span class="line">IP:                 10.244.2.11</span><br><span class="line">Containers:</span><br><span class="line">  myapp:</span><br><span class="line">    Container ID:   docker://365be76d72546b736b2e119acda1b315d5c4fa498d4e7769d49421c8639b5d01</span><br><span class="line">    Image:          ikubernetes/myapp:v1</span><br><span class="line">    Image ID:       docker-pullable://ikubernetes/myapp@sha256:9c3dc30b5219788b2b8a4b065f548b922a34479577befb54b03330999d30d513</span><br><span class="line">    Port:           80/TCP</span><br><span class="line">    Host Port:      0/TCP</span><br><span class="line">    State:          Running</span><br><span class="line">      Started:      Sat, 06 Apr 2019 19:57:43 +0800</span><br><span class="line">    Ready:          False</span><br><span class="line">    Restart Count:  0</span><br><span class="line">    Readiness:      http-get http://:80/index.html delay=3s timeout=1s period=3s #success=1 #failure=3</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      /var/run/secrets/kubernetes.io/serviceaccount from default-token-f9699 (ro)</span><br><span class="line">  busybox:</span><br><span class="line">    Container ID:  docker://270ab33e2e6ab299e6f5dd3fc4641a72e97004a249b599e47af981dcde172cda</span><br><span class="line">    Image:         busybox:latest</span><br><span class="line">    Image ID:      docker-pullable://busybox@sha256:954e1f01e80ce09d0887ff6ea10b13a812cb01932a0781d6b0cc23f743a874fd</span><br><span class="line">    Port:          &lt;none&gt;</span><br><span class="line">    Host Port:     &lt;none&gt;</span><br><span class="line">    Command:</span><br><span class="line">      /bin/sh</span><br><span class="line">      -c</span><br><span class="line">      mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600</span><br><span class="line">    State:          Running</span><br><span class="line">      Started:      Sat, 06 Apr 2019 19:58:13 +0800</span><br><span class="line">    Ready:          True</span><br><span class="line">    Restart Count:  0</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      /var/run/secrets/kubernetes.io/serviceaccount from default-token-f9699 (ro)</span><br><span class="line">Conditions:</span><br><span class="line">  Type              Status</span><br><span class="line">  Initialized       True </span><br><span class="line">  Ready             False </span><br><span class="line">  ContainersReady   False </span><br><span class="line">  PodScheduled      True </span><br><span class="line">Volumes:</span><br><span class="line">  default-token-f9699:</span><br><span class="line">    Type:        Secret (a volume populated by a Secret)</span><br><span class="line">    SecretName:  default-token-f9699</span><br><span class="line">    Optional:    false</span><br><span class="line">QoS Class:       BestEffort</span><br><span class="line">Node-Selectors:  &lt;none&gt;</span><br><span class="line">Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s</span><br><span class="line">                 node.kubernetes.io/unreachable:NoExecute for 300s</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason     Age                 From               Message</span><br><span class="line">  ----     ------     ----                ----               -------</span><br><span class="line">  Normal   Scheduled  5m38s               default-scheduler  Successfully assigned default/http-ready-pod to node02</span><br><span class="line">  Normal   Pulled     5m38s               kubelet, node02    Container image &quot;ikubernetes/myapp:v1&quot; already present on machine</span><br><span class="line">  Normal   Created    5m38s               kubelet, node02    Created container myapp</span><br><span class="line">  Normal   Started    5m38s               kubelet, node02    Started container myapp</span><br><span class="line">  Normal   Pulling    5m38s               kubelet, node02    Pulling image &quot;busybox:latest&quot;</span><br><span class="line">  Normal   Pulled     5m8s                kubelet, node02    Successfully pulled image &quot;busybox:latest&quot;</span><br><span class="line">  Normal   Created    5m8s                kubelet, node02    Created container busybox</span><br><span class="line">  Normal   Started    5m8s                kubelet, node02    Started container busybox</span><br><span class="line">  Warning  Unhealthy  23s (x19 over 77s)  kubelet, node02    Readiness probe failed: HTTP probe failed with statuscode: 404</span><br></pre></td></tr></table></figure>
+<h3 id="tcpsocket"><a href="#tcpsocket" class="headerlink" title="tcpsocket"></a>tcpsocket</h3><p>编写tcpsocket-ready-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">cp tcpsocket-health-hook.yaml tcpsocket-ready-hook.yaml </span><br><span class="line">vim tcpsocket-ready-hook.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: tcpsocket-ready-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    readinessProbe:</span><br><span class="line">      tcpSocket:</span><br><span class="line">        port: 80</span><br><span class="line">      initialDelaySeconds: 15</span><br><span class="line">      periodSeconds: 20</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600&quot;</span><br></pre></td></tr></table></figure>
+<p>创建tcpsocket-ready-hook.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl apply -f tcpsocket-ready-hook.yaml </span><br><span class="line">pod/tcpsocket-ready-pod created</span><br><span class="line">[root@master pod_yaml]# kubectl get pod  -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE     IP           NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          6d8h    10.244.2.5   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          6d8h    10.244.1.5   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   2          6d8h    10.244.2.4   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">tcpsocket-ready-pod            2/2     Running   0          8m47s   10.244.1.6   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<p>手动改80端口，改成89，再看看是否就绪</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl exec tcpsocket-ready-pod -it -c myapp -- /bin/sh</span><br><span class="line">~ # cd /etc/nginx/</span><br><span class="line">/etc/nginx # cd conf.d/</span><br><span class="line">/etc/nginx/conf.d # vi default.conf </span><br><span class="line">/etc/nginx/conf.d # nginx -s reload</span><br><span class="line">2019/04/06 13:17:17 [notice] 19#19: signal process started</span><br><span class="line">/etc/nginx/conf.d # netstat -ntlp</span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    </span><br><span class="line">tcp        0      0 0.0.0.0:89              0.0.0.0:*               LISTEN      1/nginx: master pro</span><br><span class="line"></span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE    IP           NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          6d8h   10.244.2.5   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          6d8h   10.244.1.5   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       1/2     Running   2          6d8h   10.244.2.4   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">tcpsocket-ready-pod            1/2     Running   0          16m    10.244.1.6   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">[root@master pod_yaml]# kubectl describe pod tcpsocket-ready-pod </span><br><span class="line">Name:               tcpsocket-ready-pod</span><br><span class="line">Namespace:          default</span><br><span class="line">Priority:           0</span><br><span class="line">PriorityClassName:  &lt;none&gt;</span><br><span class="line">Node:               node01/192.168.48.201</span><br><span class="line">Start Time:         Sat, 06 Apr 2019 21:04:50 +0800</span><br><span class="line">Labels:             app=myapp</span><br><span class="line">                    type=pod</span><br><span class="line">Annotations:        kubectl.kubernetes.io/last-applied-configuration:</span><br><span class="line">                      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Pod&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;labels&quot;:&#123;&quot;app&quot;:&quot;myapp&quot;,&quot;type&quot;:&quot;pod&quot;&#125;,&quot;name&quot;:&quot;tcpsocket-ready-pod&quot;,&quot;namespace...</span><br><span class="line">Status:             Running</span><br><span class="line">IP:                 10.244.1.6</span><br><span class="line">Containers:</span><br><span class="line">  myapp:</span><br><span class="line">    Container ID:   docker://882eb554046e9f7158edb993eba6d8571af8e87ffed697a4b57afc836ad48015</span><br><span class="line">    Image:          ikubernetes/myapp:v1</span><br><span class="line">    Image ID:       docker-pullable://ikubernetes/myapp@sha256:9c3dc30b5219788b2b8a4b065f548b922a34479577befb54b03330999d30d513</span><br><span class="line">    Port:           80/TCP</span><br><span class="line">    Host Port:      0/TCP</span><br><span class="line">    State:          Running</span><br><span class="line">      Started:      Sat, 06 Apr 2019 21:04:51 +0800</span><br><span class="line">    Ready:          False</span><br><span class="line">    Restart Count:  0</span><br><span class="line">    Readiness:      tcp-socket :80 delay=15s timeout=1s period=20s #success=1 #failure=3</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      /var/run/secrets/kubernetes.io/serviceaccount from default-token-f9699 (ro)</span><br><span class="line">  busybox:</span><br><span class="line">    Container ID:  docker://dbff1eb869afd6c15e205d6c8d8316eeb3126a82fbb2217a0fa9ce11a1bde06e</span><br><span class="line">    Image:         busybox:latest</span><br><span class="line">    Image ID:      docker-pullable://busybox@sha256:954e1f01e80ce09d0887ff6ea10b13a812cb01932a0781d6b0cc23f743a874fd</span><br><span class="line">    Port:          &lt;none&gt;</span><br><span class="line">    Host Port:     &lt;none&gt;</span><br><span class="line">    Command:</span><br><span class="line">      /bin/sh</span><br><span class="line">      -c</span><br><span class="line">      mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600</span><br><span class="line">    State:          Running</span><br><span class="line">      Started:      Sat, 06 Apr 2019 21:11:07 +0800</span><br><span class="line">    Ready:          True</span><br><span class="line">    Restart Count:  0</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      /var/run/secrets/kubernetes.io/serviceaccount from default-token-f9699 (ro)</span><br><span class="line">Conditions:</span><br><span class="line">  Type              Status</span><br><span class="line">  Initialized       True </span><br><span class="line">  Ready             False </span><br><span class="line">  ContainersReady   False </span><br><span class="line">  PodScheduled      True </span><br><span class="line">Volumes:</span><br><span class="line">  default-token-f9699:</span><br><span class="line">    Type:        Secret (a volume populated by a Secret)</span><br><span class="line">    SecretName:  default-token-f9699</span><br><span class="line">    Optional:    false</span><br><span class="line">QoS Class:       BestEffort</span><br><span class="line">Node-Selectors:  &lt;none&gt;</span><br><span class="line">Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s</span><br><span class="line">                 node.kubernetes.io/unreachable:NoExecute for 300s</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason     Age                  From               Message</span><br><span class="line">  ----     ------     ----                 ----               -------</span><br><span class="line">  Normal   Scheduled  16m                  default-scheduler  Successfully assigned default/tcpsocket-ready-pod to node01</span><br><span class="line">  Normal   Created    16m                  kubelet, node01    Created container myapp</span><br><span class="line">  Normal   Started    16m                  kubelet, node01    Started container myapp</span><br><span class="line">  Normal   Pulled     16m                  kubelet, node01    Container image &quot;ikubernetes/myapp:v1&quot; already present on machine</span><br><span class="line">  Warning  Failed     13m                  kubelet, node01    Failed to pull image &quot;busybox:latest&quot;: rpc error: code = Unknown desc = Error response from daemon: Get https://registry-1.docker.io/v2/library/busybox/manifests/latest: read tcp 192.168.48.201:35494-&gt;52.22.201.61:443: read: connection reset by peer</span><br><span class="line">  Warning  Failed     11m (x3 over 14m)    kubelet, node01    Error: ErrImagePull</span><br><span class="line">  Warning  Failed     11m (x2 over 14m)    kubelet, node01    Failed to pull image &quot;busybox:latest&quot;: rpc error: code = Unknown desc = context canceled</span><br><span class="line">  Warning  Failed     10m (x5 over 14m)    kubelet, node01    Error: ImagePullBackOff</span><br><span class="line">  Normal   BackOff    10m (x5 over 14m)    kubelet, node01    Back-off pulling image &quot;busybox:latest&quot;</span><br><span class="line">  Normal   Pulling    10m (x4 over 16m)    kubelet, node01    Pulling image &quot;busybox:latest&quot;</span><br><span class="line">  Normal   Pulled     10m                  kubelet, node01    Successfully pulled image &quot;busybox:latest&quot;</span><br><span class="line">  Normal   Created    10m                  kubelet, node01    Created container busybox</span><br><span class="line">  Normal   Started    10m                  kubelet, node01    Started container busybox</span><br><span class="line">  Warning  Unhealthy  92s (x8 over 3m52s)  kubelet, node01    Readiness probe failed: dial tcp 10.244.1.6:80: connect: connection refused</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pod/" rel="tag"> <i class="fa fa-tag"></i> pod</a>
+          
+            <a href="/tags/health/" rel="tag"> <i class="fa fa-tag"></i> health</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/05/06.pod hook/" rel="next" title="06.pod hook">
+                <i class="fa fa-chevron-left"></i> 06.pod hook
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/07/08.dashboard install/" rel="prev" title="08.dashboard install">
+                08.dashboard install <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Pod-Health-Check"><span class="nav-number">1.</span> <span class="nav-text">Pod Health Check</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#liveness-probe"><span class="nav-number">1.1.</span> <span class="nav-text">liveness probe</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#exec"><span class="nav-number">1.1.1.</span> <span class="nav-text">exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http"><span class="nav-number">1.1.2.</span> <span class="nav-text">http</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tcpSocket"><span class="nav-number">1.1.3.</span> <span class="nav-text">tcpSocket</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#readiness-probe"><span class="nav-number">1.2.</span> <span class="nav-text">readiness probe</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#exec-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">exec</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#http-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">http</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tcpsocket"><span class="nav-number">1.2.3.</span> <span class="nav-text">tcpsocket</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

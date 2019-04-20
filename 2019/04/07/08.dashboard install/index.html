@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="dashboard,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Dashboard InstallKubernetes Dashboard就是k8s集群的web界面，集合了所有命令行可以操作的所有命令。界面如下所示  dashboard 安装k8s的dashboard安装可以说是非常简单，参考github的指导既可。项目地址如下 1https://github.com/kubernetes/dashboard 官方安装命令 1kubectl apply -f">
+<meta name="keywords" content="dashboard">
+<meta property="og:type" content="article">
+<meta property="og:title" content="08.dashboard install">
+<meta property="og:url" content="http://yoursite.com/2019/04/07/08.dashboard install/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="Dashboard InstallKubernetes Dashboard就是k8s集群的web界面，集合了所有命令行可以操作的所有命令。界面如下所示  dashboard 安装k8s的dashboard安装可以说是非常简单，参考github的指导既可。项目地址如下 1https://github.com/kubernetes/dashboard 官方安装命令 1kubectl apply -f">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.loli.net/2019/04/07/5ca98562ca6aa.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/06/5ca8beb047f8b.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/06/5ca8be5a86e26.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/06/5ca8be27669bf.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/06/5ca8c82c4b1d0.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/06/5ca8c8cb5fdbb.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/06/5ca8cc783544c.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/07/5ca8d120a7ff0.png">
+<meta property="og:image" content="https://i.loli.net/2019/04/07/5ca8d13c096ee.png">
+<meta property="og:updated_time" content="2019-04-07T05:28:08.278Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="08.dashboard install">
+<meta name="twitter:description" content="Dashboard InstallKubernetes Dashboard就是k8s集群的web界面，集合了所有命令行可以操作的所有命令。界面如下所示  dashboard 安装k8s的dashboard安装可以说是非常简单，参考github的指导既可。项目地址如下 1https://github.com/kubernetes/dashboard 官方安装命令 1kubectl apply -f">
+<meta name="twitter:image" content="https://i.loli.net/2019/04/07/5ca98562ca6aa.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/07/08.dashboard install/">
+
+
+
+
+
+  <title>08.dashboard install | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/07/08.dashboard install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">08.dashboard install</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-07T00:00:41+08:00">
+                2019-04-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/dashboard/" itemprop="url" rel="index">
+                    <span itemprop="name">dashboard</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Dashboard-Install"><a href="#Dashboard-Install" class="headerlink" title="Dashboard Install"></a>Dashboard Install</h1><p>Kubernetes Dashboard就是k8s集群的web界面，集合了所有命令行可以操作的所有命令。界面如下所示</p>
+<p><img src="https://i.loli.net/2019/04/07/5ca98562ca6aa.png" alt="dashboard"></p>
+<h2 id="dashboard-安装"><a href="#dashboard-安装" class="headerlink" title="dashboard 安装"></a>dashboard 安装</h2><p>k8s的dashboard安装可以说是非常简单，参考github的指导既可。项目地址如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/kubernetes/dashboard</span><br></pre></td></tr></table></figure>
+<p>官方安装命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml</span><br></pre></td></tr></table></figure>
+<p>但是这么安装存在几个问题：</p>
+<ol>
+<li>镜像国内无法直接访问，需要设置docker代理，才能下载镜像</li>
+<li>dashboard的默认web证书是自动生成的，由于时间和名称存在问题，导致谷歌和ie浏览器无法打开登录界面，经过测试Firefox可以正常打开</li>
+</ol>
+<h3 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h3><p>dashboardv1.10.1镜像下载</p>
+<p><strong>链接：<a href="https://pan.baidu.com/s/1A4NI1guHwOFQv-n7F6ajYA" target="_blank" rel="noopener">https://pan.baidu.com/s/1A4NI1guHwOFQv-n7F6ajYA</a> 提取码：fvne </strong></p>
+<p>各节点无脑加载镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load -i dashboard.tar.gz</span><br></pre></td></tr></table></figure>
+<p>创建dashboard</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml</span><br><span class="line">secret/kubernetes-dashboard-certs created</span><br><span class="line">serviceaccount/kubernetes-dashboard created</span><br><span class="line">role.rbac.authorization.k8s.io/kubernetes-dashboard-minimal created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard-minimal created</span><br><span class="line">deployment.apps/kubernetes-dashboard created</span><br><span class="line">service/kubernetes-dashboard created</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl get pod -n kube-system </span><br><span class="line">NAME                                    READY   STATUS    RESTARTS   AGE</span><br><span class="line">coredns-fb8b8dccf-jfm2m                 1/1     Running   8          6d19h</span><br><span class="line">coredns-fb8b8dccf-r8tqp                 1/1     Running   7          6d19h</span><br><span class="line">etcd-master                             1/1     Running   5          6d19h</span><br><span class="line">kube-apiserver-master                   1/1     Running   5          6d19h</span><br><span class="line">kube-controller-manager-master          1/1     Running   4          6d19h</span><br><span class="line">kube-flannel-ds-amd64-26xjf             1/1     Running   7          6d19h</span><br><span class="line">kube-flannel-ds-amd64-82s7n             1/1     Running   3          6d19h</span><br><span class="line">kube-flannel-ds-amd64-sd2j9             1/1     Running   3          6d19h</span><br><span class="line">kube-proxy-792hk                        1/1     Running   5          6d19h</span><br><span class="line">kube-proxy-88cgt                        1/1     Running   3          6d19h</span><br><span class="line">kube-proxy-frgtq                        1/1     Running   2          6d19h</span><br><span class="line">kube-scheduler-master                   1/1     Running   4          6d19h</span><br><span class="line">kubernetes-dashboard-5f7b999d65-rmxhw   1/1     Running   0          92s</span><br><span class="line">[root@master ~]#</span><br></pre></td></tr></table></figure>
+<p> kubernetes-dashboard service 在集群内部，无法再外部访问，为了方便访问，得暴露kubernetes-dashboard 443端口给NodePort</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get svc -n kube-system </span><br><span class="line">NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line">kube-dns               ClusterIP   10.96.0.10      &lt;none&gt;        53/UDP,53/TCP,9153/TCP   6d19h</span><br><span class="line">kubernetes-dashboard   ClusterIP   10.109.71.206   &lt;none&gt;        443/TCP                  2m25s</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl edit svc kubernetes-dashboard  -n kube-system </span><br><span class="line"></span><br><span class="line"># Please edit the object below. Lines beginning with a &apos;#&apos; will be ignored,</span><br><span class="line"># and an empty file will abort the edit. If an error occurs while saving this file will be</span><br><span class="line"># reopened with the relevant failures.</span><br><span class="line">#</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    kubectl.kubernetes.io/last-applied-configuration: |</span><br><span class="line">      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Service&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;labels&quot;:&#123;&quot;k8s-app&quot;:&quot;kubernetes-dashboard&quot;&#125;,&quot;name&quot;:&quot;kubernetes-dashboard&quot;,&quot;namespace&quot;:&quot;kube-system&quot;&#125;,&quot;spec&quot;:&#123;&quot;ports&quot;:[&#123;&quot;port&quot;:443,&quot;targetPort&quot;:8443&#125;],&quot;selector&quot;:&#123;&quot;k8s-app&quot;:&quot;kubernetes-dashboard&quot;&#125;&#125;&#125;</span><br><span class="line">  creationTimestamp: &quot;2019-04-06T14:30:32Z&quot;</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  namespace: kube-system</span><br><span class="line">  resourceVersion: &quot;37052&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/kube-system/services/kubernetes-dashboard</span><br><span class="line">  uid: 88d3c228-5878-11e9-8c85-000c296cdc6e</span><br><span class="line">spec:</span><br><span class="line">  clusterIP: 10.109.71.206</span><br><span class="line">  ports:</span><br><span class="line">  - port: 443</span><br><span class="line">    protocol: TCP</span><br><span class="line">    targetPort: 8443</span><br><span class="line">  selector:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">  sessionAffinity: None  </span><br><span class="line">  type: NodePort</span><br><span class="line">status:</span><br><span class="line">  loadBalancer: &#123;&#125;</span><br><span class="line"> </span><br><span class="line">[root@master ~]# kubectl get svc -n kube-system </span><br><span class="line">NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line">kube-dns               ClusterIP   10.96.0.10      &lt;none&gt;        53/UDP,53/TCP,9153/TCP   6d19h</span><br><span class="line">kubernetes-dashboard   NodePort    10.109.71.206   &lt;none&gt;        443:30440/TCP            6m41s</span><br></pre></td></tr></table></figure>
+<p>访问<a href="https://192.168.48.200:30440" target="_blank" rel="noopener">https://192.168.48.200:30440</a></p>
+<p>通过谷歌浏览器访问，发现居然无法继续，如下图所示：</p>
+<p><img src="https://i.loli.net/2019/04/06/5ca8beb047f8b.png" alt="Chrome"></p>
+<p>通过火狐浏览器可以访问</p>
+<p><img src="https://i.loli.net/2019/04/06/5ca8be5a86e26.png" alt="firefox"></p>
+<p>发现原因是证书日期问题，Chrome拦截了，所以得手动配证书</p>
+<p><img src="https://i.loli.net/2019/04/06/5ca8be27669bf.png" alt="cert"></p>
+<h3 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h3><p>生成证书通过openssl生成自签名证书即可,这样就有了证书文件dashboard.crt 和 私钥 dashboad.key</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# cd /etc/kubernetes/pki/</span><br><span class="line">[root@master pki]# openssl genrsa -out dashboard.key 2048</span><br><span class="line">Generating RSA private key, 2048 bit long modulus</span><br><span class="line">...................................+++</span><br><span class="line">....................................................+++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">[root@master pki]# openssl req -new -out dashboard.csr -key dashboard.key -subj &quot;/CN=dashboard&quot;</span><br><span class="line">[root@master pki]# openssl x509 -req -in dashboard.csr -out dashboard.crt -signkey dashboard.key  -CA ca.crt -CAkey ca.key -CAcreateserial -days 365</span><br><span class="line">Signature ok</span><br><span class="line">subject=/CN=dashboard</span><br><span class="line">Getting Private key</span><br><span class="line">Getting CA Private Key</span><br><span class="line">[root@master pki]# ls</span><br><span class="line">apiserver.crt              apiserver-etcd-client.key  apiserver-kubelet-client.crt  ca.crt  ca.srl         dashboard.csr  etcd                front-proxy-ca.key      front-proxy-client.key  sa.pub</span><br><span class="line">apiserver-etcd-client.crt  apiserver.key              apiserver-kubelet-client.key  ca.key  dashboard.crt  dashboard.key  front-proxy-ca.crt  front-proxy-client.crt  sa.key</span><br></pre></td></tr></table></figure>
+<h3 id="下载yaml并修改"><a href="#下载yaml并修改" class="headerlink" title="下载yaml并修改"></a>下载yaml并修改</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml</span><br></pre></td></tr></table></figure>
+<p>我们需要重新生成secret，并且将该配置文件中创建secret的配置文件信息去掉，将以下内容 从配置文件中去掉</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# vim kubernetes-dashboard.yaml </span><br><span class="line"></span><br><span class="line"># ------------------- Dashboard Secret ------------------- #</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">  name: kubernetes-dashboard-certs</span><br><span class="line">  namespace: kube-system</span><br><span class="line">type: Opaque</span><br></pre></td></tr></table></figure>
+<p>在配置文件中，修改service type为nodeport类型，固定访问端口nodePort:30001</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">vim kubernetes-dashboard.yaml </span><br><span class="line"></span><br><span class="line"># ------------------- Dashboard Service ------------------- #</span><br><span class="line"></span><br><span class="line">kind: Service</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  namespace: kube-system</span><br><span class="line">spec:</span><br><span class="line">  type: NodePort</span><br><span class="line">  ports:</span><br><span class="line">    - port: 443</span><br><span class="line">      targetPort: 8443</span><br><span class="line">      nodePort: 30001</span><br><span class="line">  selector:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br></pre></td></tr></table></figure>
+<h3 id="生成secret"><a href="#生成secret" class="headerlink" title="生成secret"></a>生成secret</h3><p>先删除以前的secret 生成新的secret</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl delete  secrets kubernetes-dashboard-certs   -n kube-system  </span><br><span class="line">secret &quot;kubernetes-dashboard-certs&quot; deleted</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl  create secret generic kubernetes-dashboard-certs --from-file=/etc/kubernetes/pki/dashboard.key --from-file=/etc/kubernetes/pki/dashboard.crt -n kube-system </span><br><span class="line">secret/kubernetes-dashboard-certs created</span><br></pre></td></tr></table></figure>
+<h3 id="重新apply-yaml文件"><a href="#重新apply-yaml文件" class="headerlink" title="重新apply yaml文件"></a>重新apply yaml文件</h3><p>重新创建kubernetes-dashboard.yaml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl delete -f kubernetes-dashboard.yaml </span><br><span class="line">serviceaccount &quot;kubernetes-dashboard&quot; deleted</span><br><span class="line">role.rbac.authorization.k8s.io &quot;kubernetes-dashboard-minimal&quot; deleted</span><br><span class="line">rolebinding.rbac.authorization.k8s.io &quot;kubernetes-dashboard-minimal&quot; deleted</span><br><span class="line">deployment.apps &quot;kubernetes-dashboard&quot; deleted</span><br><span class="line">service &quot;kubernetes-dashboard&quot; deleted</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl apply -f kubernetes-dashboard.yaml </span><br><span class="line">serviceaccount/kubernetes-dashboard created</span><br><span class="line">role.rbac.authorization.k8s.io/kubernetes-dashboard-minimal created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard-minimal created</span><br><span class="line">deployment.apps/kubernetes-dashboard created</span><br><span class="line">service/kubernetes-dashboard created</span><br></pre></td></tr></table></figure>
+<p>查看kubernetes-dashboard的服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get svc -n kube-system </span><br><span class="line">NAME                   TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line">kube-dns               ClusterIP   10.96.0.10      &lt;none&gt;        53/UDP,53/TCP,9153/TCP   6d20h</span><br><span class="line">kubernetes-dashboard   NodePort    10.109.71.206   &lt;none&gt;        443:30001/TCP            64m</span><br></pre></td></tr></table></figure>
+<p>访问<a href="https://192.168.48.200:30001" target="_blank" rel="noopener">https://192.168.48.200:30001</a></p>
+<p>通过谷歌浏览器可以访问，如下图所示：</p>
+<p><img src="https://i.loli.net/2019/04/06/5ca8c82c4b1d0.png" alt="1554565081273"></p>
+<h2 id="dashboard-访问"><a href="#dashboard-访问" class="headerlink" title="dashboard 访问"></a>dashboard 访问</h2><p><img src="https://i.loli.net/2019/04/06/5ca8c8cb5fdbb.png" alt="1554565282797"></p>
+<h3 id="token访问"><a href="#token访问" class="headerlink" title="token访问"></a>token访问</h3><p>访问dashboard的是serviceaccount，得创建serviceaccount</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl create serviceaccount  dashboard-admin -n kube-system </span><br><span class="line">serviceaccount/dashboard-admin created</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl get serviceaccounts -n kube-system </span><br><span class="line">NAME                                 SECRETS   AGE</span><br><span class="line">attachdetach-controller              1         6d20h</span><br><span class="line">bootstrap-signer                     1         6d20h</span><br><span class="line">certificate-controller               1         6d20h</span><br><span class="line">clusterrole-aggregation-controller   1         6d20h</span><br><span class="line">coredns                              1         6d20h</span><br><span class="line">cronjob-controller                   1         6d20h</span><br><span class="line">daemon-set-controller                1         6d20h</span><br><span class="line">dashboard-admin                      1         33s</span><br><span class="line">default                              1         6d20h</span><br><span class="line">deployment-controller                1         6d20h</span><br><span class="line">disruption-controller                1         6d20h</span><br><span class="line">endpoint-controller                  1         6d20h</span><br><span class="line">expand-controller                    1         6d20h</span><br><span class="line">flannel                              1         6d20h</span><br><span class="line">generic-garbage-collector            1         6d20h</span><br><span class="line">horizontal-pod-autoscaler            1         6d20h</span><br><span class="line">job-controller                       1         6d20h</span><br><span class="line">kube-proxy                           1         6d20h</span><br><span class="line">kubernetes-dashboard                 1         10m</span><br><span class="line">namespace-controller                 1         6d20h</span><br><span class="line">node-controller                      1         6d20h</span><br><span class="line">persistent-volume-binder             1         6d20h</span><br><span class="line">pod-garbage-collector                1         6d20h</span><br><span class="line">pv-protection-controller             1         6d20h</span><br><span class="line">pvc-protection-controller            1         6d20h</span><br><span class="line">replicaset-controller                1         6d20h</span><br><span class="line">replication-controller               1         6d20h</span><br><span class="line">resourcequota-controller             1         6d20h</span><br><span class="line">service-account-controller           1         6d20h</span><br><span class="line">service-controller                   1         6d20h</span><br><span class="line">statefulset-controller               1         6d20h</span><br><span class="line">token-cleaner                        1         6d20h</span><br><span class="line">ttl-controller                       1         6d20h</span><br></pre></td></tr></table></figure>
+<p>clusterrolebinding绑定</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl create clusterrolebinding  dashboard-cluster-admin --clusterrole=cluster-admin   --serviceaccount=kube-system:dashboard-admin</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/dashboard-cluster-admin created</span><br></pre></td></tr></table></figure>
+<p>获取token</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get secrets -n kube-system </span><br><span class="line">NAME                                             TYPE                                  DATA   AGE</span><br><span class="line">attachdetach-controller-token-w5tsb              kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">bootstrap-signer-token-2gsqj                     kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">certificate-controller-token-qb8hw               kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">clusterrole-aggregation-controller-token-k6czs   kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">coredns-token-mfq8b                              kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">cronjob-controller-token-b5k7j                   kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">daemon-set-controller-token-qmpqt                kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">dashboard-admin-token-zf5kd                      kubernetes.io/service-account-token   3      5m30s</span><br><span class="line">default-token-sx4mq                              kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">deployment-controller-token-n4z6v                kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">disruption-controller-token-bg4gl                kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">endpoint-controller-token-wb9p2                  kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">expand-controller-token-l5nz2                    kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">flannel-token-kmdc4                              kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">generic-garbage-collector-token-vrsdm            kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">horizontal-pod-autoscaler-token-82685            kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">job-controller-token-vg4qd                       kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">kube-proxy-token-lwgch                           kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">kubernetes-dashboard-certs                       Opaque                                2      19m</span><br><span class="line">kubernetes-dashboard-key-holder                  Opaque                                2      82m</span><br><span class="line">kubernetes-dashboard-token-wsrcl                 kubernetes.io/service-account-token   3      15m</span><br><span class="line">namespace-controller-token-kjtfb                 kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">node-controller-token-2vljj                      kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">persistent-volume-binder-token-gcbz2             kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">pod-garbage-collector-token-vfwll                kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">pv-protection-controller-token-86bv7             kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">pvc-protection-controller-token-ls59z            kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">replicaset-controller-token-snxzg                kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">replication-controller-token-96ff9               kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">resourcequota-controller-token-ht46g             kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">service-account-controller-token-lhj4g           kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">service-controller-token-vrpt2                   kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">statefulset-controller-token-w5dxf               kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">token-cleaner-token-99l6t                        kubernetes.io/service-account-token   3      6d20h</span><br><span class="line">ttl-controller-token-cwwp4                       kubernetes.io/service-account-token   3      6d20h</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl describe secrets  -n kube-system  dashboard-admin-token-zf5kd </span><br><span class="line">Name:         dashboard-admin-token-zf5kd</span><br><span class="line">Namespace:    kube-system</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  kubernetes.io/service-account.name: dashboard-admin</span><br><span class="line">              kubernetes.io/service-account.uid: 508072c6-5883-11e9-8c85-000c296cdc6e</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io/service-account-token</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">ca.crt:     1025 bytes</span><br><span class="line">namespace:  11 bytes</span><br><span class="line">token:      eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4temY1a2QiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNTA4MDcyYzYtNTg4My0xMWU5LThjODUtMDAwYzI5NmNkYzZlIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.YxTu6SH0LswKd0AJMEDXvVsgKWqZSRlAqh_Xhlxt592m2KjfxlNzjHIufa6x44qo7bed9LYsvA03wvD0jIsJcDMadzlnQ_Mw-AUxe8kox6oUHgUbzSAmJg9-WRbhF0eYCq4RA8xB88S4KS2YyW1-XSz4gLf2MEqYZ0zyLqbE_br1Rz5vp9O2oKeVoDzrG18Zp-mdNJrQYWSGvk5ZyUaYT1T53NP3hSFRb2KppCGCP3d9pNZCEQ1x9nUp4nXqBc5wSawCtj83uDzyRtfnJquhqUu-gVsnv2t3WGIQnAwHWom5mW9824moczkISYf9sp8JT-ZSLwnf05s9-1Qv9urAaA</span><br></pre></td></tr></table></figure>
+<p>利用token登录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4temY1a2QiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNTA4MDcyYzYtNTg4My0xMWU5LThjODUtMDAwYzI5NmNkYzZlIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.YxTu6SH0LswKd0AJMEDXvVsgKWqZSRlAqh_Xhlxt592m2KjfxlNzjHIufa6x44qo7bed9LYsvA03wvD0jIsJcDMadzlnQ_Mw-AUxe8kox6oUHgUbzSAmJg9-WRbhF0eYCq4RA8xB88S4KS2YyW1-XSz4gLf2MEqYZ0zyLqbE_br1Rz5vp9O2oKeVoDzrG18Zp-mdNJrQYWSGvk5ZyUaYT1T53NP3hSFRb2KppCGCP3d9pNZCEQ1x9nUp4nXqBc5wSawCtj83uDzyRtfnJquhqUu-gVsnv2t3WGIQnAwHWom5mW9824moczkISYf9sp8JT-ZSLwnf05s9-1Qv9urAaA</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/04/06/5ca8cc783544c.png" alt="1554566228146"></p>
+<h3 id="config访问"><a href="#config访问" class="headerlink" title="config访问"></a>config访问</h3><p>复制.kube/config文件  将token那一串添加进去</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# cp .kube/config  admin.conf</span><br><span class="line">[root@master ~]# vim admin.conf </span><br><span class="line">apiVersion: v1</span><br><span class="line">clusters:</span><br><span class="line">- cluster:</span><br><span class="line">    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRFNU1ETXpNREU0TlRZd05sb1hEVEk1TURNeU56RTROVFl3Tmxvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTUdtCkFvU3g5VlNBeThHQnl3dUdjelBOVU8rZEJNRDhHZGkzQVVSdEg3TTd5U3FhVWxGY0Jnanpic004UmJ0QmwvZGYKeUh6a0RENDJKVGJDd0RvZVFuQTFZVGVOUmdUTzE5R0VXcVpZakN0U29pck9RakZEVElXYXg2RVhTeER5ZjB1YwpDTEhzNWtPVzdobm9ramNVREFOZUVaTmFBSUFKMkhxOW90QU9WZUNiaWNFa0h5SUsrMGNqTmMyN3RKcUVUVWhJClRYS0hiQUJWSjB0Y2tXTm53SUkvNUIwODloL0dXbnlTVFIyYXBydSsxaDVUbVRJOWVNZUtRVHpva2psTG1DbWgKU2duaXA3ZFN4Q3g1cVUrNm9nMHY3bXlOc0xWeWFKVlZrR0UxSG4vMVlPdW9rVkYrZnJ3YThuUHhxQ291UVZkWgpiOUo3cU9JZWE1Vi9KY1d4akxrQ0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFLVmZLb0labHdLVFI4MnlIeTBKeDduSHhwa0QKSjhRNHowM1N0Yk9rN2JlMjZCdGRSZTJieTRaOXdoMk8vcXA5T3NKNVpPNzJKbHNIa09lUEQrZDRleStTRHRaKwpFVElxRXd0NEg3Vm1TOCs1c0J1cFpvVlVBdlI5QVI2Z2ZkTXB2OUJLK1RUV2dsaU45dW4yVThZQXpQVCtCejVaCmxsZ3dNWFl5Ymh5ZzBiQjNjckhMcWxaWFh3THg3ajBaQ3JsbUZKSlV2elBhZWVOQzhiRWNJd2t1RXlXc2l4dkYKelRhSzVIbDA3WnNTb0FZbWJHbThheEI2T3B6cUUzYlJaTmdHV0Z6dE1reFlpYy9aNkdJemo0Qm9hNWJhTlJPdApwK1ZhMHVOSlROTjREMjhza0d4MjdkRmVTNXVkdzdPYXUrbEM5Z3g0YmJKUkV6T0RYM00wY2wxcm5YTT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=</span><br><span class="line">    server: https://192.168.48.200:6443</span><br><span class="line">  name: kubernetes</span><br><span class="line">contexts:</span><br><span class="line">- context:</span><br><span class="line">    cluster: kubernetes</span><br><span class="line">    user: kubernetes-admin</span><br><span class="line">  name: kubernetes-admin@kubernetes</span><br><span class="line">current-context: kubernetes-admin@kubernetes</span><br><span class="line">kind: Config</span><br><span class="line">preferences: &#123;&#125;</span><br><span class="line">users:</span><br><span class="line">- name: kubernetes-admin</span><br><span class="line">  user:</span><br><span class="line">    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM4akNDQWRxZ0F3SUJBZ0lJWGdzZkVBUWpUU3d3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB4T1RBek16QXhPRFUyTURaYUZ3MHlNREF6TWpreE9EVTJNRFphTURReApGekFWQmdOVkJBb1REbk41YzNSbGJUcHRZWE4wWlhKek1Sa3dGd1lEVlFRREV4QnJkV0psY201bGRHVnpMV0ZrCmJXbHVNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXBCQlFQYjJKK3BhNCtrT00KNHVtS1J1UjVJekFtWi9qWEk5QWpyR0J1OWMwSXFUQVI5MjlzMFpHUnRoU0ZrNGtXaGZkbHNNOEVFZGtsb3hzdgowL1NxZWIvWVhpMGR3WXBrcElxMDlkVi9zck1aelNBS0cyaXBkMXovN2VjaVEvYUU5MDJDMzBxcnFPTExPejdOCnZiYmN4cmtyWEwvcFJSK0tWZjRYTzBuOXJuaE05ci9qd0JBVUNzSFZmbXY0OTJSdXFqY3JVUHVBUUpRNmxsdHIKMnZ1cURyRWZOeFR3OVcwK0pPVVZ5SVV4TkV6UEx3YndSL1hjTE9IZG9OcmlUcVFnVWRseXg0TFdwYkJzYkZQcgpZU0xpaDQrRExnWndWOTFIUUkySkliNlFZYjgzWW8rMHRsZlFBaWNCc0Y2R0YwVktmNmlLQTFjRmlDTlV5V3NYCjhhVU5rd0lEQVFBQm95Y3dKVEFPQmdOVkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUgKQXdJd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFDNVlKQ3FEQXl3TTlOM2xoVkdjdkthMVNkN090eTEzQWtjZApjSDV4TDhWL2R5TGpTd3MrZHd6MDM1d3ZYVXVNMEtIT0hIcVMrMUkzenFpQW5wSWRNcVFjT3QzOEVGRnhqWnZxClNtYzdDczVVY0I1Znhocm14SnZFZGUvdFQzVmx4V2JHUHN0YUk3ZnRYdGFuQVFlZURBVjA3WHlvOHJqSG5VdFEKQ1ZrSEV5MUxIN3I5eGU3MUh2bzJFendHVzU2ZCtsSGlvK0hOdXdzcHlxZzF4NXF1SGhkYWc4VE9NY1RpcHpJawpndXNPTDF6YXh6bjBSalhsQ21ENmQ0cFR3bGtDVU42L3FaUWVHRkpjZFBBTlk0Y3NUQXdQSDJHS1Mrd2xrcGZECmw0NWpuL2IzSDJ6d2FabTFUK2xYNG1nYXZNR0lENjJTWno1WHNXOXprN3htODdrcmJoMD0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=</span><br><span class="line">    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBcEJCUVBiMkorcGE0K2tPTTR1bUtSdVI1SXpBbVovalhJOUFqckdCdTljMElxVEFSCjkyOXMwWkdSdGhTRms0a1doZmRsc004RUVka2xveHN2MC9TcWViL1lYaTBkd1lwa3BJcTA5ZFYvc3JNWnpTQUsKRzJpcGQxei83ZWNpUS9hRTkwMkMzMHFycU9MTE96N052YmJjeHJrclhML3BSUitLVmY0WE8wbjlybmhNOXIvagp3QkFVQ3NIVmZtdjQ5MlJ1cWpjclVQdUFRSlE2bGx0cjJ2dXFEckVmTnhUdzlXMCtKT1VWeUlVeE5FelBMd2J3ClIvWGNMT0hkb05yaVRxUWdVZGx5eDRMV3BiQnNiRlByWVNMaWg0K0RMZ1p3VjkxSFFJMkpJYjZRWWI4M1lvKzAKdGxmUUFpY0JzRjZHRjBWS2Y2aUtBMWNGaUNOVXlXc1g4YVVOa3dJREFRQUJBb0lCQVFDWW5hUkhDcDNqd1hscApOSlZHTDhFMW1Tc21sSS9sZ0JHQmV3ajBQUEI3THJPenpzZW55THNOWjhDSUJDY055eVJza21yQ1FwQ2ltY0R0CkxVa2NmaWhuQVJNZzZBOGFEc2I0V1I5azM2bmViY1MraitOWEE5RkErLzRITEU4dnNZNlhEaitEdjA1WDJFRDkKWjdxemsvdGowTFNKbnV3OEpNN21sMnE4K0dOSGU1dFd5cUo4YVJaaXB6UDB3cXZCU2ZsalpvdDFuNHl2alh4SQptM1d0QjY5bmpvRWVnYXdIN1V6SXZmSGNzUnlRejN6akFKTEdFYzA3a0Q1WnhaRlNGNkZudmovcjNCdFZOL0prCndoSXBXdFl2UytOTG5mMEFNbnZjZFplMlplQmJvWU5jVjZqU0RkeDZ3Mm80dmhWdXJHNzlVZDI2SW5DaUdqMGoKa2t4QXhUbGhBb0dCQU1ReGtjK21jQThwOENpR0YwdHJUM3Z0b2xicjRXbDhEbjE3Wng5R1BoZFVXSDhmOE9WcAo5VU1xVHdqYmNVODRUKzRyRG4yTHJkKy9iR2l5d25TR01vbXFwUXd1S3p2eitPQ1BOUkh2T1daYnF0Y2owUnlkCjhHL3NtQm9UaWFNaWVobURwTXZOUlJvd21xTHRjVWJPcFJKYS83MjBma3I3dk5EVmk4c3FidGdYQW9HQkFOWVQKYVVQYmZ0bTJKZ1Nxa1Q2NDJ0WTZDWFJpTzl1THdjVnBNZUluaWZBZkRVRmFLa1FjRldGVWVKeVByTXVuUDJ1MgpoL2dvZTljM2lPN1pmSERYWjlrMFptZ0FSZHA3bmhXQ3M0NVZCSElpZ3c0UmJQQkwvZ1lsSTlOcW1Xa1JHc0puCmg3UDUvalVlYlg1V3VISWJqVjNIQjhtNHBpQUlUR0gvcW4zVUorZmxBb0dBVzhYVUx3M3IzU3dBNnZQT2Nia0EKdFRlemVIVmVPN21NRGFacjFuVkZGaVNlUU5qd0ZtQTZHZkR3aDNRZXpLL0tzOTN3S1VudFMzeC9lWG9rKzl6SwpSeHRMbVNiL2trdk5YejJkMVlYUms4L05XbFdtdTN3bHZEVXY4UUt5bjF6QlFLNFRxRUdjMFdOcThrdWZjVCs0CmQ1MlpnMk9xcitpUnFoNDZCZzhUU29FQ2dZRUF5YzZRdkVSdUI2UzdvRWgvRmNiRG5aSW1tWTJGYWdrTXlTSEsKd2F5T1QwdW1ma1lXZEJDWll5QnpkdnZHWkZHczZzaXUweFN1OGdyTFRvYTkxYzVxZW9yNFF2Q0c2VmtCaEx1cQpzdkdZZUZQcWdkZVJmOUhUalUxendYakxXQTJrMFVFeDMwczdCaTVDQUFpV1poTnRKOHRabnlNdmtDRGlpTHV3CnFGL1lvclVDZ1lFQWpWQUFGQ0RGWXZVRWxMUEt2U2Y4K1hBdnR6Y3dKUGZoVmE5dmdYcjZtWnlOL0xWS1BBTmQKVDJLVHc2cStNNkF3cDQ2cFA2bkRiSjBEYVRyZUkxUFVvYlhFZFBnMTBlQjIyL0RNdDBaVlI5WnlCcmFVLzBkQgp6dXhuL21FbUk2NU9NL3RBQzlIblNZQUw3b3hUcVY4NldSTTI4VzNTTS82SFozSUZUVGVoa1ZZPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=</span><br><span class="line">    token: eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkYXNoYm9hcmQtYWRtaW4tdG9rZW4temY1a2QiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGFzaGJvYXJkLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNTA4MDcyYzYtNTg4My0xMWU5LThjODUtMDAwYzI5NmNkYzZlIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmRhc2hib2FyZC1hZG1pbiJ9.YxTu6SH0LswKd0AJMEDXvVsgKWqZSRlAqh_Xhlxt592m2KjfxlNzjHIufa6x44qo7bed9LYsvA03wvD0jIsJcDMadzlnQ_Mw-AUxe8kox6oUHgUbzSAmJg9-WRbhF0eYCq4RA8xB88S4KS2YyW1-XSz4gLf2MEqYZ0zyLqbE_br1Rz5vp9O2oKeVoDzrG18Zp-mdNJrQYWSGvk5ZyUaYT1T53NP3hSFRb2KppCGCP3d9pNZCEQ1x9nUp4nXqBc5wSawCtj83uDzyRtfnJquhqUu-gVsnv2t3WGIQnAwHWom5mW9824moczkISYf9sp8JT-ZSLwnf05s9-1Qv9urAaA</span><br></pre></td></tr></table></figure>
+<p>利用admin.conf文件登录</p>
+<p><img src="https://i.loli.net/2019/04/07/5ca8d120a7ff0.png" alt="1554567409147"></p>
+<p><img src="https://i.loli.net/2019/04/07/5ca8d13c096ee.png" alt="1554567425003"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/dashboard/" rel="tag"> <i class="fa fa-tag"></i> dashboard</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/06/07.pod health check/" rel="next" title="07.pod health check">
+                <i class="fa fa-chevron-left"></i> 07.pod health check
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/07/09.metrics-server and heapster/" rel="prev" title="09.Metrics Server And Heapster">
+                09.Metrics Server And Heapster <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Dashboard-Install"><span class="nav-number">1.</span> <span class="nav-text">Dashboard Install</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dashboard-安装"><span class="nav-number">1.1.</span> <span class="nav-text">dashboard 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#镜像"><span class="nav-number">1.1.1.</span> <span class="nav-text">镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#证书"><span class="nav-number">1.1.2.</span> <span class="nav-text">证书</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下载yaml并修改"><span class="nav-number">1.1.3.</span> <span class="nav-text">下载yaml并修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成secret"><span class="nav-number">1.1.4.</span> <span class="nav-text">生成secret</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重新apply-yaml文件"><span class="nav-number">1.1.5.</span> <span class="nav-text">重新apply yaml文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dashboard-访问"><span class="nav-number">1.2.</span> <span class="nav-text">dashboard 访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#token访问"><span class="nav-number">1.2.1.</span> <span class="nav-text">token访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#config访问"><span class="nav-number">1.2.2.</span> <span class="nav-text">config访问</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

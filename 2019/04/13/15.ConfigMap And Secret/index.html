@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="configmap,secret,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="ConfigMap许多应用经常会有从配置文件、命令行参数或者环境变量中读取一些配置信息，ConfigMap非常重要的资源对象。 用命令创建123456789Examples:  # Create a new configmap named my-config based on folder bar  kubectl create configmap my-config --from-file=pa">
+<meta name="keywords" content="configmap,secret">
+<meta property="og:type" content="article">
+<meta property="og:title" content="15.ConfigMap And Secret">
+<meta property="og:url" content="http://yoursite.com/2019/04/13/15.ConfigMap And Secret/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="ConfigMap许多应用经常会有从配置文件、命令行参数或者环境变量中读取一些配置信息，ConfigMap非常重要的资源对象。 用命令创建123456789Examples:  # Create a new configmap named my-config based on folder bar  kubectl create configmap my-config --from-file=pa">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-13T15:10:42.022Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="15.ConfigMap And Secret">
+<meta name="twitter:description" content="ConfigMap许多应用经常会有从配置文件、命令行参数或者环境变量中读取一些配置信息，ConfigMap非常重要的资源对象。 用命令创建123456789Examples:  # Create a new configmap named my-config based on folder bar  kubectl create configmap my-config --from-file=pa">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/13/15.ConfigMap And Secret/">
+
+
+
+
+
+  <title>15.ConfigMap And Secret | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/13/15.ConfigMap And Secret/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">15.ConfigMap And Secret</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-13T23:00:41+08:00">
+                2019-04-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/configmap/" itemprop="url" rel="index">
+                    <span itemprop="name">configmap</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/configmap/secret/" itemprop="url" rel="index">
+                    <span itemprop="name">secret</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="ConfigMap"><a href="#ConfigMap" class="headerlink" title="ConfigMap"></a>ConfigMap</h1><p>许多应用经常会有从配置文件、命令行参数或者环境变量中读取一些配置信息，<code>ConfigMap</code>非常重要的资源对象。</p>
+<h2 id="用命令创建"><a href="#用命令创建" class="headerlink" title="用命令创建"></a>用命令创建</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Examples:</span><br><span class="line">  # Create a new configmap named my-config based on folder bar</span><br><span class="line">  kubectl create configmap my-config --from-file=path/to/bar</span><br><span class="line"></span><br><span class="line">  # Create a new configmap named my-config with specified keys instead of file basenames on disk</span><br><span class="line">  kubectl create configmap my-config --from-file=key1=/path/to/bar/file1.txt --from-file=key2=/path/to/bar/file2.txt</span><br><span class="line"></span><br><span class="line">  # Create a new configmap named my-config with key1=config1 and key2=config2</span><br><span class="line">  kubectl create configmap my-config --from-literal=key1=config1 --from-literal=key2=config2</span><br></pre></td></tr></table></figure>
+<h3 id="键值格式"><a href="#键值格式" class="headerlink" title="键值格式"></a>键值格式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl create configmap  nginx-config --from-literal=nginx_port=80 --from-literal=server_name=myapp.magedu.com</span><br><span class="line">configmap/nginx-config created</span><br><span class="line">[root@master ~]# kubectl get cm</span><br><span class="line">NAME           DATA   AGE</span><br><span class="line">demo-config    3      13d</span><br><span class="line">nginx-config   2      7s</span><br><span class="line">[root@master ~]# kubectl describe cm nginx-config </span><br><span class="line">Name:         nginx-config</span><br><span class="line">Namespace:    default</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  &lt;none&gt;</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">nginx_port:</span><br><span class="line">----</span><br><span class="line">80</span><br><span class="line">server_name:</span><br><span class="line">----</span><br><span class="line">myapp.magedu.com</span><br><span class="line">Events:  &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="文件格式"><a href="#文件格式" class="headerlink" title="文件格式"></a>文件格式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# vim www.conf</span><br><span class="line">server &#123;</span><br><span class="line">        server_name myapp.magedu.com;</span><br><span class="line">        listen 80;</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl create configmap nginx-www --from-file=www.conf </span><br><span class="line">configmap/nginx-www created</span><br><span class="line">[root@master ~]# kubectl get cm</span><br><span class="line">NAME           DATA   AGE</span><br><span class="line">demo-config    3      13d</span><br><span class="line">nginx-config   2      3m38s</span><br><span class="line">nginx-www      1      5s</span><br><span class="line">[root@master ~]# kubectl describe cm nginx-www </span><br><span class="line">Name:         nginx-www</span><br><span class="line">Namespace:    default</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  &lt;none&gt;</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">www.conf:</span><br><span class="line">----</span><br><span class="line">server &#123;</span><br><span class="line">        server_name myapp.magedu.com;</span><br><span class="line">        listen 80;</span><br><span class="line">        root /usr/share/nginx/html;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">Events:  &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="yaml文件创建"><a href="#yaml文件创建" class="headerlink" title="yaml文件创建"></a>yaml文件创建</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kind: ConfigMap</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: cm-demo</span><br><span class="line">  namespace: default</span><br><span class="line">data:</span><br><span class="line">  data.1: hello</span><br><span class="line">  data.2: world</span><br><span class="line">  config: |</span><br><span class="line">    property.1=value-1</span><br><span class="line">    property.2=value-2</span><br><span class="line">    property.3=value-3</span><br></pre></td></tr></table></figure>
+<h2 id="env挂载configmap"><a href="#env挂载configmap" class="headerlink" title="env挂载configmap"></a>env挂载configmap</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">vim myapp-pod-cm.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-pod-cm</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    env:</span><br><span class="line">    - name: NGINX_SERVER_PORT</span><br><span class="line">      valueFrom:</span><br><span class="line">        configMapKeyRef:</span><br><span class="line">          name: nginx-config</span><br><span class="line">          key: nginx_port</span><br><span class="line">    - name: NGINX_SERVER_NAME</span><br><span class="line">      valueFrom:</span><br><span class="line">        configMapKeyRef:</span><br><span class="line">          name: nginx-config</span><br><span class="line">          key: server_name</span><br></pre></td></tr></table></figure>
+<p>测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl apply -f myapp-pod-cm.yaml </span><br><span class="line">pod/myapp-pod-cm created</span><br><span class="line"></span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                                      READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running   0          13d     10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running   0          13d     10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                                  1/2     Running   9          13d     10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs-pvc                             1/1     Running   0          7h7m    10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-pod-cm                              1/1     Running   0          15s     10.244.1.14   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running   0          5h17m   10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-0                                 1/1     Running   0          4h58m   10.244.1.13   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-1                                 1/1     Running   0          4h58m   10.244.2.8    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-2                                 1/1     Running   0          4h57m   10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">test-pod                                  1/1     Running   0          5h10m   10.244.1.12   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl exec  myapp-pod-cm -it -- /bin/sh</span><br><span class="line">/ # printenv </span><br><span class="line">MYAPP_SVC_NODEPORT_SERVICE_HOST=10.106.106.242</span><br><span class="line">MYAPP_SVC_PORT_80_TCP_ADDR=10.98.57.156</span><br><span class="line">KUBERNETES_PORT=tcp://10.96.0.1:443</span><br><span class="line">KUBERNETES_SERVICE_PORT=443</span><br><span class="line">MYAPP_SVC_CLUSTERIP_SERVICE_HOST=10.98.148.121</span><br><span class="line">MYAPP_SVC_PORT_80_TCP_PORT=80</span><br><span class="line">HOSTNAME=myapp-pod-cm</span><br><span class="line">SHLVL=1</span><br><span class="line">MYAPP_SVC_PORT_80_TCP_PROTO=tcp</span><br><span class="line">HOME=/root</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT=tcp://10.106.106.242:80</span><br><span class="line">MYAPP_SVC_NODEPORT_SERVICE_PORT=80</span><br><span class="line">MYAPP_SVC_CLUSTERIP_SERVICE_PORT=80</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT=tcp://10.98.148.121:80</span><br><span class="line">NGINX_SERVER_PORT=80</span><br><span class="line">NGINX_SERVER_NAME=myapp.magedu.com</span><br><span class="line">MYAPP_SVC_PORT_80_TCP=tcp://10.98.57.156:80</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT_80_TCP_ADDR=10.106.106.242</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT_80_TCP_ADDR=10.98.148.121</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT_80_TCP_PORT=80</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT_80_TCP_PROTO=tcp</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT_80_TCP_PORT=80</span><br><span class="line">TERM=xterm</span><br><span class="line">NGINX_VERSION=1.12.2</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT_80_TCP_PROTO=tcp</span><br><span class="line">KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1</span><br><span class="line">PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span><br><span class="line">KUBERNETES_PORT_443_TCP_PORT=443</span><br><span class="line">KUBERNETES_PORT_443_TCP_PROTO=tcp</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT_80_TCP=tcp://10.106.106.242:80</span><br><span class="line">MYAPP_SVC_SERVICE_HOST=10.98.57.156</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT_80_TCP=tcp://10.98.148.121:80</span><br><span class="line">KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443</span><br><span class="line">KUBERNETES_SERVICE_PORT_HTTPS=443</span><br><span class="line">PWD=/</span><br><span class="line">KUBERNETES_SERVICE_HOST=10.96.0.1</span><br><span class="line">MYAPP_SVC_SERVICE_PORT=80</span><br><span class="line">MYAPP_SVC_PORT=tcp://10.98.57.156:80</span><br></pre></td></tr></table></figure>
+<h2 id="以存储卷形式挂载configmap"><a href="#以存储卷形式挂载configmap" class="headerlink" title="以存储卷形式挂载configmap"></a>以存储卷形式挂载configmap</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">vim myapp-pod-cm-volume.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-pod-cm-volume</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: nginxconf</span><br><span class="line">      mountPath: /etc/nginx/config.d</span><br><span class="line">      readOnly: true</span><br><span class="line">  volumes:</span><br><span class="line">  - name: nginxconf</span><br><span class="line">    configMap:</span><br><span class="line">      name: nginx-config</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl apply -f myapp-pod-cm-volume.yaml </span><br><span class="line">pod/myapp-pod-cm-volume created</span><br><span class="line">[root@master pod_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                                      READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running   0          13d     10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running   0          13d     10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                                  1/2     Running   9          13d     10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs-pvc                             1/1     Running   0          7h16m   10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-pod-cm                              1/1     Running   0          8m41s   10.244.1.14   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-pod-cm-volume                       1/1     Running   0          7s      10.244.1.15   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running   0          5h26m   10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-0                                 1/1     Running   0          5h6m    10.244.1.13   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-1                                 1/1     Running   0          5h6m    10.244.2.8    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-2                                 1/1     Running   0          5h6m    10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">test-pod                                  1/1     Running   0          5h18m   10.244.1.12   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@master pod_yaml]# kubectl exec myapp-pod-cm-volume -it -- /bin/sh</span><br><span class="line">/ # cd /etc/nginx/config.d/</span><br><span class="line">/etc/nginx/config.d # ls</span><br><span class="line">nginx_port   server_name</span><br><span class="line">/etc/nginx/config.d # cat nginx_port </span><br><span class="line">80</span><br><span class="line">/etc/nginx/config.d # cat server_name </span><br><span class="line">myapp.magedu.com</span><br></pre></td></tr></table></figure>
+<h1 id="Secret"><a href="#Secret" class="headerlink" title="Secret"></a>Secret</h1><p>一般情况下<code>ConfigMap</code>是用来存储一些非安全的配置信息，如果涉及到一些安全相关的数据的话用<code>ConfigMap</code>就非常不妥了，因为<code>ConfigMap</code>是名为存储的，我们说这个时候我们就需要用到另外一个资源对象了：<code>Secret</code>，<code>Secret</code>用来保存敏感信息，例如密码、OAuth 令牌和 ssh key等等，将这些信息放在<code>Secret</code>中比放在<code>Pod</code>的定义中或者<code>docker</code>镜像中来说更加安全和灵活。</p>
+<p><code>Secret</code>有三种类型：</p>
+<ul>
+<li>Opaque：base64 编码格式的 Secret，用来存储密码、密钥等；但数据也可以通过base64 –decode解码得到原始数据，所有加密性很弱。</li>
+<li>kubernetes.io/dockerconfigjson：用来存储私有docker registry的认证信息。</li>
+<li>kubernetes.io/service-account-token：用于被<code>serviceaccount</code>引用，serviceaccout 创建时Kubernetes会默认创建对应的secret。Pod如果使用了serviceaccount，对应的secret会自动挂载到Pod目录<code>/run/secrets/kubernetes.io/serviceaccount</code>中。</li>
+</ul>
+<h2 id="Opaque-Secret"><a href="#Opaque-Secret" class="headerlink" title="Opaque Secret"></a>Opaque Secret</h2><p>Opaque 类型的数据是一个 map 类型，要求value是<code>base64</code>编码格式，比如我们来创建一个用户名为 admin，密码为 admin321 的 Secret 对象，首先我们先把这用户名和密码做 base64 编码</p>
+<h3 id="命令创建"><a href="#命令创建" class="headerlink" title="命令创建"></a>命令创建</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl create secret generic mysql-root   --from-literal=username=admin --from-literal=password=admin321</span><br><span class="line">secret/mysql-root created</span><br><span class="line">[root@master ~]# kubectl get secret</span><br><span class="line">NAME                                 TYPE                                  DATA   AGE</span><br><span class="line">default-token-f9699                  kubernetes.io/service-account-token   3      13d</span><br><span class="line">demo-secret                          Opaque                                1      13d</span><br><span class="line">mysql-root                           Opaque                                2      14s</span><br><span class="line">nfs-client-provisioner-token-q5h6t   kubernetes.io/service-account-token   3      5h51m</span><br><span class="line">[root@master ~]# kubectl describe secrets mysql-root </span><br><span class="line">Name:         mysql-root</span><br><span class="line">Namespace:    default</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  &lt;none&gt;</span><br><span class="line"></span><br><span class="line">Type:  Opaque</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">password:  8 bytes</span><br><span class="line">username:  5 bytes</span><br></pre></td></tr></table></figure>
+<h3 id="yaml文件创建-1"><a href="#yaml文件创建-1" class="headerlink" title="yaml文件创建"></a>yaml文件创建</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# echo -n &quot;admin321&quot; | base64 </span><br><span class="line">YWRtaW4zMjE=</span><br><span class="line">[root@master ~]# echo -n &quot;admin&quot; | base64 </span><br><span class="line">YWRtaW4=</span><br><span class="line"></span><br><span class="line">[root@master ~]# vim mysql-root-secret.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  name: mysecret</span><br><span class="line">type: Opaque</span><br><span class="line">data:</span><br><span class="line">  username: YWRtaW4=</span><br><span class="line">  password: YWRtaW4zMjE=</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get secrets </span><br><span class="line">NAME                                 TYPE                                  DATA   AGE</span><br><span class="line">default-token-f9699                  kubernetes.io/service-account-token   3      13d</span><br><span class="line">demo-secret                          Opaque                                1      13d</span><br><span class="line">mysecret                             Opaque                                2      4m46s</span><br><span class="line">mysql-root                           Opaque                                2      9m51s</span><br><span class="line">nfs-client-provisioner-token-q5h6t   kubernetes.io/service-account-token   3      6h</span><br><span class="line">[root@master ~]# kubectl describe secrets  mysecret </span><br><span class="line">Name:         mysecret</span><br><span class="line">Namespace:    default</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  </span><br><span class="line">Type:         Opaque</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">password:  8 bytes</span><br><span class="line">username:  5 bytes</span><br><span class="line">[root@master ~]# kubectl get secrets  mysecret  -o yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  password: YWRtaW4zMjE=</span><br><span class="line">  username: YWRtaW4=</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  annotations:</span><br><span class="line">    kubectl.kubernetes.io/last-applied-configuration: |</span><br><span class="line">      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;data&quot;:&#123;&quot;password&quot;:&quot;YWRtaW4zMjE=&quot;,&quot;username&quot;:&quot;YWRtaW4=&quot;&#125;,&quot;kind&quot;:&quot;Secret&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;name&quot;:&quot;mysecret&quot;,&quot;namespace&quot;:&quot;default&quot;&#125;,&quot;type&quot;:&quot;Opaque&quot;&#125;</span><br><span class="line">  creationTimestamp: &quot;2019-04-13T14:36:50Z&quot;</span><br><span class="line">  name: mysecret</span><br><span class="line">  namespace: default</span><br><span class="line">  resourceVersion: &quot;93037&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/default/secrets/mysecret</span><br><span class="line">  uid: 92c96158-5df9-11e9-8bc6-000c296cdc6e</span><br><span class="line">type: Opaque</span><br><span class="line"></span><br><span class="line">[root@master ~]# echo &quot;YWRtaW4zMjE=&quot; | base64 -d</span><br><span class="line">admin321[root@master ~]# echo &quot;YWRtaW4=&quot; | base64 -d</span><br><span class="line">admin[root@master ~]#</span><br></pre></td></tr></table></figure>
+<h3 id="env挂载"><a href="#env挂载" class="headerlink" title="env挂载"></a>env挂载</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">vim secret1-pod.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: secret1-pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: secret1</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    imagePullPolicy: IfNotPresent</span><br><span class="line">    command: [ &quot;/bin/sh&quot;, &quot;-c&quot;, &quot;env&quot; ]</span><br><span class="line">    env:</span><br><span class="line">    - name: USERNAME</span><br><span class="line">      valueFrom:</span><br><span class="line">        secretKeyRef:</span><br><span class="line">          name: mysecret</span><br><span class="line">          key: username</span><br><span class="line">    - name: PASSWORD</span><br><span class="line">      valueFrom:</span><br><span class="line">        secretKeyRef:</span><br><span class="line">          name: mysecret</span><br><span class="line">          key: password</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl apply -f secret1-pod.yaml</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl get pod -o wide</span><br><span class="line">NAME                                      READY   STATUS      RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running     0          13d     10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running     0          13d     10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                                  1/2     Running     9          13d     10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs-pvc                             1/1     Running     0          7h58m   10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-pod-cm                              1/1     Running     0          51m     10.244.1.14   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-pod-cm-volume                       1/1     Running     0          42m     10.244.1.15   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running     0          6h8m    10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-0                                 1/1     Running     0          5h49m   10.244.1.13   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-1                                 1/1     Running     0          5h49m   10.244.2.8    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-2                                 1/1     Running     0          5h48m   10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">secret1-pod                               0/1     Completed   2          26s     10.244.2.10   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">test-pod                                  1/1     Running     0          6h1m    10.244.1.12   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl logs secret1-pod</span><br><span class="line">MYAPP_SVC_NODEPORT_SERVICE_HOST=10.106.106.242</span><br><span class="line">KUBERNETES_SERVICE_PORT=443</span><br><span class="line">KUBERNETES_PORT=tcp://10.96.0.1:443</span><br><span class="line">MYAPP_SVC_CLUSTERIP_SERVICE_HOST=10.98.148.121</span><br><span class="line">HOSTNAME=secret1-pod</span><br><span class="line">SHLVL=1</span><br><span class="line">HOME=/root</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT=tcp://10.106.106.242:80</span><br><span class="line">MYAPP_SVC_NODEPORT_SERVICE_PORT=80</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT=tcp://10.98.148.121:80</span><br><span class="line">MYAPP_SVC_CLUSTERIP_SERVICE_PORT=80</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT_80_TCP_ADDR=10.106.106.242</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT_80_TCP_ADDR=10.98.148.121</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT_80_TCP_PORT=80</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT_80_TCP_PROTO=tcp</span><br><span class="line">USERNAME=admin</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT_80_TCP_PORT=80</span><br><span class="line">KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT_80_TCP_PROTO=tcp</span><br><span class="line">PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span><br><span class="line">KUBERNETES_PORT_443_TCP_PORT=443</span><br><span class="line">KUBERNETES_PORT_443_TCP_PROTO=tcp</span><br><span class="line">MYAPP_SVC_NODEPORT_PORT_80_TCP=tcp://10.106.106.242:80</span><br><span class="line">MYAPP_SVC_CLUSTERIP_PORT_80_TCP=tcp://10.98.148.121:80</span><br><span class="line">KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443</span><br><span class="line">KUBERNETES_SERVICE_PORT_HTTPS=443</span><br><span class="line">KUBERNETES_SERVICE_HOST=10.96.0.1</span><br><span class="line">PWD=/</span><br><span class="line">PASSWORD=admin321</span><br></pre></td></tr></table></figure>
+<h3 id="Volume-挂载"><a href="#Volume-挂载" class="headerlink" title="Volume 挂载"></a>Volume 挂载</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">vim secret2-pod.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: secret2-pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: secret2</span><br><span class="line">	image: busybox:latest</span><br><span class="line">    imagePullPolicy: IfNotPresent</span><br><span class="line">    command: [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;ls /etc/secrets&quot;]</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: secrets</span><br><span class="line">      mountPath: /etc/secrets</span><br><span class="line">  volumes:</span><br><span class="line">  - name: secrets</span><br><span class="line">    secret:</span><br><span class="line">     secretName: mysecret</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get pod</span><br><span class="line">NAME                                      READY   STATUS             RESTARTS   AGE</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running            0          13d</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running            0          13d</span><br><span class="line">demo-pod                                  1/2     Running            9          13d</span><br><span class="line">myapp-nfs-pvc                             1/1     Running            0          8h</span><br><span class="line">myapp-pod-cm                              1/1     Running            0          56m</span><br><span class="line">myapp-pod-cm-volume                       1/1     Running            0          47m</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running            0          6h13m</span><br><span class="line">nfs-web-0                                 1/1     Running            0          5h54m</span><br><span class="line">nfs-web-1                                 1/1     Running            0          5h54m</span><br><span class="line">nfs-web-2                                 1/1     Running            0          5h53m</span><br><span class="line">secret1-pod                               0/1     CrashLoopBackOff   5          5m22s</span><br><span class="line">secret2-pod                               0/1     Completed          2          18s</span><br><span class="line">test-pod                                  1/1     Running            0          6h6m</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl logs secret2-pod</span><br><span class="line">password</span><br><span class="line">username</span><br></pre></td></tr></table></figure>
+<h2 id="kubernetes-io-service-account-token"><a href="#kubernetes-io-service-account-token" class="headerlink" title="kubernetes.io/service-account-token"></a>kubernetes.io/service-account-token</h2><p>另外一种<code>Secret</code>类型就是<code>kubernetes.io/service-account-token</code>，用于被<code>serviceaccount</code>引用。serviceaccout 创建时 Kubernetes 会默认创建对应的 secret。Pod 如果使用了 serviceaccount，对应的secret会自动挂载到Pod的<code>/var/run/secrets/kubernetes.io/serviceaccount</code>目录中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get  pod</span><br><span class="line">NAME                                      READY   STATUS             RESTARTS   AGE</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running            0          13d</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running            0          13d</span><br><span class="line">demo-pod                                  1/2     Running            9          13d</span><br><span class="line">myapp-nfs-pvc                             1/1     Running            0          8h</span><br><span class="line">myapp-pod-cm                              1/1     Running            0          60m</span><br><span class="line">myapp-pod-cm-volume                       1/1     Running            0          52m</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running            0          6h18m</span><br><span class="line">nfs-web-0                                 1/1     Running            0          5h58m</span><br><span class="line">nfs-web-1                                 1/1     Running            0          5h58m</span><br><span class="line">nfs-web-2                                 1/1     Running            0          5h58m</span><br><span class="line">secret1-pod                               0/1     CrashLoopBackOff   6          9m47s</span><br><span class="line">secret2-pod                               0/1     CrashLoopBackOff   5          4m43s</span><br><span class="line">test-pod                                  1/1     Running            0          6h10m</span><br><span class="line">[root@master ~]# kubectl describe pod demo-pod </span><br><span class="line">Name:               demo-pod</span><br><span class="line">Namespace:          default</span><br><span class="line">Priority:           0</span><br><span class="line">PriorityClassName:  &lt;none&gt;</span><br><span class="line">Node:               node02/192.168.48.202</span><br><span class="line">Start Time:         Sun, 31 Mar 2019 12:53:32 +0800</span><br><span class="line">Labels:             app=myapp</span><br><span class="line">                    type=pod</span><br><span class="line">Annotations:        kubectl.kubernetes.io/last-applied-configuration:</span><br><span class="line">                      &#123;&quot;apiVersion&quot;:&quot;v1&quot;,&quot;kind&quot;:&quot;Pod&quot;,&quot;metadata&quot;:&#123;&quot;annotations&quot;:&#123;&#125;,&quot;labels&quot;:&#123;&quot;app&quot;:&quot;myapp&quot;,&quot;type&quot;:&quot;pod&quot;&#125;,&quot;name&quot;:&quot;demo-pod&quot;,&quot;namespace&quot;:&quot;default&quot;...</span><br><span class="line">Status:             Running</span><br><span class="line">IP:                 10.244.2.4</span><br><span class="line">Containers:</span><br><span class="line">  myapp:</span><br><span class="line">    Container ID:   docker://83ae7929a8c83e907a8d445a44d4bc254942b83332cdc63044b2793f85a6658d</span><br><span class="line">    Image:          ikubernetes/myapp:v1</span><br><span class="line">    Image ID:       docker-pullable://ikubernetes/myapp@sha256:9c3dc30b5219788b2b8a4b065f548b922a34479577befb54b03330999d30d513</span><br><span class="line">    Port:           80/TCP</span><br><span class="line">    Host Port:      0/TCP</span><br><span class="line">    State:          Running</span><br><span class="line">      Started:      Sun, 31 Mar 2019 12:53:33 +0800</span><br><span class="line">    Ready:          True</span><br><span class="line">    Restart Count:  0</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      /var/run/secrets/kubernetes.io/serviceaccount from default-token-f9699 (ro)</span><br><span class="line">  busybox:</span><br><span class="line">    Container ID:  docker://75a994741b6583346519394a01701f9a444cfe5283ff78da2b818cf22c54cab3</span><br><span class="line">    Image:         busybox:latest</span><br><span class="line">    Image ID:      docker-pullable://busybox@sha256:954e1f01e80ce09d0887ff6ea10b13a812cb01932a0781d6b0cc23f743a874fd</span><br><span class="line">    Port:          &lt;none&gt;</span><br><span class="line">    Host Port:     &lt;none&gt;</span><br><span class="line">    Command:</span><br><span class="line">      /bin/sh</span><br><span class="line">      -c</span><br><span class="line">      mkdir -p /usr/share/nginx/html; echo $(date) &gt;&gt; /usr/share/nginx/html/test.html;sleep 3600</span><br><span class="line">    State:          Terminated</span><br><span class="line">      Reason:       Completed</span><br><span class="line">      Exit Code:    0</span><br><span class="line">      Started:      Sat, 13 Apr 2019 18:54:24 +0800</span><br><span class="line">      Finished:     Sat, 13 Apr 2019 19:54:24 +0800</span><br><span class="line">    Last State:     Terminated</span><br><span class="line">      Reason:       Completed</span><br><span class="line">      Exit Code:    0</span><br><span class="line">      Started:      Sat, 13 Apr 2019 17:54:02 +0800</span><br><span class="line">      Finished:     Sat, 13 Apr 2019 18:54:02 +0800</span><br><span class="line">    Ready:          False</span><br><span class="line">    Restart Count:  9</span><br><span class="line">    Environment:    &lt;none&gt;</span><br><span class="line">    Mounts:</span><br><span class="line">      /var/run/secrets/kubernetes.io/serviceaccount from default-token-f9699 (ro)</span><br><span class="line">Conditions:</span><br><span class="line">  Type              Status</span><br><span class="line">  Initialized       True </span><br><span class="line">  Ready             False </span><br><span class="line">  ContainersReady   False </span><br><span class="line">  PodScheduled      True </span><br><span class="line">Volumes:</span><br><span class="line">  default-token-f9699:</span><br><span class="line">    Type:        Secret (a volume populated by a Secret)</span><br><span class="line">    SecretName:  default-token-f9699</span><br><span class="line">    Optional:    false</span><br><span class="line">QoS Class:       BestEffort</span><br><span class="line">Node-Selectors:  &lt;none&gt;</span><br><span class="line">Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s</span><br><span class="line">                 node.kubernetes.io/unreachable:NoExecute for 300s</span><br><span class="line">Events:          &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl exec  demo-pod ls /var/run/secrets/kubernetes.io/serviceaccount</span><br><span class="line">ca.crt</span><br><span class="line">namespace</span><br><span class="line">token</span><br><span class="line">[root@master ~]# kubectl exec  demo-pod cat /var/run/secrets/kubernetes.io/serviceaccount/token</span><br><span class="line">eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tZjk2OTkiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjhkN2RhOWMwLTUzMWQtMTFlOS04NmVhLTAwMGMyOTZjZGM2ZSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.VwxzFq7N1UHBDaPxkrELrnnUYsMvFbQIaz18XdYlryYWGIMAvQ3NzSKqrNka2Ydk1joh9RLA-XIyCa1I2jREpkcKZqeVjE5KQ9wURbjRQEhVTfUG3tw8NQomO_f41M5c1TGq5OrD7AvBfeS96OQnArEdzJwNQCK1guhp2jhoyiHQBdRCoYvjlOnHkUznZ2VT8_IQ7D7cVbkSNvneHqXcCYhpdtGa</span><br></pre></td></tr></table></figure>
+<h2 id="kubernetes-io-dockerconfigjson"><a href="#kubernetes-io-dockerconfigjson" class="headerlink" title="kubernetes.io/dockerconfigjson"></a>kubernetes.io/dockerconfigjson</h2><p>除了上面的<code>Opaque</code>这种类型外，我们还可以来创建用户<code>docker registry</code>认证的<code>Secret</code>，直接使用<code>kubectl create</code>命令创建即可，如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl create secret docker-registry myregistry --docker-server=DOCKER_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL</span><br><span class="line">secret "myregistry" created</span><br></pre></td></tr></table></figure>
+<p>然后查看<code>Secret</code>列表：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl get secret</span><br><span class="line">NAME                  TYPE                                  DATA      AGE</span><br><span class="line">default-token-n9w2d   kubernetes.io/service-account-token   3         33d</span><br><span class="line">myregistry            kubernetes.io/dockerconfigjson        1         15s</span><br><span class="line">mysecret              Opaque                                2         34m</span><br></pre></td></tr></table></figure>
+<p>注意看上面的<code>TYPE</code>类型，<code>myregistry</code>是不是对应的<code>kubernetes.io/dockerconfigjson</code>，同样的可以使用<code>describe</code>命令来查看详细信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl describe secret myregistry</span><br><span class="line">Name:         myregistry</span><br><span class="line">Namespace:    default</span><br><span class="line">Labels:       &lt;none&gt;</span><br><span class="line">Annotations:  &lt;none&gt;</span><br><span class="line"></span><br><span class="line">Type:  kubernetes.io/dockerconfigjson</span><br><span class="line"></span><br><span class="line">Data</span><br><span class="line">====</span><br><span class="line">.dockerconfigjson:  152 bytes</span><br></pre></td></tr></table></figure>
+<p>同样的可以看到<code>Data</code>区域没有直接展示出来，如果想查看的话可以使用<code>-o yaml</code>来输出展示出来：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl get secret myregistry -o yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  .dockerconfigjson: eyJhdXRocyI6eyJET0NLRVJfU0VSVkVSIjp7InVzZXJuYW1lIjoiRE9DS0VSX1VTRVIiLCJwYXNzd29yZCI6IkRPQ0tFUl9QQVNTV09SRCIsImVtYWlsIjoiRE9DS0VSX0VNQUlMIiwiYXV0aCI6IlJFOURTMFZTWDFWVFJWSTZSRTlEUzBWU1gxQkJVMU5YVDFKRSJ9fX0=</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: 2018-06-19T16:01:05Z</span><br><span class="line">  name: myregistry</span><br><span class="line">  namespace: default</span><br><span class="line">  resourceVersion: "3696966"</span><br><span class="line">  selfLink: /api/v1/namespaces/default/secrets/myregistry</span><br><span class="line">  uid: f91db707-73d9-11e8-a101-525400db4df7</span><br><span class="line">type: kubernetes.io/dockerconfigjson</span><br></pre></td></tr></table></figure>
+<p>可以把上面的<code>data.dockerconfigjson</code>下面的数据做一个<code>base64</code>解码，看看里面的数据是怎样的呢？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> echo eyJhdXRocyI6eyJET0NLRVJfU0VSVkVSIjp7InVzZXJuYW1lIjoiRE9DS0VSX1VTRVIiLCJwYXNzd29yZCI6IkRPQ0tFUl9QQVNTV09SRCIsImVtYWlsIjoiRE9DS0VSX0VNQUlMIiwiYXV0aCI6IlJFOURTMFZTWDFWVFJWSTZSRTlEUzBWU1gxQkJVMU5YVDFKRSJ9fX0= | base64 -d</span><br><span class="line">&#123;"auths":&#123;"DOCKER_SERVER":&#123;"username":"DOCKER_USER","password":"DOCKER_PASSWORD","email":"DOCKER_EMAIL","auth":"RE9DS0VSX1VTRVI6RE9DS0VSX1BBU1NXT1JE"&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们需要拉取私有仓库中的<code>docker</code>镜像的话就需要使用到上面的<code>myregistry</code>这个<code>Secret</code>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">foo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">foo</span></span><br><span class="line"><span class="attr">    image:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.100</span><span class="string">:5000/test:v1</span></span><br><span class="line"><span class="attr">  imagePullSecrets:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">myregistrykey</span></span><br></pre></td></tr></table></figure>
+<p>我们需要拉取私有仓库镜像<code>192.168.1.100:5000/test:v1</code>，我们就需要针对该私有仓库来创建一个如上的<code>Secret</code>，然后在<code>Pod</code>的 YAML 文件中指定<code>imagePullSecrets</code>，我们会在后面的私有仓库搭建的课程中跟大家详细说明的。</p>
+<h1 id="Secret-与-ConfigMap-对比"><a href="#Secret-与-ConfigMap-对比" class="headerlink" title="Secret 与 ConfigMap 对比"></a>Secret 与 ConfigMap 对比</h1><p>最后我们来对比下<code>Secret</code>和<code>ConfigMap</code>这两种资源对象的异同点：</p>
+<p>相同点：</p>
+<ul>
+<li>key/value的形式</li>
+<li>属于某个特定的namespace</li>
+<li>可以导出到环境变量</li>
+<li>可以通过目录/文件形式挂载</li>
+<li>通过 volume 挂载的配置信息均可热更新</li>
+</ul>
+<p>不同点：</p>
+<ul>
+<li>Secret 可以被 ServerAccount 关联</li>
+<li>Secret 可以存储 docker register 的鉴权信息，用在 ImagePullSecret 参数中，用于拉取私有仓库的镜像</li>
+<li>Secret 支持 Base64 加密</li>
+<li>Secret 分为 kubernetes.io/service-account-token、kubernetes.io/dockerconfigjson、Opaque 三种类型，而 Configmap 不区分类型</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/configmap/" rel="tag"> <i class="fa fa-tag"></i> configmap</a>
+          
+            <a href="/tags/secret/" rel="tag"> <i class="fa fa-tag"></i> secret</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/12/14.Volumes/" rel="next" title="14.Volumes">
+                <i class="fa fa-chevron-left"></i> 14.Volumes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/14/16.Config/" rel="prev" title="16.Config">
+                16.Config <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ConfigMap"><span class="nav-number">1.</span> <span class="nav-text">ConfigMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用命令创建"><span class="nav-number">1.1.</span> <span class="nav-text">用命令创建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#键值格式"><span class="nav-number">1.1.1.</span> <span class="nav-text">键值格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件格式"><span class="nav-number">1.1.2.</span> <span class="nav-text">文件格式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yaml文件创建"><span class="nav-number">1.2.</span> <span class="nav-text">yaml文件创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#env挂载configmap"><span class="nav-number">1.3.</span> <span class="nav-text">env挂载configmap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#以存储卷形式挂载configmap"><span class="nav-number">1.4.</span> <span class="nav-text">以存储卷形式挂载configmap</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Secret"><span class="nav-number">2.</span> <span class="nav-text">Secret</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Opaque-Secret"><span class="nav-number">2.1.</span> <span class="nav-text">Opaque Secret</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#命令创建"><span class="nav-number">2.1.1.</span> <span class="nav-text">命令创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yaml文件创建-1"><span class="nav-number">2.1.2.</span> <span class="nav-text">yaml文件创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#env挂载"><span class="nav-number">2.1.3.</span> <span class="nav-text">env挂载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Volume-挂载"><span class="nav-number">2.1.4.</span> <span class="nav-text">Volume 挂载</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubernetes-io-service-account-token"><span class="nav-number">2.2.</span> <span class="nav-text">kubernetes.io/service-account-token</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubernetes-io-dockerconfigjson"><span class="nav-number">2.3.</span> <span class="nav-text">kubernetes.io/dockerconfigjson</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Secret-与-ConfigMap-对比"><span class="nav-number">3.</span> <span class="nav-text">Secret 与 ConfigMap 对比</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

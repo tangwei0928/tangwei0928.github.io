@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="volume,empty,hostpath,pv,pvc,storageclass,nfs,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="volumeempty临时存储 编写empty yaml123456789101112131415161718192021222324252627282930313233vim myapp-empty.yaml apiVersion: v1kind: Podmetadata:  name: myapp-empty  namespace: default  labels:    app: myapp">
+<meta name="keywords" content="volume,empty,hostpath,pv,pvc,storageclass,nfs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="14.Volumes">
+<meta property="og:url" content="http://yoursite.com/2019/04/12/14.Volumes/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="volumeempty临时存储 编写empty yaml123456789101112131415161718192021222324252627282930313233vim myapp-empty.yaml apiVersion: v1kind: Podmetadata:  name: myapp-empty  namespace: default  labels:    app: myapp">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.loli.net/2019/04/13/5cb1812b861ea.png">
+<meta property="og:updated_time" content="2019-04-13T09:10:27.879Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="14.Volumes">
+<meta name="twitter:description" content="volumeempty临时存储 编写empty yaml123456789101112131415161718192021222324252627282930313233vim myapp-empty.yaml apiVersion: v1kind: Podmetadata:  name: myapp-empty  namespace: default  labels:    app: myapp">
+<meta name="twitter:image" content="https://i.loli.net/2019/04/13/5cb1812b861ea.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/12/14.Volumes/">
+
+
+
+
+
+  <title>14.Volumes | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/12/14.Volumes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">14.Volumes</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-04-12T23:00:41+08:00">
+                2019-04-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/volume/" itemprop="url" rel="index">
+                    <span itemprop="name">volume</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/volume/empty/" itemprop="url" rel="index">
+                    <span itemprop="name">empty</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/volume/empty/hostpath/" itemprop="url" rel="index">
+                    <span itemprop="name">hostpath</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/volume/empty/hostpath/pv/" itemprop="url" rel="index">
+                    <span itemprop="name">pv</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/volume/empty/hostpath/pv/pvc/" itemprop="url" rel="index">
+                    <span itemprop="name">pvc</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/volume/empty/hostpath/pv/pvc/storageclass/" itemprop="url" rel="index">
+                    <span itemprop="name">storageclass</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/volume/empty/hostpath/pv/pvc/storageclass/nfs/" itemprop="url" rel="index">
+                    <span itemprop="name">nfs</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="volume"><a href="#volume" class="headerlink" title="volume"></a>volume</h1><h2 id="empty"><a href="#empty" class="headerlink" title="empty"></a>empty</h2><p>临时存储</p>
+<h3 id="编写empty-yaml"><a href="#编写empty-yaml" class="headerlink" title="编写empty yaml"></a>编写empty yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">vim myapp-empty.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-empty</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: html</span><br><span class="line">      mountPath: /usr/share/nginx/html/</span><br><span class="line">  - name: busybox</span><br><span class="line">    image: busybox:latest</span><br><span class="line">    imagePullPolicy: IfNotPresent</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;echo &apos;this is test&apos; &gt; /data/test.html;sleep 3600&quot;</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: html</span><br><span class="line">      mountPath: /data/</span><br><span class="line">  volumes:</span><br><span class="line">  - name: html</span><br><span class="line">    emptyDir: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="创建empty-yaml"><a href="#创建empty-yaml" class="headerlink" title="创建empty yaml"></a>创建empty yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master volume_yaml]# kubectl apply -f myapp-empty.yaml </span><br><span class="line">pod/myapp-empty created</span><br><span class="line"></span><br><span class="line">[root@master volume_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          13d   10.244.2.5   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          13d   10.244.1.5   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   3          13d   10.244.2.4   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-empty                    2/2     Running   0          10s   10.244.1.8   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@master volume_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE     IP           NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          13d     10.244.2.5   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          13d     10.244.1.5   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   3          13d     10.244.2.4   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-empty                    2/2     Running   0          3m31s   10.244.1.8   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">[root@master volume_yaml]# curl 10.244.1.8/test.html</span><br><span class="line">this is test</span><br></pre></td></tr></table></figure>
+<h2 id="hostpath"><a href="#hostpath" class="headerlink" title="hostpath"></a>hostpath</h2><p>主机本地挂载</p>
+<h3 id="编写hostpath-yaml"><a href="#编写hostpath-yaml" class="headerlink" title="编写hostpath yaml"></a>编写hostpath yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">vim myapp-hostpath.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-hostpath</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: html</span><br><span class="line">      mountPath: /usr/share/nginx/html/</span><br><span class="line">  volumes:</span><br><span class="line">  - name: html</span><br><span class="line">    hostPath:</span><br><span class="line">      path: /data/pod/</span><br><span class="line">      type: DirectoryOrCreate</span><br></pre></td></tr></table></figure>
+<h3 id="创建hostpath-yaml"><a href="#创建hostpath-yaml" class="headerlink" title="创建hostpath yaml"></a>创建hostpath yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master volume_yaml]# kubectl apply -f myapp-hostpath.yaml </span><br><span class="line">pod/myapp-hostpath created</span><br><span class="line">[root@master volume_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP           NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          13d   10.244.2.5   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          13d   10.244.1.5   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   3          13d   10.244.2.4   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-empty                    2/2     Running   0          11m   10.244.1.8   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-hostpath                 1/1     Running   0          7s    10.244.1.9   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master volume_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE     IP           NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          13d     10.244.2.5   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          13d     10.244.1.5   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   3          13d     10.244.2.4   node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-empty                    2/2     Running   0          13m     10.244.1.8   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-hostpath                 1/1     Running   0          2m22s   10.244.1.9   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# cd /data/pod/</span><br><span class="line">[root@node01 pod]# echo &quot;this is test&quot; &gt; test.html</span><br><span class="line"></span><br><span class="line">[root@master volume_yaml]# curl 10.244.1.9/test.html</span><br><span class="line">this is test</span><br></pre></td></tr></table></figure>
+<h2 id="nfs"><a href="#nfs" class="headerlink" title="nfs"></a>nfs</h2><p>准备一台虚拟机node03 用作nfs服务器</p>
+<h3 id="所有节点安装nfs"><a href="#所有节点安装nfs" class="headerlink" title="所有节点安装nfs"></a>所有节点安装nfs</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install nfs-utils</span><br></pre></td></tr></table></figure>
+<h3 id="创建目录"><a href="#创建目录" class="headerlink" title="创建目录"></a>创建目录</h3><p>node03 nfs服务器建立共享挂载目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 ~]# mkdir /data/volumes/ -pv</span><br></pre></td></tr></table></figure>
+<h3 id="nfs配置文件"><a href="#nfs配置文件" class="headerlink" title="nfs配置文件"></a>nfs配置文件</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 ~]# vim /etc/exports</span><br><span class="line"></span><br><span class="line">/data/volumes    192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br></pre></td></tr></table></figure>
+<h3 id="启动nfs"><a href="#启动nfs" class="headerlink" title="启动nfs"></a>启动nfs</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl start nfs</span><br><span class="line">systemctl enable nfs</span><br></pre></td></tr></table></figure>
+<h3 id="各节点挂载nfs"><a href="#各节点挂载nfs" class="headerlink" title="各节点挂载nfs"></a>各节点挂载nfs</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t nfs 192.168.48.203:/data/volumes /mnt</span><br></pre></td></tr></table></figure>
+<h3 id="编写nfs-yaml"><a href="#编写nfs-yaml" class="headerlink" title="编写nfs yaml"></a>编写nfs yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">vim myapp-nfs.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-nfs</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: html</span><br><span class="line">      mountPath: /usr/share/nginx/html/</span><br><span class="line">  volumes:</span><br><span class="line">  - name: html</span><br><span class="line">    nfs:</span><br><span class="line">      path: /data/volumes</span><br><span class="line">      server: node03</span><br></pre></td></tr></table></figure>
+<h3 id="创建nfs-yaml"><a href="#创建nfs-yaml" class="headerlink" title="创建nfs yaml"></a>创建nfs yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@master volume_yaml]# kubectl apply -f myapp-nfs.yaml </span><br><span class="line">pod/myapp-nfs created</span><br><span class="line">[root@master volume_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          13d   10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          13d   10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   4          13d   10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-empty                    2/2     Running   0          36m   10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-hostpath                 1/1     Running   0          17m   10.244.2.6    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs                      1/1     Running   0          13s   10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="测试-2"><a href="#测试-2" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 ~]# echo &quot;this is test&quot; &gt; /data/volumes/test.html </span><br><span class="line"></span><br><span class="line">[root@master volume_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          13d   10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          13d   10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   4          13d   10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-empty                    2/2     Running   0          36m   10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-hostpath                 1/1     Running   0          17m   10.244.2.6    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs                      1/1     Running   0          13s   10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">[root@master volume_yaml]# curl 10.244.1.10/test.html</span><br><span class="line">this is test</span><br></pre></td></tr></table></figure>
+<h2 id="pv"><a href="#pv" class="headerlink" title="pv"></a>pv</h2><p>Kubernetes 支持的 PV 类型有很多，比如常见的 Ceph、GlusterFs、NFS，甚至 HostPath也可以，不过 HostPath 我们之前也说过仅仅可以用于单机测试，更多的支持类型可以前往 <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/" target="_blank" rel="noopener">Kubernetes PV 官方文档</a>进行查看，因为每种存储类型都有各自的特点，所以我们在使用的时候可以去查看相应的文档来设置对应的参数。</p>
+<h3 id="编写nfs配置文件并重启"><a href="#编写nfs配置文件并重启" class="headerlink" title="编写nfs配置文件并重启"></a>编写nfs配置文件并重启</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 ~]# mkdir /data/volumes/v&#123;1..5&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@node03 ~]# vim /etc/exports</span><br><span class="line"></span><br><span class="line">/data/volumes    192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line">/data/volumes/v1    192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line">/data/volumes/v2    192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line">/data/volumes/v3    192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line">/data/volumes/v4    192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line">/data/volumes/v5    192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line"></span><br><span class="line">[root@node03 ~]# systemctl restart nfs</span><br></pre></td></tr></table></figure>
+<h3 id="编写pv-yaml"><a href="#编写pv-yaml" class="headerlink" title="编写pv yaml"></a>编写pv yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">vim myapp-pv.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: pv01</span><br><span class="line">  labels:</span><br><span class="line">    name: pv01</span><br><span class="line">    type: pv</span><br><span class="line">spec:</span><br><span class="line">  nfs:</span><br><span class="line">    path: /data/volumes/v1</span><br><span class="line">    server: node03</span><br><span class="line">  accessModes: [&quot;ReadWriteMany&quot;]</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 5Gi</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: pv02</span><br><span class="line">  labels:</span><br><span class="line">    name: pv02</span><br><span class="line">    type: pv</span><br><span class="line">spec:</span><br><span class="line">  nfs:</span><br><span class="line">    path: /data/volumes/v2</span><br><span class="line">    server: node03</span><br><span class="line">  accessModes: [&quot;ReadWriteMany&quot;]</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 10Gi</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: pv03</span><br><span class="line">  labels:</span><br><span class="line">    name: pv03</span><br><span class="line">    type: pv</span><br><span class="line">spec:</span><br><span class="line">  nfs:</span><br><span class="line">    path: /data/volumes/v3</span><br><span class="line">    server: node03</span><br><span class="line">  accessModes: [&quot;ReadWriteMany&quot;]</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 15Gi</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: pv04</span><br><span class="line">  labels:</span><br><span class="line">    name: pv04</span><br><span class="line">    type: pv</span><br><span class="line">spec:</span><br><span class="line">  nfs:</span><br><span class="line">    path: /data/volumes/v4</span><br><span class="line">    server: node03</span><br><span class="line">  accessModes: [&quot;ReadWriteMany&quot;]</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 20Gi</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: pv05</span><br><span class="line">  labels:</span><br><span class="line">    name: pv05</span><br><span class="line">    type: pv</span><br><span class="line">spec:</span><br><span class="line">  nfs:</span><br><span class="line">    path: /data/volumes/v5</span><br><span class="line">    server: node03</span><br><span class="line">  accessModes: [&quot;ReadWriteMany&quot;]</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 25Gi</span><br></pre></td></tr></table></figure>
+<h3 id="capacity"><a href="#capacity" class="headerlink" title="capacity"></a>capacity</h3><p>一般来说，一个 PV 对象都要指定一个存储能力，通过 PV 的 <strong>capacity</strong>属性来设置的，目前只支持存储空间的设置，就是我们这里的 storage=1Gi，不过未来可能会加入 IOPS、吞吐量等指标的配置。</p>
+<h3 id="accessModes"><a href="#accessModes" class="headerlink" title="accessModes"></a>accessModes</h3><p>AccessModes 是用来对 PV 进行访问模式的设置，用于描述用户应用对存储资源的访问权限，访问权限包括下面几种方式：</p>
+<ul>
+<li>ReadWriteOnce（RWO）：读写权限，但是只能被单个节点挂载</li>
+<li>ReadOnlyMany（ROX）：只读权限，可以被多个节点挂载</li>
+<li>ReadWriteMany（RWX）：读写权限，可以被多个节点挂载</li>
+</ul>
+<p><img src="https://i.loli.net/2019/04/13/5cb1812b861ea.png" alt></p>
+<h3 id="persistentVolumeReclaimPolicy"><a href="#persistentVolumeReclaimPolicy" class="headerlink" title="persistentVolumeReclaimPolicy"></a>persistentVolumeReclaimPolicy</h3><p>我这里指定的 PV 的回收策略为 Recycle，目前 PV 支持的策略有三种：</p>
+<ul>
+<li>Retain（保留）- 保留数据，需要管理员手工清理数据</li>
+<li>Recycle（回收）- 清除 PV 中的数据，效果相当于执行 rm -rf /thevoluem/*</li>
+<li>Delete（删除）- 与 PV 相连的后端存储完成 volume 的删除操作，当然这常见于云服务商的存储服务，比如 ASW EBS。</li>
+</ul>
+<p>不过需要注意的是，目前只有 NFS 和 HostPath 两种类型支持回收策略。当然一般来说还是设置为 Retain 这种策略保险一点。</p>
+<h3 id="创建pv-yaml"><a href="#创建pv-yaml" class="headerlink" title="创建pv yaml"></a>创建pv yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master pv_yaml]# kubectl apply -f myapp-pv.yaml </span><br><span class="line">persistentvolume/pv01 created</span><br><span class="line">persistentvolume/pv02 created</span><br><span class="line">persistentvolume/pv03 created</span><br><span class="line">persistentvolume/pv04 created</span><br><span class="line">persistentvolume/pv05 created</span><br><span class="line">[root@master pv_yaml]# kubectl get pv</span><br><span class="line">NAME   CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE</span><br><span class="line">pv01   5Gi        RWX            Retain           Available                                   4s</span><br><span class="line">pv02   10Gi       RWX            Retain           Available                                   4s</span><br><span class="line">pv03   15Gi       RWX            Retain           Available                                   4s</span><br><span class="line">pv04   20Gi       RWX            Retain           Available                                   4s</span><br><span class="line">pv05   25Gi       RWX            Retain           Available                                   4s</span><br></pre></td></tr></table></figure>
+<h2 id="pvc"><a href="#pvc" class="headerlink" title="pvc"></a>pvc</h2><p>学习了 PV 的使用，但是在我们真正使用的时候是使用的 PVC，就类似于我们的服务是通过 Pod 来运行的，而不是 Node，只是 Pod 跑在 Node 上而已，所以这节课我们就来给大家讲解下 PVC 的使用方法。</p>
+<h3 id="编写pvc-yaml"><a href="#编写pvc-yaml" class="headerlink" title="编写pvc yaml"></a>编写pvc yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master pvc_yaml]# vim myapp-pvc.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-pvc</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pvc</span><br><span class="line">spec:</span><br><span class="line">  accessModes: [&quot;ReadWriteMany&quot;]</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 11Gi</span><br></pre></td></tr></table></figure>
+<h3 id="创建pvc-yaml"><a href="#创建pvc-yaml" class="headerlink" title="创建pvc yaml"></a>创建pvc yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master pvc_yaml]# vim myapp-pvc.yaml </span><br><span class="line">[root@master pvc_yaml]# kubectl apply -f myapp-pvc.yaml </span><br><span class="line">persistentvolumeclaim/myapp-pvc created</span><br><span class="line">[root@master pvc_yaml]# kubectl get pvc</span><br><span class="line">NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">myapp-pvc   Bound    pv03     15Gi       RWX                           5s</span><br><span class="line">[root@master pvc_yaml]# kubectl get pv</span><br><span class="line">NAME   CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM               STORAGECLASS   REASON   AGE</span><br><span class="line">pv01   5Gi        RWX            Retain           Available                                               18m</span><br><span class="line">pv02   10Gi       RWX            Retain           Available                                               18m</span><br><span class="line">pv03   15Gi       RWX            Retain           Bound       default/myapp-pvc                           18m</span><br><span class="line">pv04   20Gi       RWX            Retain           Available                                               18m</span><br><span class="line">pv05   25Gi       RWX            Retain           Available                                               18m</span><br></pre></td></tr></table></figure>
+<h3 id="创建pod-yaml"><a href="#创建pod-yaml" class="headerlink" title="创建pod yaml"></a>创建pod yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">vim myapp-nfs-pvc.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-nfs-pvc</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: html</span><br><span class="line">      mountPath: /usr/share/nginx/html/</span><br><span class="line">  volumes:</span><br><span class="line">  - name: html</span><br><span class="line">    persistentVolumeClaim:</span><br><span class="line">      claimName: myapp-pvc</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@master volume_yaml]# kubectl apply -f myapp-nfs-pvc.yaml </span><br><span class="line">pod/myapp-nfs-pvc created</span><br><span class="line"></span><br><span class="line">[root@master volume_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          13d   10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          13d   10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   4          13d   10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-empty                    2/2     Running   1          91m   10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-hostpath                 1/1     Running   0          72m   10.244.2.6    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs                      1/1     Running   0          54m   10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs-pvc                  1/1     Running   0          29s   10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="测试-3"><a href="#测试-3" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master volume_yaml]# kubectl get pod -o wide</span><br><span class="line">NAME                           READY   STATUS    RESTARTS   AGE   IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn   1/1     Running   0          13d   10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2   1/1     Running   0          13d   10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                       2/2     Running   4          13d   10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-empty                    2/2     Running   1          91m   10.244.1.8    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-hostpath                 1/1     Running   0          72m   10.244.2.6    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs                      1/1     Running   0          54m   10.244.1.10   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs-pvc                  1/1     Running   0          29s   10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line"></span><br><span class="line">[root@master volume_yaml]# kubectl get pvc</span><br><span class="line">NAME        STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span><br><span class="line">myapp-pvc   Bound    pv03     15Gi       RWX                           2m49s</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 ~]# echo &quot;this is test&quot; &gt; /data/volumes/v3/test.html</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master volume_yaml]# curl 10.244.1.11/test.html</span><br><span class="line">this is test</span><br></pre></td></tr></table></figure>
+<h2 id="storageclass"><a href="#storageclass" class="headerlink" title="storageclass"></a>storageclass</h2><p>前面的课程中我们学习了 PV 和 PVC 的使用方法，但是前面的 PV 都是静态的，什么意思？就是我要使用的一个 PVC 的话就必须手动去创建一个 PV，我们也说过这种方式在很大程度上并不能满足我们的需求，比如我们有一个应用需要对存储的并发度要求比较高，而另外一个应用对读写速度又要求比较高，特别是对于 StatefulSet 类型的应用简单的来使用静态的 PV 就很不合适了，这种情况下我们就需要用到动态 PV，也就是我们今天要讲解的 StorageClass。</p>
+<p>要使用 StorageClass，我们就得安装对应的自动配置程序，比如我们这里存储后端使用的是 nfs，那么我们就需要使用到一个 nfs-client 的自动配置程序，我们也叫它 Provisioner，这个程序使用我们已经配置好的 nfs 服务器，来自动创建持久卷，也就是自动帮我们创建 PV。</p>
+<h3 id="配置nfs服务器"><a href="#配置nfs服务器" class="headerlink" title="配置nfs服务器"></a>配置nfs服务器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 ~]# mkdir /volume</span><br><span class="line">[root@node03 ~]# vim /etc/exports</span><br><span class="line">/volume   192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line"></span><br><span class="line">[root@node03 ~]# systemctl restart nfs</span><br></pre></td></tr></table></figure>
+<h3 id="各节点挂载nfs-1"><a href="#各节点挂载nfs-1" class="headerlink" title="各节点挂载nfs"></a>各节点挂载nfs</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t nfs 192.168.48.203:/volume  /tmp</span><br></pre></td></tr></table></figure>
+<h3 id="准备deployment"><a href="#准备deployment" class="headerlink" title="准备deployment"></a>准备deployment</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">vim nfs-client.yaml</span><br><span class="line"></span><br><span class="line">kind: Deployment</span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  strategy:</span><br><span class="line">    type: Recreate</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nfs-client-provisioner</span><br><span class="line">    spec:</span><br><span class="line">      serviceAccountName: nfs-client-provisioner</span><br><span class="line">      containers:</span><br><span class="line">        - name: nfs-client-provisioner</span><br><span class="line">          image: quay.io/external_storage/nfs-client-provisioner:latest</span><br><span class="line">          imagePullPolicy: IfNotPresent</span><br><span class="line">          volumeMounts:</span><br><span class="line">            - name: nfs-client-root</span><br><span class="line">              mountPath: /persistentvolumes</span><br><span class="line">          env:</span><br><span class="line">            - name: PROVISIONER_NAME</span><br><span class="line">              value: nfs-provisioner</span><br><span class="line">            - name: NFS_SERVER</span><br><span class="line">              value: 192.168.48.203</span><br><span class="line">            - name: NFS_PATH</span><br><span class="line">              value: /volume</span><br><span class="line">      volumes:</span><br><span class="line">        - name: nfs-client-root</span><br><span class="line">          nfs:</span><br><span class="line">            server: 192.168.48.203</span><br><span class="line">            path: /volume</span><br></pre></td></tr></table></figure>
+<h3 id="创建sa"><a href="#创建sa" class="headerlink" title="创建sa"></a>创建sa</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">vim nfs-client-sa.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumes&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;delete&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumeclaims&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;update&quot;]</span><br><span class="line">  - apiGroups: [&quot;storage.k8s.io&quot;]</span><br><span class="line">    resources: [&quot;storageclasses&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;events&quot;]</span><br><span class="line">    verbs: [&quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;update&quot;, &quot;patch&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;endpoints&quot;]</span><br><span class="line">    verbs: [&quot;create&quot;, &quot;delete&quot;, &quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;patch&quot;, &quot;update&quot;]</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: run-nfs-client-provisioner</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: nfs-client-provisioner</span><br><span class="line">    namespace: default</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br></pre></td></tr></table></figure>
+<h3 id="编写storageclass-yaml"><a href="#编写storageclass-yaml" class="headerlink" title="编写storageclass yaml"></a>编写storageclass yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim nfs-client-class.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">kind: StorageClass</span><br><span class="line">metadata:</span><br><span class="line">  name: course-nfs-storage</span><br><span class="line">provisioner: nfs-provisioner</span><br></pre></td></tr></table></figure>
+<h3 id="创建storageclass-yaml"><a href="#创建storageclass-yaml" class="headerlink" title="创建storageclass yaml"></a>创建storageclass yaml</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl apply -f nfs-client.yaml </span><br><span class="line">deployment.extensions/nfs-client-provisioner created</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl apply -f nfs-client-sa.yaml</span><br><span class="line">serviceaccount/nfs-client-provisioner created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/nfs-client-provisioner-runner created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/run-nfs-client-provisioner created</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl apply -f nfs-client-class.yaml</span><br><span class="line">storageclass.storage.k8s.io/course-nfs-storage created</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get pods</span><br><span class="line">NAME                                      READY   STATUS    RESTARTS   AGE</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running   0          13d</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running   0          13d</span><br><span class="line">demo-pod                                  2/2     Running   6          13d</span><br><span class="line">myapp-nfs-pvc                             1/1     Running   0          110m</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running   0          46s</span><br><span class="line">[root@master ~]# kubectl get storageclasses.storage.k8s.io </span><br><span class="line">NAME                 PROVISIONER       AGE</span><br><span class="line">course-nfs-storage   nfs-provisioner   52s</span><br></pre></td></tr></table></figure>
+<h3 id="创建pvc"><a href="#创建pvc" class="headerlink" title="创建pvc"></a>创建pvc</h3><p>上面把<code>StorageClass</code>资源对象创建成功了，接下来我们来通过一个示例测试下动态 PV，首先创建一个 PVC 对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">vim test-pvc.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: test-pvc</span><br><span class="line">  annotations:</span><br><span class="line">    volume.beta.kubernetes.io/storage-class: &quot;course-nfs-storage&quot;</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">  - ReadWriteMany</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 1Mi</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@master pvc_yaml]# kubectl apply -f myapp-pvc.yaml </span><br><span class="line">persistentvolumeclaim/test-pvc created</span><br><span class="line">[root@master pvc_yaml]# kubectl get pvc</span><br><span class="line">NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE</span><br><span class="line">myapp-pvc   Bound    pv03                                       15Gi       RWX                                 116m</span><br><span class="line">test-pvc    Bound    pvc-7fb9ad47-5dc8-11e9-8bc6-000c296cdc6e   1Mi        RWX            course-nfs-storage   14s</span><br></pre></td></tr></table></figure>
+<h3 id="测试-4"><a href="#测试-4" class="headerlink" title="测试"></a>测试</h3><p>接下来我们还是用一个简单的示例来测试下我们上面用 StorageClass 方式声明的 PVC 对象吧：(test-pod.yaml)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">vim test-pod.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: test-pod</span><br><span class="line">  namespace: default</span><br><span class="line">  labels:</span><br><span class="line">    app: myapp</span><br><span class="line">    type: pod</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">    ports:</span><br><span class="line">    - name: http</span><br><span class="line">      containerPort: 80</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: html</span><br><span class="line">      mountPath: /usr/share/nginx/html/</span><br><span class="line">  volumes:</span><br><span class="line">  - name: html</span><br><span class="line">    persistentVolumeClaim:</span><br><span class="line">      claimName: test-pvc</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl apply -f test-pod.yaml </span><br><span class="line">pod/test-pod created</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl get pod -o wide</span><br><span class="line">NAME                                      READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running   0          13d     10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running   0          13d     10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                                  2/2     Running   6          13d     10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs-pvc                             1/1     Running   0          118m    10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running   0          7m47s   10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">test-pod                                  1/1     Running   0          10s     10.244.1.12   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 ~]# cd /volume/</span><br><span class="line">[root@node03 volume]# ll</span><br><span class="line">total 4</span><br><span class="line">drwxrwxrwx 2 root root  6 Apr 13 16:45 default-test-pvc-pvc-7fb9ad47-5dc8-11e9-8bc6-000c296cdc6e</span><br><span class="line">[root@node03 volume]# cd default-test-pvc-pvc-7fb9ad47-5dc8-11e9-8bc6-000c296cdc6e/</span><br><span class="line">[root@node03 default-test-pvc-pvc-7fb9ad47-5dc8-11e9-8bc6-000c296cdc6e]# ll</span><br><span class="line">total 0</span><br><span class="line">[root@node03 default-test-pvc-pvc-7fb9ad47-5dc8-11e9-8bc6-000c296cdc6e]# echo &quot;this is test&quot; &gt; test.html</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# curl 10.244.1.12/test.html</span><br><span class="line">this is test</span><br></pre></td></tr></table></figure>
+<p>实际工作中，使用 StorageClass 更多的是 StatefulSet 类型的服务，StatefulSet 类型的服务我们也可以通过一个 volumeClaimTemplates 属性来直接使用 StorageClass</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">vim test-statefulset-nfs.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: apps/v1beta1</span><br><span class="line">kind: StatefulSet</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-web</span><br><span class="line">spec:</span><br><span class="line">  serviceName: &quot;nginx&quot;</span><br><span class="line">  replicas: 3</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nfs-web</span><br><span class="line">    spec:</span><br><span class="line">      terminationGracePeriodSeconds: 10</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: ikubernetes/myapp:v1</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: web</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: www</span><br><span class="line">          mountPath: /usr/share/nginx/html</span><br><span class="line">  volumeClaimTemplates:</span><br><span class="line">  - metadata:</span><br><span class="line">      name: www</span><br><span class="line">      annotations:</span><br><span class="line">        volume.beta.kubernetes.io/storage-class: course-nfs-storage</span><br><span class="line">    spec:</span><br><span class="line">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span><br><span class="line">      resources:</span><br><span class="line">        requests:</span><br><span class="line">          storage: 1Gi</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl apply -f test-statefulset-nfs.yaml</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl get pod -o wide</span><br><span class="line">NAME                                      READY   STATUS    RESTARTS   AGE    IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running   0          13d    10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running   0          13d    10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                                  2/2     Running   7          13d    10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs-pvc                             1/1     Running   0          130m   10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running   0          20m    10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-0                                 1/1     Running   0          39s    10.244.1.13   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-1                                 1/1     Running   0          33s    10.244.2.8    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-2                                 1/1     Running   0          17s    10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">test-pod                                  1/1     Running   0          12m    10.244.1.12   node01   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<p>我们可以看到是不是也生成了3个 PVC 对象，名称由模板名称 name 加上 Pod 的名称组合而成，这3个 PVC 对象也都是 绑定状态了，很显然我们查看 PV 也可以看到对应的3个 PV 对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get pv</span><br><span class="line">NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                   STORAGECLASS         REASON   AGE</span><br><span class="line">pv01                                       5Gi        RWX            Retain           Released    default/test-pvc                                      133m</span><br><span class="line">pv02                                       10Gi       RWX            Retain           Available                                                         133m</span><br><span class="line">pv03                                       15Gi       RWX            Retain           Bound       default/myapp-pvc                                     133m</span><br><span class="line">pv04                                       20Gi       RWX            Retain           Available                                                         133m</span><br><span class="line">pv05                                       25Gi       RWX            Retain           Available                                                         133m</span><br><span class="line">pvc-7fb9ad47-5dc8-11e9-8bc6-000c296cdc6e   1Mi        RWX            Delete           Bound       default/test-pvc        course-nfs-storage            16m</span><br><span class="line">pvc-9502037e-5dca-11e9-8bc6-000c296cdc6e   1Gi        RWO            Delete           Bound       default/www-nfs-web-0   course-nfs-storage            98s</span><br><span class="line">pvc-9871e0ab-5dca-11e9-8bc6-000c296cdc6e   1Gi        RWO            Delete           Bound       default/www-nfs-web-1   course-nfs-storage            83s</span><br><span class="line">pvc-a244e88f-5dca-11e9-8bc6-000c296cdc6e   1Gi        RWO            Delete           Bound       default/www-nfs-web-2   course-nfs-storage            68s</span><br><span class="line">[root@master ~]# kubectl get pvc</span><br><span class="line">NAME            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS         AGE</span><br><span class="line">myapp-pvc       Bound    pv03                                       15Gi       RWX                                 133m</span><br><span class="line">test-pvc        Bound    pvc-7fb9ad47-5dc8-11e9-8bc6-000c296cdc6e   1Mi        RWX            course-nfs-storage   16m</span><br><span class="line">www-nfs-web-0   Bound    pvc-9502037e-5dca-11e9-8bc6-000c296cdc6e   1Gi        RWO            course-nfs-storage   103s</span><br><span class="line">www-nfs-web-1   Bound    pvc-9871e0ab-5dca-11e9-8bc6-000c296cdc6e   1Gi        RWO            course-nfs-storage   97s</span><br><span class="line">www-nfs-web-2   Bound    pvc-a244e88f-5dca-11e9-8bc6-000c296cdc6e   1Gi        RWO            course-nfs-storage   81s</span><br></pre></td></tr></table></figure>
+<p>查看 nfs 服务器上面的共享数据目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@node03 ~]# cd /volume/</span><br><span class="line">[root@node03 volume]# ll</span><br><span class="line">total 0</span><br><span class="line">drwxrwxrwx 2 root root 23 Apr 13 16:51 default-test-pvc-pvc-7fb9ad47-5dc8-11e9-8bc6-000c296cdc6e</span><br><span class="line">drwxrwxrwx 2 root root 23 Apr 13 17:05 default-www-nfs-web-0-pvc-9502037e-5dca-11e9-8bc6-000c296cdc6e</span><br><span class="line">drwxrwxrwx 2 root root  6 Apr 13 17:00 default-www-nfs-web-1-pvc-9871e0ab-5dca-11e9-8bc6-000c296cdc6e</span><br><span class="line">drwxrwxrwx 2 root root  6 Apr 13 17:00 default-www-nfs-web-2-pvc-a244e88f-5dca-11e9-8bc6-000c296cdc6e</span><br><span class="line">[root@node03 volume]# cd default-www-nfs-web-0-pvc-9502037e-5dca-11e9-8bc6-000c296cdc6e/</span><br><span class="line">[root@node03 default-www-nfs-web-0-pvc-9502037e-5dca-11e9-8bc6-000c296cdc6e]# echo &quot;this is test&quot; &gt; test.html</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl get pod -o wide</span><br><span class="line">NAME                                      READY   STATUS    RESTARTS   AGE     IP            NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">demo-deploy-8675c97685-vhncn              1/1     Running   0          13d     10.244.2.5    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-deploy-8675c97685-w7md2              1/1     Running   0          13d     10.244.1.5    node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">demo-pod                                  2/2     Running   7          13d     10.244.2.4    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">myapp-nfs-pvc                             1/1     Running   0          135m    10.244.1.11   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-client-provisioner-7fbb54945f-8rbcb   1/1     Running   0          24m     10.244.2.7    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-0                                 1/1     Running   0          5m16s   10.244.1.13   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-1                                 1/1     Running   0          5m10s   10.244.2.8    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-web-2                                 1/1     Running   0          4m54s   10.244.2.9    node02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">test-pod                                  1/1     Running   0          17m     10.244.1.12   node01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">[root@master ~]# curl 10.244.1.13/test.html</span><br><span class="line">this is test</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/volume/" rel="tag"> <i class="fa fa-tag"></i> volume</a>
+          
+            <a href="/tags/empty/" rel="tag"> <i class="fa fa-tag"></i> empty</a>
+          
+            <a href="/tags/hostpath/" rel="tag"> <i class="fa fa-tag"></i> hostpath</a>
+          
+            <a href="/tags/pv/" rel="tag"> <i class="fa fa-tag"></i> pv</a>
+          
+            <a href="/tags/pvc/" rel="tag"> <i class="fa fa-tag"></i> pvc</a>
+          
+            <a href="/tags/storageclass/" rel="tag"> <i class="fa fa-tag"></i> storageclass</a>
+          
+            <a href="/tags/nfs/" rel="tag"> <i class="fa fa-tag"></i> nfs</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/11/13.Ingress-controller/" rel="next" title="13.Ingress-controller">
+                <i class="fa fa-chevron-left"></i> 13.Ingress-controller
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/13/15.ConfigMap And Secret/" rel="prev" title="15.ConfigMap And Secret">
+                15.ConfigMap And Secret <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#volume"><span class="nav-number">1.</span> <span class="nav-text">volume</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#empty"><span class="nav-number">1.1.</span> <span class="nav-text">empty</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编写empty-yaml"><span class="nav-number">1.1.1.</span> <span class="nav-text">编写empty yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建empty-yaml"><span class="nav-number">1.1.2.</span> <span class="nav-text">创建empty yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">1.1.3.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hostpath"><span class="nav-number">1.2.</span> <span class="nav-text">hostpath</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编写hostpath-yaml"><span class="nav-number">1.2.1.</span> <span class="nav-text">编写hostpath yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建hostpath-yaml"><span class="nav-number">1.2.2.</span> <span class="nav-text">创建hostpath yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试-1"><span class="nav-number">1.2.3.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nfs"><span class="nav-number">1.3.</span> <span class="nav-text">nfs</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#所有节点安装nfs"><span class="nav-number">1.3.1.</span> <span class="nav-text">所有节点安装nfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建目录"><span class="nav-number">1.3.2.</span> <span class="nav-text">创建目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nfs配置文件"><span class="nav-number">1.3.3.</span> <span class="nav-text">nfs配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动nfs"><span class="nav-number">1.3.4.</span> <span class="nav-text">启动nfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各节点挂载nfs"><span class="nav-number">1.3.5.</span> <span class="nav-text">各节点挂载nfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写nfs-yaml"><span class="nav-number">1.3.6.</span> <span class="nav-text">编写nfs yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建nfs-yaml"><span class="nav-number">1.3.7.</span> <span class="nav-text">创建nfs yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试-2"><span class="nav-number">1.3.8.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pv"><span class="nav-number">1.4.</span> <span class="nav-text">pv</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编写nfs配置文件并重启"><span class="nav-number">1.4.1.</span> <span class="nav-text">编写nfs配置文件并重启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写pv-yaml"><span class="nav-number">1.4.2.</span> <span class="nav-text">编写pv yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#capacity"><span class="nav-number">1.4.3.</span> <span class="nav-text">capacity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accessModes"><span class="nav-number">1.4.4.</span> <span class="nav-text">accessModes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#persistentVolumeReclaimPolicy"><span class="nav-number">1.4.5.</span> <span class="nav-text">persistentVolumeReclaimPolicy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建pv-yaml"><span class="nav-number">1.4.6.</span> <span class="nav-text">创建pv yaml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pvc"><span class="nav-number">1.5.</span> <span class="nav-text">pvc</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编写pvc-yaml"><span class="nav-number">1.5.1.</span> <span class="nav-text">编写pvc yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建pvc-yaml"><span class="nav-number">1.5.2.</span> <span class="nav-text">创建pvc yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建pod-yaml"><span class="nav-number">1.5.3.</span> <span class="nav-text">创建pod yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试-3"><span class="nav-number">1.5.4.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#storageclass"><span class="nav-number">1.6.</span> <span class="nav-text">storageclass</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置nfs服务器"><span class="nav-number">1.6.1.</span> <span class="nav-text">配置nfs服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各节点挂载nfs-1"><span class="nav-number">1.6.2.</span> <span class="nav-text">各节点挂载nfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备deployment"><span class="nav-number">1.6.3.</span> <span class="nav-text">准备deployment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建sa"><span class="nav-number">1.6.4.</span> <span class="nav-text">创建sa</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编写storageclass-yaml"><span class="nav-number">1.6.5.</span> <span class="nav-text">编写storageclass yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建storageclass-yaml"><span class="nav-number">1.6.6.</span> <span class="nav-text">创建storageclass yaml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建pvc"><span class="nav-number">1.6.7.</span> <span class="nav-text">创建pvc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试-4"><span class="nav-number">1.6.8.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
