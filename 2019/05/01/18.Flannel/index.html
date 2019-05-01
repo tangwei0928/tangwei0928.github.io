@@ -75,7 +75,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT">
+  <meta name="keywords" content="flannel,">
 
 
 
@@ -86,12 +86,13 @@
 
 
 
-<meta name="description" content="123456title: 18.Flanneldate: 2019-05-01 16:00:41tags:   - flannelcategories:   - flannel FlannelFlannel 项目是 CoreOS 公司主推的容器网络方案。事实上，Flannel 项目本身只是一个框架，真正为我们提供容器网络功能的，是 Flannel 的后端实现。目前，Flannel 支持三种后端实现">
+<meta name="description" content="FlannelFlannel 项目是 CoreOS 公司主推的容器网络方案。事实上，Flannel 项目本身只是一个框架，真正为我们提供容器网络功能的，是 Flannel 的后端实现。目前，Flannel 支持三种后端实现，分别是：  UDP Vxlan Host-gw  UDPUDP 模式，是 Flannel 项目最早支持的一种方式，却也是性能最差的一种方式。所以，这个模式目前已经被弃用。不过，">
+<meta name="keywords" content="flannel">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kubernetes">
+<meta property="og:title" content="18.Flannel">
 <meta property="og:url" content="http://yoursite.com/2019/05/01/18.Flannel/index.html">
 <meta property="og:site_name" content="Kubernetes">
-<meta property="og:description" content="123456title: 18.Flanneldate: 2019-05-01 16:00:41tags:   - flannelcategories:   - flannel FlannelFlannel 项目是 CoreOS 公司主推的容器网络方案。事实上，Flannel 项目本身只是一个框架，真正为我们提供容器网络功能的，是 Flannel 的后端实现。目前，Flannel 支持三种后端实现">
+<meta property="og:description" content="FlannelFlannel 项目是 CoreOS 公司主推的容器网络方案。事实上，Flannel 项目本身只是一个框架，真正为我们提供容器网络功能的，是 Flannel 的后端实现。目前，Flannel 支持三种后端实现，分别是：  UDP Vxlan Host-gw  UDPUDP 模式，是 Flannel 项目最早支持的一种方式，却也是性能最差的一种方式。所以，这个模式目前已经被弃用。不过，">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://static001.geekbang.org/resource/image/e6/f0/e6827cecb75641d3c8838f2213543cf0.png">
 <meta property="og:image" content="https://static001.geekbang.org/resource/image/84/8d/84caa6dc3f9dcdf8b88b56bd2e22138d.png">
@@ -99,10 +100,10 @@
 <meta property="og:image" content="https://static001.geekbang.org/resource/image/9a/01/9ab883eb52a438a76c4a54a9985db801.png">
 <meta property="og:image" content="https://static001.geekbang.org/resource/image/43/41/43f5ebb001145ecd896fd10fb27c5c41.png">
 <meta property="og:image" content="https://static001.geekbang.org/resource/image/82/22/824da616633528ad503bcdaa57e67222.png">
-<meta property="og:updated_time" content="2019-05-01T10:25:51.506Z">
+<meta property="og:updated_time" content="2019-05-01T10:50:26.901Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kubernetes">
-<meta name="twitter:description" content="123456title: 18.Flanneldate: 2019-05-01 16:00:41tags:   - flannelcategories:   - flannel FlannelFlannel 项目是 CoreOS 公司主推的容器网络方案。事实上，Flannel 项目本身只是一个框架，真正为我们提供容器网络功能的，是 Flannel 的后端实现。目前，Flannel 支持三种后端实现">
+<meta name="twitter:title" content="18.Flannel">
+<meta name="twitter:description" content="FlannelFlannel 项目是 CoreOS 公司主推的容器网络方案。事实上，Flannel 项目本身只是一个框架，真正为我们提供容器网络功能的，是 Flannel 的后端实现。目前，Flannel 支持三种后端实现，分别是：  UDP Vxlan Host-gw  UDPUDP 模式，是 Flannel 项目最早支持的一种方式，却也是性能最差的一种方式。所以，这个模式目前已经被弃用。不过，">
 <meta name="twitter:image" content="https://static001.geekbang.org/resource/image/e6/f0/e6827cecb75641d3c8838f2213543cf0.png">
 
 
@@ -139,7 +140,7 @@
 
 
 
-  <title> | Kubernetes</title>
+  <title>18.Flannel | Kubernetes</title>
   
 
 
@@ -325,7 +326,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"></h1>
+          <h1 class="post-title" itemprop="name headline">18.Flannel</h1>
         
 
         <div class="post-meta">
@@ -337,7 +338,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-01T15:39:49+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-01T16:00:41+08:00">
                 2019-05-01
               </time>
             
@@ -347,6 +348,28 @@
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/flannel/" itemprop="url" rel="index">
+                    <span itemprop="name">flannel</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -406,8 +429,7 @@
       
 
       
-        <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">title: 18.Flannel</span><br><span class="line">date: 2019-05-01 16:00:41</span><br><span class="line">tags: </span><br><span class="line">  - flannel</span><br><span class="line">categories: </span><br><span class="line">  - flannel</span><br></pre></td></tr></table></figure>
-<h1 id="Flannel"><a href="#Flannel" class="headerlink" title="Flannel"></a>Flannel</h1><p>Flannel 项目是 CoreOS 公司主推的容器网络方案。事实上，Flannel 项目本身只是一个框架，真正为我们提供容器网络功能的，是 Flannel 的后端实现。目前，Flannel 支持三种后端实现，分别是：</p>
+        <h1 id="Flannel"><a href="#Flannel" class="headerlink" title="Flannel"></a>Flannel</h1><p>Flannel 项目是 CoreOS 公司主推的容器网络方案。事实上，Flannel 项目本身只是一个框架，真正为我们提供容器网络功能的，是 Flannel 的后端实现。目前，Flannel 支持三种后端实现，分别是：</p>
 <ol>
 <li>UDP</li>
 <li>Vxlan</li>
@@ -626,6 +648,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/flannel/" rel="tag"> <i class="fa fa-tag"></i> flannel</a>
+          
+        </div>
+      
 
       
       
@@ -644,6 +672,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/01/19.Calico/" rel="prev" title="19.Calico">
+                19.Calico <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -722,7 +754,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -733,7 +765,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -744,7 +776,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-count">37</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
