@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="scheduler,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Kube-Scheduler kube-scheduler 是 k8s 系统的核心组件之一，其主要职责就是通过自身的调度算法，为新创建的 Pod 寻找一个最合适的 Node。 主要包含如下几个步骤：  通过一组叫做谓词 predicates 的过滤算法，先挑出满足条件的 Node； 通过一组叫做优先级 priorities 的打分算法，来给上一步符合条件的每个 Node 进行打分排名； 最终选择得">
+<meta name="keywords" content="scheduler">
+<meta property="og:type" content="article">
+<meta property="og:title" content="22.Kube-Scheduler">
+<meta property="og:url" content="http://yoursite.com/2019/05/01/22.Kube-Scheduler/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="Kube-Scheduler kube-scheduler 是 k8s 系统的核心组件之一，其主要职责就是通过自身的调度算法，为新创建的 Pod 寻找一个最合适的 Node。 主要包含如下几个步骤：  通过一组叫做谓词 predicates 的过滤算法，先挑出满足条件的 Node； 通过一组叫做优先级 priorities 的打分算法，来给上一步符合条件的每个 Node 进行打分排名； 最终选择得">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-02T06:33:07.874Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="22.Kube-Scheduler">
+<meta name="twitter:description" content="Kube-Scheduler kube-scheduler 是 k8s 系统的核心组件之一，其主要职责就是通过自身的调度算法，为新创建的 Pod 寻找一个最合适的 Node。 主要包含如下几个步骤：  通过一组叫做谓词 predicates 的过滤算法，先挑出满足条件的 Node； 通过一组叫做优先级 priorities 的打分算法，来给上一步符合条件的每个 Node 进行打分排名； 最终选择得">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/05/01/22.Kube-Scheduler/">
+
+
+
+
+
+  <title>22.Kube-Scheduler | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/01/22.Kube-Scheduler/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">22.Kube-Scheduler</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-01T22:00:41+08:00">
+                2019-05-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/scheduler/" itemprop="url" rel="index">
+                    <span itemprop="name">scheduler</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Kube-Scheduler"><a href="#Kube-Scheduler" class="headerlink" title="Kube-Scheduler"></a>Kube-Scheduler</h1><p> kube-scheduler 是 k8s 系统的核心组件之一，其主要职责就是通过自身的调度算法，为新创建的 Pod 寻找一个最合适的 Node。</p>
+<p>主要包含如下几个步骤：</p>
+<ul>
+<li>通过一组叫做谓词 <a href="https://github.com/kubernetes/kubernetes/blob/master/pkg/scheduler/algorithm/predicates/predicates.go" target="_blank" rel="noopener">predicates</a> 的过滤算法，先挑出满足条件的 Node；</li>
+<li>通过一组叫做优先级 <a href="https://github.com/kubernetes/kubernetes/blob/master/pkg/scheduler/algorithm/priorities/priorities.go" target="_blank" rel="noopener">priorities</a> 的打分算法，来给上一步符合条件的每个 Node 进行打分排名；</li>
+<li>最终选择得分最高的节点，当然如果得分一样就随机一个节点，填回 Pod 的 <code>spec.nodeName</code> 字段。</li>
+</ul>
+<p>官方流程图如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">For given pod:</span><br><span class="line"></span><br><span class="line">+---------------------------------------------+</span><br><span class="line">|               Schedulable nodes:            |</span><br><span class="line">|                                             |</span><br><span class="line">| +--------+    +--------+      +--------+    |</span><br><span class="line">| | node 1 |    | node 2 |      | node 3 |    |</span><br><span class="line">| +--------+    +--------+      +--------+    |</span><br><span class="line">|                                             |</span><br><span class="line">+-------------------+-------------------------+</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    v</span><br><span class="line">+-------------------+-------------------------+</span><br><span class="line"></span><br><span class="line">Pred. filters: node 3 doesn&apos;t have enough resource</span><br><span class="line"></span><br><span class="line">+-------------------+-------------------------+</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    v</span><br><span class="line">+-------------------+-------------------------+</span><br><span class="line">|             remaining nodes:                |</span><br><span class="line">|   +--------+                 +--------+     |</span><br><span class="line">|   | node 1 |                 | node 2 |     |</span><br><span class="line">|   +--------+                 +--------+     |</span><br><span class="line">|                                             |</span><br><span class="line">+-------------------+-------------------------+</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    v</span><br><span class="line">+-------------------+-------------------------+</span><br><span class="line"></span><br><span class="line">Priority function:    node 1: p=2</span><br><span class="line">                      node 2: p=5</span><br><span class="line"></span><br><span class="line">+-------------------+-------------------------+</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    v</span><br><span class="line">        select max&#123;node priority&#125; = node 2</span><br></pre></td></tr></table></figure>
+<p>scheduler 的工作看似很简单，但其实不然。考虑的问题非常多，比如要保证每个节点被公平调度，提高资源利用率，提高 pod 调度效率，提升调度器扩展能力等等。</p>
+<p>Kubernetes的调度器以插件化形式实现的，方便用户定制和二次开发。用户可以自定义调度器并以插件形式与Kubernetes集成，或集成其他调度器，便于调度不同类型的任务。</p>
+<p>Kubernetes调度器的源码位于kubernetes/plugin/中，大体的代码目录结构如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubernetes/plugin/pkg/  </span><br><span class="line">`-- scheduler               //调度相关的具体实现              </span><br><span class="line">|-- algorithm</span><br><span class="line">|   |-- predicates       //节点筛选策略</span><br><span class="line">|   `-- priorities         //节点打分策略</span><br><span class="line">|       `-- util</span><br><span class="line">|-- algorithmprovider</span><br><span class="line">|   `-- defaults          //定义默认的调度器  12345678</span><br></pre></td></tr></table></figure>
+<p>Scheduler创建和运行的过程， 对应的代码在plugin/pkg/scheduler/scheduler.go。<br>上面初步介绍了Kubernetes调度器,在新增Pod的过程中，调度器的调度策略被分成两个阶段：<strong>Predicates</strong>阶段和<strong>Priorities</strong>阶段</p>
+<h2 id="Predicates"><a href="#Predicates" class="headerlink" title="Predicates"></a>Predicates</h2><ul>
+<li>CheckNodeConditionPred  检查节点是否正常</li>
+<li>GeneralPred  HostName(如果pod定义hostname属性，会检查节点是否匹配。pod.spec.hostname)、PodFitsHostPorts（检查pod要暴露的hostpors是否被占用。pod.spec.containers.ports.hostPort）</li>
+<li>MatchNodeSelector  pod.spec.nodeSelector  看节点标签能否适配pod定义的nodeSelector</li>
+<li>PodFitsResources 判断节点的资源能够满足Pod的定义（如果一个pod定义最少需要2C4G node上的低于此资源的将不被调度。用kubectl describe node NODE名称 可以查看资源使用情况）</li>
+<li>NoDiskConflict 判断pod定义的存储是否在node节点上使用。（默认没有启用）</li>
+<li>PodToleratesNodeTaints 检查pod上Tolerates的能否容忍污点（pod.spec.tolerations）</li>
+<li>CheckNodeLabelPresence 检查节点上的标志是否存在 （默认没有启动）</li>
+<li>CheckServiceAffinity  根据pod所属的service。将相同service上的pod尽量放到同一个节点（默认没有启动）</li>
+<li>CheckVolumeBinding 检查是否可以绑定（默认没有启动）</li>
+<li>NoVolumeZoneConflict 检查是否在一起区域（默认没有启动）</li>
+<li>CheckNodeMemoryPressure  检查内存是否存在压力</li>
+<li>CheckNodeDiskPressure   检查磁盘IO压力是否过大</li>
+<li>CheckNodePIDPressure 检查pid资源是否过大</li>
+</ul>
+<h2 id="Priorities"><a href="#Priorities" class="headerlink" title="Priorities"></a>Priorities</h2><ul>
+<li>least_requested  选择消耗最小的节点（根据空闲比率评估 cpu(总容量-sum(已使用)*10/总容量) ）</li>
+<li>balanced_resource_allocation  从节点列表中选出各项资源使用率最均衡的节点（CPU和内存）</li>
+<li>node_prefer_avoid_pods  节点倾向</li>
+<li>taint_toleration 将pod对象的spec.toleration与节点的taints列表项进行匹配度检查，匹配的条目越多，得分越低。</li>
+<li>selector_spreading 与services上其他pod尽量不在同一个节点上，节点上通一个service的pod越少得分越高。</li>
+<li>interpod_affinity  遍历node上的亲和性条目，匹配项越多的得分越高</li>
+<li>most_requested  选择消耗最大的节点上（尽量将一个节点上的资源用完）</li>
+<li>node_label  根据节点标签得分，存在标签既得分，没有标签没得分。标签越多 得分越高。</li>
+<li>image_locality  节点上有所需要的镜像既得分，所需镜像越多得分越高。（根据已有镜像体积大小之和）</li>
+</ul>
+<h2 id="Scheduler"><a href="#Scheduler" class="headerlink" title="Scheduler"></a>Scheduler</h2><p>当我们想把调度到预期的节点，我们可以使用高级调度分为：</p>
+<ul>
+<li>节点选择器： nodeSelector、nodeName</li>
+<li>节点亲和性调度： nodeAffinity</li>
+<li>Pod亲和性调度：PodAffinity</li>
+<li>Pod反亲和性调度：PodAntiAffinity</li>
+</ul>
+<h3 id="NodeSelector"><a href="#NodeSelector" class="headerlink" title="NodeSelector"></a>NodeSelector</h3><p>我们定义一个pod,让其选择带有node=ssd这个标签的节点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">vim test.yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: pod-1</span><br><span class="line">  labels:</span><br><span class="line">    name: myapp</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">  nodeSelector:</span><br><span class="line">    node: ssd</span><br><span class="line"></span><br><span class="line">kubectl apply -f test.yaml</span><br></pre></td></tr></table></figure>
+<p>查看信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">#get一下pod 一直处于Pending状态</span><br><span class="line">$ kubectl get pod </span><br><span class="line">NAME      READY     STATUS    RESTARTS   AGE</span><br><span class="line">pod-1     0/1       Pending   0          7s</span><br><span class="line">#查看详细信息,是没有可用的selector</span><br><span class="line">$ kubectl describe pod pod-1</span><br><span class="line">...</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason            Age                From               Message</span><br><span class="line">  ----     ------            ----               ----               -------</span><br><span class="line">  Warning  FailedScheduling  9s (x14 over 36s)  default-scheduler  0/4 nodes are available: 4 node(s) didn&apos;t match node selector.</span><br><span class="line">#我们给node2打上这个标签</span><br><span class="line">$  kubectl label node k8s-node02 node=ssd</span><br><span class="line">node/k8s-node02 labeled</span><br><span class="line">#Pod正常启动</span><br><span class="line">$  kubectl describe pod pod-1</span><br><span class="line">....</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason            Age                From                 Message</span><br><span class="line">  ----     ------            ----               ----                 -------</span><br><span class="line">  Warning  FailedScheduling  2m (x122 over 8m)  default-scheduler    0/4 nodes are available: 4 node(s) didn&apos;t match node selector.</span><br><span class="line">  Normal   Pulled            7s                 kubelet, k8s-node02  Container image &quot;ikubernetes/myapp:v1&quot; already present on machine</span><br><span class="line">  Normal   Created           7s                 kubelet, k8s-node02  Created container</span><br><span class="line">  Normal   Started           7s                 kubelet, k8s-node02  Started container</span><br></pre></td></tr></table></figure>
+<h3 id="nodeAffinity"><a href="#nodeAffinity" class="headerlink" title="nodeAffinity"></a>nodeAffinity</h3><p>kubectl explain pod.spec.affinity.nodeAffinity </p>
+<ul>
+<li>requiredDuringSchedulingIgnoredDuringExecution 硬亲和性  必须满足亲和性。</li>
+</ul>
+<ul>
+<li>matchExpressions  匹配表达式,这个标签可以指定一段，例如pod中定义的key为zone，operator为In(包含那些)，values为 foo和bar。就是在node节点中包含foo和bar的标签中调度</li>
+<li>matchFields  匹配字段 和上面的意思 不过他可以不定义标签值，可以定义</li>
+</ul>
+<ul>
+<li><p>preferredDuringSchedulingIgnoredDuringExecution   软亲和性 能满足最好，不满足也没关系。</p>
+<ul>
+<li>preference 优先级</li>
+<li>weight 权重1-100范围内，对于满足所有调度要求的每个节点，调度程序将通过迭代此字段的元素计算总和，并在节点与对应的节点匹配时将“权重”添加到总和。</li>
+</ul>
+</li>
+</ul>
+<p>运算符包含：<code>In</code>，<code>NotIn</code>，<code>Exists</code>，<code>DoesNotExist</code>，<code>Gt</code>，<code>Lt</code>。可以使用<code>NotIn</code>和<code>DoesNotExist</code>实现节点反关联行为。</p>
+<p>硬亲和性:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">vim pod-affinity-demo.yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: node-affinity-pod</span><br><span class="line">  labels:</span><br><span class="line">    name: myapp</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">  affinity:</span><br><span class="line">    nodeAffinity:</span><br><span class="line">      requiredDuringSchedulingIgnoredDuringExecution:</span><br><span class="line">        nodeSelectorTerms:</span><br><span class="line">        - matchExpressions:</span><br><span class="line">          - key: zone</span><br><span class="line">            operator: In</span><br><span class="line">            values:</span><br><span class="line">            - foo</span><br><span class="line">            - bar</span><br><span class="line">            </span><br><span class="line">$ kubectl apply -f pod-affinity-demo.yaml </span><br><span class="line">$ kubectl describe pod node-affinity-pod </span><br><span class="line">.....</span><br><span class="line">Events:</span><br><span class="line">  Type     Reason            Age                From               Message</span><br><span class="line">  ----     ------            ----               ----               -------</span><br><span class="line">  Warning  FailedScheduling  33s (x25 over 1m)  default-scheduler  0/4 nodes are available: 4 node(s) didn&apos;t match node selector.</span><br><span class="line"># 给其中一个node打上foo的标签</span><br><span class="line">$ kubectl label node k8s-node03 zone=foo</span><br><span class="line">$ kubectl get pods</span><br><span class="line">NAME                READY     STATUS    RESTARTS   AGE</span><br><span class="line">node-affinity-pod   1/1       Running   0          8m</span><br></pre></td></tr></table></figure>
+<p> 软亲和性：</p>
+<p>与requiredDuringSchedulingIgnoredDuringExecution比较，这里需要注意的是preferredDuringSchedulingIgnoredDuringExecution是个列表项，而preference不是一个列表项了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: node-affinity-pod-2</span><br><span class="line">  labels:</span><br><span class="line">    name: myapp</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">  affinity:</span><br><span class="line">    nodeAffinity:</span><br><span class="line">      preferredDuringSchedulingIgnoredDuringExecution:</span><br><span class="line">      - weight: 50</span><br><span class="line">        preference:</span><br><span class="line">          matchExpressions:</span><br><span class="line">          - key: zone</span><br><span class="line">            operator: In</span><br><span class="line">            values:</span><br><span class="line">            - foo</span><br><span class="line">            - bar</span><br><span class="line">            </span><br><span class="line">$ kubectl get pod -o wide </span><br><span class="line">NAME                  READY     STATUS    RESTARTS   AGE       IP           NODE</span><br><span class="line">node-affinity-pod     1/1       Running   0          3h        10.244.3.2   k8s-node03</span><br><span class="line">node-affinity-pod-2   1/1       Running   0          1m        10.244.3.3   k8s-node03</span><br></pre></td></tr></table></figure>
+<h3 id="podAffinity"><a href="#podAffinity" class="headerlink" title="podAffinity"></a>podAffinity</h3><p>Pod亲和性场景，我们的k8s集群的节点分布在不同的区域或者不同的机房，当服务A和服务B要求部署在同一个区域或者同一机房的时候，我们就需要亲和性调度了。</p>
+<p>kubectl explain pod.spec.affinity.podAffinity 和NodeAffinity是一样的，都是有硬亲和性和软亲和性</p>
+<p>硬亲和性：</p>
+<ul>
+<li>labelSelector  选择跟那组Pod亲和</li>
+<li>namespaces 选择哪个命名空间</li>
+<li>topologyKey 指定节点上的哪个键</li>
+</ul>
+<p>样例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: node-affinity-pod1</span><br><span class="line">  labels:</span><br><span class="line">    name: podaffinity-myapp</span><br><span class="line">    tier: service</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: node-affinity-pod2</span><br><span class="line">  labels:</span><br><span class="line">    name: podaffinity-myapp</span><br><span class="line">    tier: front</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">  affinity:</span><br><span class="line">    podAffinity:</span><br><span class="line">      requiredDuringSchedulingIgnoredDuringExecution:</span><br><span class="line">      - labelSelector:</span><br><span class="line">          matchExpressions:</span><br><span class="line">          - key: name</span><br><span class="line">            operator: In</span><br><span class="line">            values:</span><br><span class="line">            - podaffinity-myapp</span><br><span class="line">        topologyKey: kubernetes.io/hostname</span><br></pre></td></tr></table></figure>
+<p>查看</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -o wide </span><br><span class="line">NAME                  READY     STATUS    RESTARTS   AGE       IP           NODE</span><br><span class="line">node-affinity-pod1    1/1       Running   0          12s       10.244.2.6   k8s-node02</span><br><span class="line">node-affinity-pod2    1/1       Running   0          12s       10.244.2.5   k8s-node02</span><br></pre></td></tr></table></figure>
+<h3 id="podAntiAffinity"><a href="#podAntiAffinity" class="headerlink" title="podAntiAffinity"></a>podAntiAffinity</h3><p>Pod反亲和性场景，当应用服务A和数据库服务B要求尽量不要在同一台节点上的时候。</p>
+<p> kubectl explain pod.spec.affinity.podAntiAffinity 也分为硬反亲和性和软反亲和性调度（和podAffinity一样的配置）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">#首先把两个node打上同一个标签。</span><br><span class="line">kubectl label node k8s-node02 zone=foo </span><br><span class="line">kubectl label node k8s-node03 zone=foo</span><br><span class="line">#反硬亲和调度</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: node-affinity-pod1</span><br><span class="line">  labels:</span><br><span class="line">    name: podaffinity-myapp</span><br><span class="line">    tier: service</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: node-affinity-pod2</span><br><span class="line">  labels:</span><br><span class="line">    name: podaffinity-myapp</span><br><span class="line">    tier: front</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: myapp</span><br><span class="line">    image: ikubernetes/myapp:v1</span><br><span class="line">  affinity:</span><br><span class="line">    podAntiAffinity:</span><br><span class="line">      requiredDuringSchedulingIgnoredDuringExecution:</span><br><span class="line">      - labelSelector:</span><br><span class="line">          matchExpressions:</span><br><span class="line">          - key: name</span><br><span class="line">            operator: In</span><br><span class="line">            values:</span><br><span class="line">            - podaffinity-myapp</span><br><span class="line">        topologyKey: zone</span><br></pre></td></tr></table></figure>
+<p>查看一下(因为zone这个key在每个node都有会，所以第二个Pod没有办法调度，所以一直Pending状态)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get  pod </span><br><span class="line">NAME                 READY     STATUS    RESTARTS   AGE</span><br><span class="line">node-affinity-pod1   1/1       Running   0          11s</span><br><span class="line">node-affinity-pod2   0/1       Pending   0          11s</span><br></pre></td></tr></table></figure>
+<h3 id="Taint-And-Toleration"><a href="#Taint-And-Toleration" class="headerlink" title="Taint And Toleration"></a>Taint And Toleration</h3><p>前两种方式都是pod选择那个pod，而污点调度是node选择的pod，污点就是定义在节点上的键值属性数据。举要作用是让节点拒绝pod，拒绝不合法node规则的pod。Taint（污点）和 Toleration（容忍）是相互配合的，可以用来避免 pod 被分配到不合适的节点上,每个节点上都可以应用<strong>一个或多个</strong> taint ，这表示对于那些不能容忍这些 taint 的 pod，是不会被该节点接受的。</p>
+<h4 id="Taint"><a href="#Taint" class="headerlink" title="Taint"></a>Taint</h4><p>Taint是节点上属性，我们看一下Taints如何定义</p>
+<p>kubectl explain node.spec.taints（对象列表）</p>
+<ul>
+<li>key  定义一个key</li>
+<li>value 定义一个值</li>
+<li>effect  pod不能容忍这个污点时，他的行为是什么，行为分为三种：NoSchedule 仅影响调度过程，对现存的pod不影响。PreferNoSchedule 系统将<em>尽量</em>避免放置不容忍节点上污点的pod，但这不是必需的。就是软版的NoSchedule  NoExecute 既影响调度过程，也影响现存的pod，不满足的pod将被驱逐。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint NODE NAME KEY_1=VAL_1:TAINT_EFFECT_1 ... KEY_N=VAL_N:TAINT_EFFECT_N [options]</span><br><span class="line">增加taint</span><br><span class="line">kubectl  taint node k8s-node02 node-type=prod:NoSchedule</span><br><span class="line">删除taint</span><br><span class="line">kubectl  taint node k8s-node02 node-type:NoSchedule-</span><br></pre></td></tr></table></figure>
+<h4 id="tolerations"><a href="#tolerations" class="headerlink" title="tolerations"></a>tolerations</h4><ul>
+<li>key 被容忍的key</li>
+<li>tolerationSeconds  被驱逐的宽限时间，默认是0 就是立即被驱逐</li>
+<li>value  被容忍key的值</li>
+<li>operator  Exists只要key在就可以调度，Equal（等值比较）必须是值要相同</li>
+<li>effect  节点调度后的操作</li>
+</ul>
+<p>创建一个容忍</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-deploy</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  replicas: 3</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: myapp</span><br><span class="line">      release: dev</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: myapp</span><br><span class="line">        release: dev</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: myapp-containers</span><br><span class="line">        image: ikubernetes/myapp:v2</span><br><span class="line">        ports:</span><br><span class="line">        - name: http</span><br><span class="line">          containerPort: 80</span><br><span class="line">      tolerations:</span><br><span class="line">      - key: &quot;node-type&quot;</span><br><span class="line">        operator: &quot;Equal&quot;</span><br><span class="line">        value: &quot;prod&quot;</span><br><span class="line">        effect: &quot;NoSchedule&quot;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/scheduler/" rel="tag"> <i class="fa fa-tag"></i> scheduler</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/01/21.NetworkPolicy/" rel="next" title="21.NetworkPolicy">
+                <i class="fa fa-chevron-left"></i> 21.NetworkPolicy
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">38</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kube-Scheduler"><span class="nav-number">1.</span> <span class="nav-text">Kube-Scheduler</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Predicates"><span class="nav-number">1.1.</span> <span class="nav-text">Predicates</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Priorities"><span class="nav-number">1.2.</span> <span class="nav-text">Priorities</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scheduler"><span class="nav-number">1.3.</span> <span class="nav-text">Scheduler</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NodeSelector"><span class="nav-number">1.3.1.</span> <span class="nav-text">NodeSelector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nodeAffinity"><span class="nav-number">1.3.2.</span> <span class="nav-text">nodeAffinity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#podAffinity"><span class="nav-number">1.3.3.</span> <span class="nav-text">podAffinity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#podAntiAffinity"><span class="nav-number">1.3.4.</span> <span class="nav-text">podAntiAffinity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Taint-And-Toleration"><span class="nav-number">1.3.5.</span> <span class="nav-text">Taint And Toleration</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Taint"><span class="nav-number">1.3.5.1.</span> <span class="nav-text">Taint</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tolerations"><span class="nav-number">1.3.5.2.</span> <span class="nav-text">tolerations</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
