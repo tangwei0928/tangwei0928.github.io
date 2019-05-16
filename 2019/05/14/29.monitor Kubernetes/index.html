@@ -99,7 +99,8 @@
 <meta property="og:image" content="https://i.loli.net/2019/05/14/5cdab8d74e1ab10839.png">
 <meta property="og:image" content="https://i.loli.net/2019/05/14/5cdabfdc93a1687733.png">
 <meta property="og:image" content="https://s2.ax1x.com/2019/05/14/EoyMEF.png">
-<meta property="og:updated_time" content="2019-05-14T13:47:09.877Z">
+<meta property="og:image" content="https://i.loli.net/2019/05/16/5cdd58b36259285429.png">
+<meta property="og:updated_time" content="2019-05-16T12:34:46.650Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="29.monitor Kubernetes">
 <meta name="twitter:description" content="监控 Kubernetes 常用资源对象容器监控说到容器监控我们自然会想到cAdvisor，我们前面也说过cAdvisor已经内置在了 kubelet 组件之中，所以我们不需要单独去安装，cAdvisor的数据路径为/api/v1/nodes/&amp;lt;node&amp;gt;/proxy/metrics，同样我们这里使用 node 的服务发现模式，因为每一个节点下面都有 kubelet，自然都有cAdvi">
@@ -456,6 +457,12 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# vim prome-redis.yaml </span><br><span class="line"></span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: redis</span><br><span class="line">  namespace: kube-ops</span><br><span class="line">spec:</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      annotations:</span><br><span class="line">        prometheus.io/scrape: &quot;true&quot;</span><br><span class="line">        prometheus.io/port: &quot;9121&quot;</span><br><span class="line">      labels:</span><br><span class="line">        app: redis</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: redis</span><br><span class="line">        image: redis:4</span><br><span class="line">        resources:</span><br><span class="line">          requests:</span><br><span class="line">            cpu: 100m</span><br><span class="line">            memory: 100Mi</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 6379</span><br><span class="line">      - name: redis-exporter</span><br><span class="line">        image: oliver006/redis_exporter:latest</span><br><span class="line">        imagePullPolicy: IfNotPresent</span><br><span class="line">        resources:</span><br><span class="line">          requests:</span><br><span class="line">            cpu: 100m</span><br><span class="line">            memory: 100Mi</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 9121</span><br><span class="line">---</span><br><span class="line">kind: Service</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: redis</span><br><span class="line">  namespace: kube-ops</span><br><span class="line">  annotations:</span><br><span class="line">    prometheus.io/scrape: &quot;true&quot;</span><br><span class="line">    prometheus.io/port: &quot;9121&quot;</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    app: redis</span><br><span class="line">  ports:</span><br><span class="line">  - name: redis</span><br><span class="line">    port: 6379</span><br><span class="line">    targetPort: 6379</span><br><span class="line">  - name: prom</span><br><span class="line">    port: 9121</span><br><span class="line">    targetPort: 9121</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl apply -f prome-redis.yaml </span><br><span class="line">deployment.extensions/redis unchanged</span><br><span class="line">service/redis configured</span><br><span class="line">[root@master01 ~]# curl -X POST &quot;http://10.106.53.6:9090/-/reload&quot;</span><br></pre></td></tr></table></figure>
 <p><img src="https://s2.ax1x.com/2019/05/14/EoyMEF.png" alt></p>
+<h2 id="kube-state-metrics"><a href="#kube-state-metrics" class="headerlink" title="kube-state-metrics"></a>kube-state-metrics</h2><p>上面我们配置了自动发现 Service（Pod也是一样的）的监控，但是这些监控数据都是应用内部的监控，需要应用本身提供一个<code>/metrics</code>接口，或者对应的 exporter 来暴露对应的指标数据，但是在 Kubernetes 集群上 Pod、DaemonSet、Deployment、Job、CronJob 等各种资源对象的状态也需要监控，这也反映了使用这些资源部署的应用的状态。但通过查看前面从集群中拉取的指标(这些指标主要来自 apiserver 和 kubelet 中集成的 cAdvisor)，并没有具体的各种资源对象的状态指标。对于 Prometheus 来说，当然是需要引入新的 exporter 来暴露这些指标，Kubernetes 提供了一个<a href="https://github.com/kubernetes/kube-state-metrics" target="_blank" rel="noopener">kube-state-metrics</a>就是我们需要的。</p>
+<p>kube-state-metrics 已经给出了在 Kubernetes 部署的 manifest 定义文件，我们直接将代码 Clone 到集群中(能用 kubectl 工具操作就行):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ git clone https://github.com/kubernetes/kube-state-metrics.git</span><br><span class="line">$ cd kube-state-metrics/kubernetes</span><br><span class="line">$ kubectl create -f .</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io &quot;kube-state-metrics&quot; created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io &quot;kube-state-metrics&quot; created</span><br><span class="line">deployment.apps &quot;kube-state-metrics&quot; created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io &quot;kube-state-metrics&quot; created</span><br><span class="line">role.rbac.authorization.k8s.io &quot;kube-state-metrics-resizer&quot; created</span><br><span class="line">serviceaccount &quot;kube-state-metrics&quot; created</span><br><span class="line">service &quot;kube-state-metrics&quot; created</span><br></pre></td></tr></table></figure>
+<p>将 kube-state-metrics 部署到 Kubernetes 上之后，就会发现 Kubernetes 集群中的 Prometheus 会在kubernetes-service-endpoints 这个 job 下自动服务发现 kube-state-metrics，并开始拉取 metrics，这是因为部署 kube-state-metrics 的 manifest 定义文件 kube-state-metrics-service.yaml 对 Service 的定义包含<code>prometheus.io/scrape: &#39;true&#39;</code>这样的一个<code>annotation</code>，因此 kube-state-metrics 的 endpoint 可以被 Prometheus 自动服务发现。</p>
+<p>关于 kube-state-metrics 暴露的所有监控指标可以参考 kube-state-metrics 的文档<a href="https://github.com/kubernetes/kube-state-metrics/tree/master/Documentation" target="_blank" rel="noopener">kube-state-metrics Documentation</a>。</p>
+<p><img src="https://i.loli.net/2019/05/16/5cdd58b36259285429.png" alt></p>
 
       
     </div>
@@ -524,6 +531,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/15/30.Grafana Install/" rel="prev" title="30.Grafana Install">
+                30.Grafana Install <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -602,7 +613,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -613,7 +624,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -624,7 +635,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -687,7 +698,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#监控-Kubernetes-常用资源对象"><span class="nav-number">1.</span> <span class="nav-text">监控 Kubernetes 常用资源对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#容器监控"><span class="nav-number">1.1.</span> <span class="nav-text">容器监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#apiserver-监控"><span class="nav-number">1.2.</span> <span class="nav-text">apiserver 监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service-的监控"><span class="nav-number">1.3.</span> <span class="nav-text">Service 的监控</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#监控-Kubernetes-常用资源对象"><span class="nav-number">1.</span> <span class="nav-text">监控 Kubernetes 常用资源对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#容器监控"><span class="nav-number">1.1.</span> <span class="nav-text">容器监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#apiserver-监控"><span class="nav-number">1.2.</span> <span class="nav-text">apiserver 监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Service-的监控"><span class="nav-number">1.3.</span> <span class="nav-text">Service 的监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kube-state-metrics"><span class="nav-number">1.4.</span> <span class="nav-text">kube-state-metrics</span></a></li></ol></li></ol></div>
             
 
           </div>

@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="Kubernetes">
 <meta property="og:description" content="kubeadm 部署k8s-1.14.0部署环境 master: 192.168.48.200 node01: 192.168.48.201 node02: 192.168.48.202  所有节点都要写入hosts 1234567[root@master ~]# cat /etc/hosts127.0.0.1   localhost localhost.localdomain localhost">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-05-01T07:36:55.076Z">
+<meta property="og:updated_time" content="2019-05-16T12:20:40.691Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="01.kubeadm install k8s">
 <meta name="twitter:description" content="kubeadm 部署k8s-1.14.0部署环境 master: 192.168.48.200 node01: 192.168.48.201 node02: 192.168.48.202  所有节点都要写入hosts 1234567[root@master ~]# cat /etc/hosts127.0.0.1   localhost localhost.localdomain localhost">
@@ -450,7 +450,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/yum.repos.d/ </span><br><span class="line"></span><br><span class="line">wget https://mirrors.aliyun.com/dockerce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
 <h4 id="k8s-yum"><a href="#k8s-yum" class="headerlink" title="k8s yum"></a>k8s yum</h4><p>配置k8s的yum库</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/yum.repos.d/ </span><br><span class="line"></span><br><span class="line">cat &lt;&lt; EOF &gt; kubernetes.repo</span><br><span class="line">[kubernetes]</span><br><span class="line">name=kubernetes</span><br><span class="line">baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</span><br><span class="line">gpgcheck=0</span><br><span class="line">enabled=1</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
-<h4 id="epel-yum"><a href="#epel-yum" class="headerlink" title="epel yum"></a>epel yum</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install epel-release</span><br></pre></td></tr></table></figure>
+<h4 id="epel-yum"><a href="#epel-yum" class="headerlink" title="epel yum"></a>epel yum</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</span><br></pre></td></tr></table></figure>
 <h3 id="所有节点安装"><a href="#所有节点安装" class="headerlink" title="所有节点安装"></a>所有节点安装</h3><p>以下都要在所有节点上执行</p>
 <ol>
 <li>docker安装</li>
@@ -655,7 +655,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-count">30</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -666,7 +666,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -677,7 +677,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">41</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>

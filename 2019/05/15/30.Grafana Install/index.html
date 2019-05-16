@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="prometheus,grafana,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="grafana 是一个可视化面板，有着非常漂亮的图表和布局展示，功能齐全的度量仪表盘和图形编辑器，支持 Graphite、zabbix、InfluxDB、Prometheus、OpenTSDB、Elasticsearch 等作为数据源，比 Prometheus 自带的图表展示功能强大太多，更加灵活，有丰富的插件，功能更加强大。 接下来我们就来直接安装，同样的，我们将 grafana 安装到 Kub">
+<meta name="keywords" content="prometheus,grafana">
+<meta property="og:type" content="article">
+<meta property="og:title" content="30.Grafana Install">
+<meta property="og:url" content="http://yoursite.com/2019/05/15/30.Grafana Install/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="grafana 是一个可视化面板，有着非常漂亮的图表和布局展示，功能齐全的度量仪表盘和图形编辑器，支持 Graphite、zabbix、InfluxDB、Prometheus、OpenTSDB、Elasticsearch 等作为数据源，比 Prometheus 自带的图表展示功能强大太多，更加灵活，有丰富的插件，功能更加强大。 接下来我们就来直接安装，同样的，我们将 grafana 安装到 Kub">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.loli.net/2019/05/15/5cdc117ea503518812.png">
+<meta property="og:image" content="https://i.loli.net/2019/05/16/5cdd62ee1f17f12004.png">
+<meta property="og:image" content="https://i.loli.net/2019/05/16/5cdd63788239057688.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-dashboard-edit.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-table.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin-config.png">
+<meta property="og:image" content="https://i.loli.net/2019/05/16/5cdd660c49be954657.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin2.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin-cluster.png">
+<meta property="og:updated_time" content="2019-05-16T13:32:56.433Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="30.Grafana Install">
+<meta name="twitter:description" content="grafana 是一个可视化面板，有着非常漂亮的图表和布局展示，功能齐全的度量仪表盘和图形编辑器，支持 Graphite、zabbix、InfluxDB、Prometheus、OpenTSDB、Elasticsearch 等作为数据源，比 Prometheus 自带的图表展示功能强大太多，更加灵活，有丰富的插件，功能更加强大。 接下来我们就来直接安装，同样的，我们将 grafana 安装到 Kub">
+<meta name="twitter:image" content="https://i.loli.net/2019/05/15/5cdc117ea503518812.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/05/15/30.Grafana Install/">
+
+
+
+
+
+  <title>30.Grafana Install | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/05/15/30.Grafana Install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">30.Grafana Install</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-15T18:00:41+08:00">
+                2019-05-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/prometheus/" itemprop="url" rel="index">
+                    <span itemprop="name">prometheus</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/prometheus/grafana/" itemprop="url" rel="index">
+                    <span itemprop="name">grafana</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>grafana 是一个可视化面板，有着非常漂亮的图表和布局展示，功能齐全的度量仪表盘和图形编辑器，支持 Graphite、zabbix、InfluxDB、Prometheus、OpenTSDB、Elasticsearch 等作为数据源，比 Prometheus 自带的图表展示功能强大太多，更加灵活，有丰富的插件，功能更加强大。</p>
+<p>接下来我们就来直接安装，同样的，我们将 grafana 安装到 Kubernetes 集群中，第一步同样是去查看 grafana 的 docker 镜像的介绍，我们可以在 dockerhub 上去搜索，也可以在官网去查看相关资料，镜像地址如下：<a href="https://hub.docker.com/r/grafana/grafana/" target="_blank" rel="noopener">https://hub.docker.com/r/grafana/grafana/</a></p>
+<p>但是还有一个需要注意的是 Changelog 中<code>v5.1.0</code>版本的更新介绍：</p>
+<ul>
+<li>Major restructuring of the container</li>
+<li>Usage of chown removed</li>
+<li>File permissions incompatibility with previous versions<ul>
+<li>user id changed from 104 to 472</li>
+<li>group id changed from 107 to 472</li>
+</ul>
+</li>
+<li>Runs as the grafana user by default (instead of root)</li>
+<li>All default volumes removed</li>
+</ul>
+<p>特别需要注意第3条，userid 和 groupid 都有所变化，所以我们在运行的容器的时候需要注意这个变化。现在我们将这个容器转化成 Kubernetes 中的 Pod：(grafana-deploy.yaml)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">vim grafana-deploy.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: grafana</span><br><span class="line">  namespace: kube-ops</span><br><span class="line">  labels:</span><br><span class="line">    app: grafana</span><br><span class="line">spec:</span><br><span class="line">  revisionHistoryLimit: 10</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: grafana</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: grafana</span><br><span class="line">        image: grafana/grafana:5.3.4</span><br><span class="line">        imagePullPolicy: IfNotPresent</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 3000</span><br><span class="line">          name: grafana</span><br><span class="line">        env:</span><br><span class="line">        - name: GF_SECURITY_ADMIN_USER</span><br><span class="line">          value: admin</span><br><span class="line">        - name: GF_SECURITY_ADMIN_PASSWORD</span><br><span class="line">          value: admin321</span><br><span class="line">        readinessProbe:</span><br><span class="line">          failureThreshold: 10</span><br><span class="line">          httpGet:</span><br><span class="line">            path: /api/health</span><br><span class="line">            port: 3000</span><br><span class="line">            scheme: HTTP</span><br><span class="line">          initialDelaySeconds: 60</span><br><span class="line">          periodSeconds: 10</span><br><span class="line">          successThreshold: 1</span><br><span class="line">          timeoutSeconds: 30</span><br><span class="line">        livenessProbe:</span><br><span class="line">          failureThreshold: 3</span><br><span class="line">          httpGet:</span><br><span class="line">            path: /api/health</span><br><span class="line">            port: 3000</span><br><span class="line">            scheme: HTTP</span><br><span class="line">          periodSeconds: 10</span><br><span class="line">          successThreshold: 1</span><br><span class="line">          timeoutSeconds: 1</span><br><span class="line">        resources:</span><br><span class="line">          limits:</span><br><span class="line">            cpu: 100m</span><br><span class="line">            memory: 256Mi</span><br><span class="line">          requests:</span><br><span class="line">            cpu: 100m</span><br><span class="line">            memory: 256Mi</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - mountPath: /var/lib/grafana</span><br><span class="line">          subPath: grafana</span><br><span class="line">          name: storage</span><br><span class="line">      securityContext:</span><br><span class="line">        fsGroup: 472</span><br><span class="line">        runAsUser: 472</span><br><span class="line">      volumes:</span><br><span class="line">      - name: storage</span><br><span class="line">        persistentVolumeClaim:</span><br><span class="line">          claimName: grafana</span><br></pre></td></tr></table></figure>
+<p>我们使用了最新的镜像<code>grafana/grafana:5.3.4</code>，然后添加了监控检查、资源声明，另外两个比较重要的环境变量<code>GF_SECURITY_ADMIN_USER</code>和<code>GF_SECURITY_ADMIN_PASSWORD</code>，用来配置 grafana 的管理员用户和密码的，由于 grafana 将 dashboard、插件这些数据保存在<code>/var/lib/grafana</code>这个目录下面的，所以我们这里如果需要做数据持久化的话，就需要针对这个目录进行 volume 挂载声明，其他的和我们之前的 Deployment 没什么区别，由于上面我们刚刚提到的 Changelog 中 grafana 的 userid 和 groupid 有所变化，所以我们这里需要增加一个<code>securityContext</code>的声明来进行声明。</p>
+<p>当然如果要使用一个 pvc 对象来持久化数据，我们就需要添加一个可用的 pv 供 pvc 绑定使用：（grafana-volume.yaml）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">vim  grafana-volume.yaml</span><br><span class="line"></span><br><span class="line">[root@master01 ~]# vim  grafana-volume.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: grafana</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 1Gi</span><br><span class="line">  accessModes:</span><br><span class="line">  - ReadWriteOnce</span><br><span class="line">  persistentVolumeReclaimPolicy: Recycle</span><br><span class="line">  nfs:</span><br><span class="line">    server: 192.168.48.204</span><br><span class="line">    path: /data/grafana</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  name: grafana</span><br><span class="line">  namespace: kube-ops</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">  - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 1Gi</span><br></pre></td></tr></table></figure>
+<p>nfs服务器设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mkdir /data/grafana</span><br><span class="line"> </span><br><span class="line">vim /etc/exports</span><br><span class="line"></span><br><span class="line">/data/prometheus   192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line">/data/grafana   192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@nfs prometheus]# systemctl restart nfs</span><br></pre></td></tr></table></figure>
+<p>最后，我们需要对外暴露 grafana 这个服务，所以我们需要一个对应的 Service 对象，当然用 NodePort 或者再建立一个 ingress 对象都是可行的：(grafana-svc.yaml)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">vim   grafana-svc.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: grafana</span><br><span class="line">  namespace: kube-ops</span><br><span class="line">  labels:</span><br><span class="line">    app: grafana</span><br><span class="line">spec:</span><br><span class="line">  type: NodePort</span><br><span class="line">  ports:</span><br><span class="line">    - port: 3000</span><br><span class="line">  selector:</span><br><span class="line">    app: grafana</span><br></pre></td></tr></table></figure>
+<p>目录的拥有者并不是上面的 grafana(472)这个用户了，所以我们需要更改下这个目录的所属用户，这个时候我们可以利用一个 Job 任务去更改下该目录的所属用户：（grafana-chown-job.yaml）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">vim grafana-chown-job.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: batch/v1</span><br><span class="line">kind: Job</span><br><span class="line">metadata:</span><br><span class="line">  name: grafana-chown</span><br><span class="line">  namespace: kube-ops</span><br><span class="line">spec:</span><br><span class="line">  template:</span><br><span class="line">    spec:</span><br><span class="line">      restartPolicy: Never</span><br><span class="line">      containers:</span><br><span class="line">      - name: grafana-chown</span><br><span class="line">        command: [&quot;chown&quot;, &quot;-R&quot;, &quot;472:472&quot;, &quot;/var/lib/grafana&quot;]</span><br><span class="line">        image: busybox:latest</span><br><span class="line">        imagePullPolicy: IfNotPresent</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - name: storage</span><br><span class="line">          subPath: grafana</span><br><span class="line">          mountPath: /var/lib/grafana</span><br><span class="line">      volumes:</span><br><span class="line">      - name: storage</span><br><span class="line">        persistentVolumeClaim:</span><br><span class="line">          claimName: grafana</span><br></pre></td></tr></table></figure>
+<p>加载yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl apply -f grafana-volume.yaml </span><br><span class="line">persistentvolume/grafana created</span><br><span class="line">persistentvolumeclaim/grafana created</span><br><span class="line">[root@master01 ~]# kubectl apply -f grafana-deploy.yaml </span><br><span class="line">deployment.extensions/grafana created</span><br><span class="line">[root@master01 ~]# kubectl apply -f grafana-chown-job.yaml </span><br><span class="line">job.batch/grafana-chown created</span><br><span class="line">[root@master01 ~]# kubectl apply -f grafana-svc.yaml </span><br><span class="line">service/grafana created</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl get pod -n kube-ops </span><br><span class="line">NAME                         READY   STATUS      RESTARTS   AGE</span><br><span class="line">grafana-bbfd776d6-x5wpb      1/1     Running     2          2m58s</span><br><span class="line">grafana-chown-q9ls9          0/1     Completed   0          2m47s</span><br><span class="line">node-exporter-6d997          1/1     Running     1          31h</span><br><span class="line">node-exporter-ksw26          1/1     Running     3          31h</span><br><span class="line">node-exporter-sbdlz          1/1     Running     1          31h</span><br><span class="line">prometheus-77d968648-q25nx   1/1     Running     3          11d</span><br><span class="line">redis-65cdd9566b-znvxz       2/2     Running     2          32h</span><br><span class="line"></span><br><span class="line">[root@master01 ~]# kubectl get svc -n kube-ops </span><br><span class="line">NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)             AGE</span><br><span class="line">grafana      NodePort    10.106.13.226    &lt;none&gt;        3000:30505/TCP      2m56s</span><br><span class="line">prometheus   NodePort    10.106.53.6      &lt;none&gt;        9090:30357/TCP      11d</span><br><span class="line">redis        ClusterIP   10.101.242.217   &lt;none&gt;        6379/TCP,9121/TCP   32h</span><br></pre></td></tr></table></figure>
+<p>我们可以看到有一个状态为<code>Completed</code>的 Pod，这就是上面我们用来更改 grafana 目录权限的 Pod，是一个 Job 任务，所以执行成功后就退出了，状态变成了<code>Completed</code>，而上面的 grafana 的 Pod 也已经是<code>Running</code>状态了，可以查看下该 Pod 的日志确认下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl logs -n kube-ops grafana-bbfd776d6-x5wpb </span><br><span class="line">GF_PATHS_DATA=&apos;/var/lib/grafana&apos; is not writable.</span><br><span class="line">You may have issues with file permissions, more information here: http://docs.grafana.org/installation/docker/#migration-from-a-previous-version-of-the-docker-container-to-5-1-or-later</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Starting Grafana&quot; logger=server version=5.3.4 commit=69630b9 compiled=2018-11-13T12:19:12+0000</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config loaded from&quot; logger=settings file=/usr/share/grafana/conf/defaults.ini</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config loaded from&quot; logger=settings file=/etc/grafana/grafana.ini</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from command line&quot; logger=settings arg=&quot;default.paths.data=/var/lib/grafana&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from command line&quot; logger=settings arg=&quot;default.paths.logs=/var/log/grafana&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from command line&quot; logger=settings arg=&quot;default.paths.plugins=/var/lib/grafana/plugins&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from command line&quot; logger=settings arg=&quot;default.paths.provisioning=/etc/grafana/provisioning&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from command line&quot; logger=settings arg=&quot;default.log.mode=console&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from Environment variable&quot; logger=settings var=&quot;GF_PATHS_DATA=/var/lib/grafana&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from Environment variable&quot; logger=settings var=&quot;GF_PATHS_LOGS=/var/log/grafana&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from Environment variable&quot; logger=settings var=&quot;GF_PATHS_PLUGINS=/var/lib/grafana/plugins&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from Environment variable&quot; logger=settings var=&quot;GF_PATHS_PROVISIONING=/etc/grafana/provisioning&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from Environment variable&quot; logger=settings var=&quot;GF_SECURITY_ADMIN_USER=admin&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Config overridden from Environment variable&quot; logger=settings var=&quot;GF_SECURITY_ADMIN_PASSWORD=*********&quot;</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Path Home&quot; logger=settings path=/usr/share/grafana</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Path Data&quot; logger=settings path=/var/lib/grafana</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Path Logs&quot; logger=settings path=/var/log/grafana</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Path Plugins&quot; logger=settings path=/var/lib/grafana/plugins</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Path Provisioning&quot; logger=settings path=/etc/grafana/provisioning</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;App mode production&quot; logger=settings</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Initializing SqlStore&quot; logger=server</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Connecting to DB&quot; logger=sqlstore dbtype=sqlite3</span><br><span class="line">t=2019-05-15T13:08:16+0000 lvl=info msg=&quot;Starting DB migration&quot; logger=migrator</span><br></pre></td></tr></table></figure>
+<p>现在我们就可以在浏览器中使用 admin/admin321</p>
+<p><img src="https://i.loli.net/2019/05/15/5cdc117ea503518812.png" alt></p>
+<h3 id="数据源"><a href="#数据源" class="headerlink" title="数据源"></a>数据源</h3><p>我们这个地方配置的数据源是 Prometheus，所以选择这个 Type 即可，给改数据源添加一个 name：prometheus-ds，最主要的是下面<code>HTTP</code>区域是配置数据源的访问模式。</p>
+<p>访问模式是用来控制如何处理对数据源的请求的：</p>
+<ul>
+<li>服务器(Server)访问模式（默认）：所有请求都将从浏览器发送到 Grafana 后端的服务器，后者又将请求转发到数据源，通过这种方式可以避免一些跨域问题，其实就是在 Grafana 后端做了一次转发，需要从Grafana 后端服务器访问该 URL。</li>
+<li>浏览器(Browser)访问模式：所有请求都将从浏览器直接发送到数据源，但是有可能会有一些跨域的限制，使用此访问模式，需要从浏览器直接访问该 URL。</li>
+</ul>
+<p>由于我们这个地方 Prometheus 通过 NodePort 的方式的对外暴露的服务，所以我们这个地方是不是可以使用浏览器访问模式直接访问 Prometheus 的外网地址，但是这种方式显然不是最好的，相当于走的是外网，而我们这里 Prometheus 和 Grafana 都处于 kube-ops 这同一个 namespace 下面，是不是在集群内部直接通过 DNS 的形式就可以访问了，而且还都是走的内网流量，所以我们这里用服务器访问模式显然更好，数据源地址：<code>http://prometheus:9090</code>（因为在同一个 namespace 下面所以直接用 Service 名也可以），然后其他的配置信息就根据实际情况了，比如 Auth 认证，我们这里没有，所以跳过即可，点击最下方的<code>Save &amp; Test</code>提示成功证明我们的数据源配置正确：</p>
+<p><img src="https://i.loli.net/2019/05/16/5cdd62ee1f17f12004.png" alt></p>
+<p><img src="https://i.loli.net/2019/05/16/5cdd63788239057688.png" alt></p>
+<p>我们可以看到 dashboard 页面上出现了很多漂亮的图表，但是看上去数据不正常，这是因为这个 dashboard 里面需要的数据指标名称和我们 Prometheus 里面采集到的数据指标不一致造成的，比如，第一个<code>Cluster memory usage(集群内存使用情况)</code>，我们可以点击标题 -&gt; Edit，进入编辑这个图表的编辑页面： <img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-dashboard-edit.png" alt="grafana dashboard edit"></p>
+<p>这就是我们之前在 Prometheus 里面查询的<code>promQL</code>语句，我们可以将上面的查询语句复制到 Prometheus 的 Graph 页面进行查询，其实可以预想到是没有对应的数据的，因为我们用<code>node_exporter</code>采集到的数据指标不是<code>node_memory_MemTotal</code>关键字，而是<code>node_memory_MemTotal_bytes</code>，将上面的<code>promQL</code>语句做相应的更改：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(sum(node_memory_MemTotal_bytes) - sum(node_memory_MemFree_bytes + node_memory_Buffers_bytes+node_memory_Cached_bytes)) / sum(node_memory_MemTotal_bytes) * 100</span><br></pre></td></tr></table></figure>
+<p>这个语句的意思就是<code>(整个集群的内存-(整个集群剩余的内存以及Buffer和Cached))/整个集群的内存</code>，简单来说就是总的集群内存使用百分比。将上面 grafana 的<code>promQL</code>语句替换掉，就可以看到图表正常了： <img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-table.png" alt="grafana table"></p>
+<h2 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h2><p>上面是我们最常用的 grafana 当中的 dashboard 的功能的使用，然后我们也可以来进行一些其他的系统管理，比如添加用户，为用户添加权限等等，我们也可以安装一些其他插件，比如 grafana 就有一个专门针对 Kubernetes 集群监控的插件：<a href="https://grafana.com/plugins/grafana-kubernetes-app/installation" target="_blank" rel="noopener">grafana-kubernetes-app</a></p>
+<p>要安装这个插件，需要到 grafana 的 Pod 里面去执行安装命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl exec -n kube-ops grafana-bbfd776d6-x5wpb -it  -- /bin/sh</span><br><span class="line">$ grafana-cli plugins install grafana-kubernetes-app</span><br><span class="line">installing grafana-kubernetes-app @ 1.0.1</span><br><span class="line">from url: https://grafana.com/api/plugins/grafana-kubernetes-app/versions/1.0.1/download</span><br><span class="line">into: /var/lib/grafana/plugins</span><br><span class="line"></span><br><span class="line">✔ Installed grafana-kubernetes-app successfully </span><br><span class="line"></span><br><span class="line">Restart grafana after installing plugins . &lt;service grafana-server restart&gt;</span><br></pre></td></tr></table></figure>
+<p>安装完成后需要重启 grafana 才会生效，我们这里直接删除 Pod，重建即可，然后回到 grafana 页面中，切换到 plugins 页面可以发现下面多了一个 Kubernetes 的插件，点击进来启用即可，然后点击<code>Next up</code>旁边的链接配置集群 <img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin.png" alt="grafana k8s plugins"></p>
+<p>这里我们可以添加一个新的 Kubernetes 集群，这里需要填写集群的访问地址：<code>https://kubernetes.default</code>，然后比较重要的是集群访问的证书，勾选上<code>TLS Client Auth</code>和<code>With CA Cert</code>这两项。 <img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin-config.png" alt="grafana k8s plugin config"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# cat .kube/config </span><br><span class="line">apiVersion: v1</span><br><span class="line">clusters:</span><br><span class="line">- cluster:</span><br><span class="line">    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRFNU1EVXdNVEEwTXpBd01sb1hEVEk1TURReU9EQTBNekF3TWxvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTHg0Cml5NU91dmhQNklNaGhtUFd0OGg2SEZqd2tQVWJzZC84bDVKR0orTHh4b0pyaVM2WFNaTWx4OEcwOUVBV0hZTVAKY2JRTDI0Nkx6RVEzYUxVOCtsUlBiNExZY3NTa1NrbDN6SVI5ditaSG5MRUFaYzhDK2l0N2tvOEYxMGlnVmFJNApuT1huWDNacURsNkFzZzlqRUdFZVFBbjVSano3MW1lZGluaWpWUVc3YTVSTGQ2K25IWTl5RmRxdnMwelVQRVN5CmZaQURnZW9hNTJGdEx1YjZvOXQwckU4THRxOW5BaTlqLzFyalVOOHUyWUpReHpiSUZwVjdyeGdlQW1Mdm5IOUYKaUxVdHppYWRBTHYvTTJQUGlPYWlQdXNqdzhXbUZQdVJPdjRnRkZDVUxSU2hIMlAvUkdFcVhqOGVqRzJZV1BBNgpldmNVN3JVb1hULzFkamRWa2VzQ0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFMTFd5amRaeXR5MWlzbTlMMTZieEVXcTh6bGEKWlJuNGR5TkwrQmR4ZTJteVR4NTFyUDVvL0QvSlR1OVRxTUZGcTJUL1JYbnBoSlUycmg3NnJwOSsyM0JxYm55cQptVVdFbGhSaG9rOVlqL2grNWhsa0d1MGVOUjBFMktGU09GamIvNEt4Z0RkM3RiTkxZMUF3VFFQUXF1L0JmVzFvCmxIMlh3Y05iVEZ3QVYvYVFiZHFMZU9TZzJTMU1SUnlGUFhpZ29lMXJCOUZQck50bkNqMmQrUXpqQVI5UEFMNW0KcnZCSE9HMU9Dck82QVdad2YzY1pZbFU4MjdhYmlSZzRFMnEvNzZjZ05rQkZqRTQ1WDBxbTlROXl1Z04wWUZrSQpzbHJvK0kwNitlbGg3NGN6N1dYUkJ3WkpjMlJHMDBHa3RMNHR2TGF0dFFoVnBFTDRDQ0VnUHFGOU95Yz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=</span><br><span class="line">    server: https://192.168.48.101:6443</span><br><span class="line">  name: kubernetes</span><br><span class="line">contexts:</span><br><span class="line">- context:</span><br><span class="line">    cluster: kubernetes</span><br><span class="line">    user: kubernetes-admin</span><br><span class="line">  name: kubernetes-admin@kubernetes</span><br><span class="line">current-context: kubernetes-admin@kubernetes</span><br><span class="line">kind: Config</span><br><span class="line">preferences: &#123;&#125;</span><br><span class="line">users:</span><br><span class="line">- name: kubernetes-admin</span><br><span class="line">  user:</span><br><span class="line">    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM4akNDQWRxZ0F3SUJBZ0lJS1FSSVprMWZpWjB3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB4T1RBMU1ERXdORE13TURKYUZ3MHlNREEwTXpBd05ETXdNRE5hTURReApGekFWQmdOVkJBb1REbk41YzNSbGJUcHRZWE4wWlhKek1Sa3dGd1lEVlFRREV4QnJkV0psY201bGRHVnpMV0ZrCmJXbHVNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZWT2RNaU96WEo1U1JZOVUKRDNOaEg5OHJPMi9jT3hLZndkdVMzcFdGSlNIaEhiZ0RwdVNsak9SN2pxUjFGMFBEa0xleTFORXIyVTFDZ0xKcApMb3FRR0IyTFZPZ2FzdnkvN0dFWDJIV0MyQlJyU0QwY0ZsYkpQbmVjMFZVYmp5L09Vd1RlYU1oejhqc3BIYmpmCklPd0ZTTERuM1duUFE5d1RZbmJLekNRd1Q2cGdsaDc5ZkdPamkvRmVnY3VFeEIxUlFiQzV6RnB3M1gzWnVvNksKMGRFbmJQR0Q1YjI2WU95cFA5MzhEaXNrUnJyejUxY2xISStuRWdHZVBSZzlKcVYxUmFGUW1taWk1bXJsaTNYaQpaWVZMVzlZU0JtaElnWHZFRHdKVWV0OU1ySDEwcmlkTTN3ZngvdlFBNlNuUUlaaEFtUFVaTmM5M2hPRmVCQTFVCkNTc2Fpd0lEQVFBQm95Y3dKVEFPQmdOVkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUgKQXdJd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFEYWNaeVZaazFjSEhxVXk3Q09CK1MrdGpVeEI1VVVsUCt2VAp1aGV4WEwvVUJRYjh1YXhxeXc4L3JUZnMrNGVOUjFNN25hT3pYVEhwMEJkS3dwWlFMVmRFT2tZRkxXTmlIMmcrCjl1ZnlJa3pFcThIQ3Fud1hrT21COVpPSGRCMDBiRFBRWEw4ajE4T3NrZE1wQzYzZm9HMHhOYS8raGxxbzd1eGIKRjZPcENVbU14Ums5MnVWamRmVjdsOWF2dVl6ZTI3eUpMWkZOVjRNQnpBbExPZGI3c2ttalF0YzFFSUJ0RmVXegp4M2JJSno1RGlJcHpBOEdTZGN6NUEyMDZJTkFwV0tDcUVISXZBN1ZzWDIxT3JGajI3T2pzWXAxM05nRG1Kc1VaCk02aEpnRjhiQXQ0bklycitzeVUxajZ5YUMvN1BiVWJLZ0NvMUo1Mkw3SUI5eEJWZi9Saz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=</span><br><span class="line">    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBdlZPZE1pT3pYSjVTUlk5VUQzTmhIOThyTzIvY094S2Z3ZHVTM3BXRkpTSGhIYmdECnB1U2xqT1I3anFSMUYwUERrTGV5MU5FcjJVMUNnTEpwTG9xUUdCMkxWT2dhc3Z5LzdHRVgySFdDMkJSclNEMGMKRmxiSlBuZWMwVlViankvT1V3VGVhTWh6OGpzcEhiamZJT3dGU0xEbjNXblBROXdUWW5iS3pDUXdUNnBnbGg3OQpmR09qaS9GZWdjdUV4QjFSUWJDNXpGcHczWDNadW82SzBkRW5iUEdENWIyNllPeXBQOTM4RGlza1Jycno1MWNsCkhJK25FZ0dlUFJnOUpxVjFSYUZRbW1paTVtcmxpM1hpWllWTFc5WVNCbWhJZ1h2RUR3SlVldDlNckgxMHJpZE0KM3dmeC92UUE2U25RSVpoQW1QVVpOYzkzaE9GZUJBMVVDU3NhaXdJREFRQUJBb0lCQUdwai9rWWF3Y1FlUStWSwo4ZFhzNUh0Z2tZN0pBVjFBemYzR1FmWksxNU5TUW9yTXlXQ1R4R1EwVVNxTFNERldweU0vMTRLNE9JZllYcktyCmoyZlQvYjFQZk9pdHRiTTNUVEtzTFJZNmt0aVNRT2RMVCtsTnc3RVN6bERrSHFTTUhNbVNSdGxqSzZUSGtnZGQKeUNWYi9Hd28zV01TL3FJSG5lMExERk5EVXRLdzE4RXZtSVhXbG9udXhsNTBlNjh5SVRrVG5XYjlrTVZMMEE5ZgpzN2dpQ3BzTndDVHdLUXBXc0diRmhKUTQvMGpid2lDZzd4QUxMcUtlK1g3azlUc1lsY2JaNmNseHlWNjlFWDdlCnNRSWlhT2t1VFpxRUZvaG54eEswZkNsQ3dzdmhOeWxxSzJ3enp3QmFGUWRMV2NhYUJWbzlHQnZ3MlBUUnc5dWEKMVFMUURFRUNnWUVBenF3YWZuT0I3eGI0UkNHY2c1RElLRHY2QkVzdDc0ZlEzdmhyR0xOTXJCQ0dQQjRQVElJcQpHNU5CUGE0SDQ2dEVDRzhDN1RPaURoWHlZZTlzd1ZOSmVrWFJFenB6ZnB6WTBERlZ0Lzd4RWJMLzZET1lDWEdmCm0vVjlzNjkwT1dOQVRvcFM0b3JadDgxdkYxT2ZCemFkNmpPd0pMZzJjRW1tMWxxNU9CK1pxT01DZ1lFQTZvT3MKRUk1RW9kb1FDajJFMHRvWUVlVGw1NUFxK2tRbmorSEJHeVdER2JQVjFaOUFPWGZpTkVWeFVSNHNaMU9mak1PRgpJU0YrM0JmYWJ1VTNyTitHZGRocWZ6L0tUWFo4aUcvbFJvKzAzL2F5SXZwUUFMRXJDdmg5S0EydlZnY0I1MEUxCjFvZDFUV0N5VmdxblkzL3VLTVFSTVpsQnpFWDRZSllEWXhUaGdEa0NnWUVBd3FLaWNPUW5RaHZIdzZKRDNFUEYKdk41L0h2d09UcjhCbm5zbG9TVjYxN0RZT2xXMDRzRFRGeFVmSkE5NXJwZmtnbXpKdk1vYm5GaGU1SXl2UjRKQQplTDYzbi93ME9ORk4vd1AzVGtqeWoxQ2NZUG4xL1M3Y3Vld0FiZkNXN0ZUa2d4TVI2L2dJQW1tZWJjRjZ5emhNCmovd05yd2N0ZmFKZlZSQXJ6d2N6bHpFQ2dZRUF2L2lwa2FQa2F0bW01N3NVVDhaWWpjMWlwZnhPTWpBNGNuL0wKSS8zQkkva2l3b3hxZHFDOGV5MmRaVm5kMzNlRTFDWDVoUFYyYzVUVEtwUll6eHJyWnV5UndUam0waUo4THZQcQpLNmpYMTc2S2REZVQ1ZjBoendrNjZ0N0krUk1qYTdybDU0ZGJic3dKTUlYb0lIdEk2ZllXWFJPbjJTQXVBbUxLCnd3RUUxNEVDZ1lFQWhZMHlJbE5qTmdlVWtvNUN0MjFkd2VtdXFlOU5NWk9FTWxlMm93UVhsRlNHR1BRaHN0M1YKWmwySkFtR0lSMzFOT2VSS0RxOEVsVDQ4ZlBnSWZ1ZU9xYmUyamhVU2p4c2E0SG9wczhXRi9TaktkNGNZNGxkSApKZW4yNzNXMnJtcWxtODN3RnlhZDF1d1RpeTRNZUZVdEJrZGlnTi9ERTE4VFE0T2VwYkdCRTZBPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=</span><br></pre></td></tr></table></figure>
+<p>集群访问的证书文件，用我们访问集群的 kubectl 的配置文件中的证书信息(~/.kube/config)即可，其中属性<code>certificate-authority-data</code>、<code>client-certificate-data</code>、<code>client-key-data</code>就对应这 CA 证书、Client 证书、Client 私钥，不过 config 文件里面的内容是<code>base64</code>编码过后的，所以我们这里填写的时候要做<code>base64</code>解码。</p>
+<blockquote>
+<p>另外需要将解码过后的<code>\n</code>换成换行符，不然认证会失败。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">##CA cert</span><br><span class="line">[root@master01 ~]# echo LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRFNU1EVXdNVEEwTXpBd01sb1hEVEk1TURReU9EQTBNekF3TWxvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTHg0Cml5NU91dmhQNklNaGhtUFd0OGg2SEZqd2tQVWJzZC84bDVKR0orTHh4b0pyaVM2WFNaTWx4OEcwOUVBV0hZTVAKY2JRTDI0Nkx6RVEzYUxVOCtsUlBiNExZY3NTa1NrbDN6SVI5ditaSG5MRUFaYzhDK2l0N2tvOEYxMGlnVmFJNApuT1huWDNacURsNkFzZzlqRUdFZVFBbjVSano3MW1lZGluaWpWUVc3YTVSTGQ2K25IWTl5RmRxdnMwelVQRVN5CmZaQURnZW9hNTJGdEx1YjZvOXQwckU4THRxOW5BaTlqLzFyalVOOHUyWUpReHpiSUZwVjdyeGdlQW1Mdm5IOUYKaUxVdHppYWRBTHYvTTJQUGlPYWlQdXNqdzhXbUZQdVJPdjRnRkZDVUxSU2hIMlAvUkdFcVhqOGVqRzJZV1BBNgpldmNVN3JVb1hULzFkamRWa2VzQ0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFMTFd5amRaeXR5MWlzbTlMMTZieEVXcTh6bGEKWlJuNGR5TkwrQmR4ZTJteVR4NTFyUDVvL0QvSlR1OVRxTUZGcTJUL1JYbnBoSlUycmg3NnJwOSsyM0JxYm55cQptVVdFbGhSaG9rOVlqL2grNWhsa0d1MGVOUjBFMktGU09GamIvNEt4Z0RkM3RiTkxZMUF3VFFQUXF1L0JmVzFvCmxIMlh3Y05iVEZ3QVYvYVFiZHFMZU9TZzJTMU1SUnlGUFhpZ29lMXJCOUZQck50bkNqMmQrUXpqQVI5UEFMNW0KcnZCSE9HMU9Dck82QVdad2YzY1pZbFU4MjdhYmlSZzRFMnEvNzZjZ05rQkZqRTQ1WDBxbTlROXl1Z04wWUZrSQpzbHJvK0kwNitlbGg3NGN6N1dYUkJ3WkpjMlJHMDBHa3RMNHR2TGF0dFFoVnBFTDRDQ0VnUHFGOU95Yz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo= | base64 -d</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">MIICyDCCAbCgAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl</span><br><span class="line">cm5ldGVzMB4XDTE5MDUwMTA0MzAwMloXDTI5MDQyODA0MzAwMlowFTETMBEGA1UE</span><br><span class="line">AxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALx4</span><br><span class="line">iy5OuvhP6IMhhmPWt8h6HFjwkPUbsd/8l5JGJ+LxxoJriS6XSZMlx8G09EAWHYMP</span><br><span class="line">cbQL246LzEQ3aLU8+lRPb4LYcsSkSkl3zIR9v+ZHnLEAZc8C+it7ko8F10igVaI4</span><br><span class="line">nOXnX3ZqDl6Asg9jEGEeQAn5Rjz71medinijVQW7a5RLd6+nHY9yFdqvs0zUPESy</span><br><span class="line">fZADgeoa52FtLub6o9t0rE8Ltq9nAi9j/1rjUN8u2YJQxzbIFpV7rxgeAmLvnH9F</span><br><span class="line">iLUtziadALv/M2PPiOaiPusjw8WmFPuROv4gFFCULRShH2P/RGEqXj8ejG2YWPA6</span><br><span class="line">evcU7rUoXT/1djdVkesCAwEAAaMjMCEwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB</span><br><span class="line">/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBALLWyjdZyty1ism9L16bxEWq8zla</span><br><span class="line">ZRn4dyNL+Bdxe2myTx51rP5o/D/JTu9TqMFFq2T/RXnphJU2rh76rp9+23Bqbnyq</span><br><span class="line">mUWElhRhok9Yj/h+5hlkGu0eNR0E2KFSOFjb/4KxgDd3tbNLY1AwTQPQqu/BfW1o</span><br><span class="line">lH2XwcNbTFwAV/aQbdqLeOSg2S1MRRyFPXigoe1rB9FPrNtnCj2d+QzjAR9PAL5m</span><br><span class="line">rvBHOG1OCrO6AWZwf3cZYlU827abiRg4E2q/76cgNkBFjE45X0qm9Q9yugN0YFkI</span><br><span class="line">slro+I06+elh74cz7WXRBwZJc2RG00GktL4tvLattQhVpEL4CCEgPqF9Oyc=</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line"></span><br><span class="line">##client cert</span><br><span class="line">[root@master01 ~]# echo LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM4akNDQWRxZ0F3SUJBZ0lJS1FSSVprMWZpWjB3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB4T1RBMU1ERXdORE13TURKYUZ3MHlNREEwTXpBd05ETXdNRE5hTURReApGekFWQmdOVkJBb1REbk41YzNSbGJUcHRZWE4wWlhKek1Sa3dGd1lEVlFRREV4QnJkV0psY201bGRHVnpMV0ZrCmJXbHVNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZWT2RNaU96WEo1U1JZOVUKRDNOaEg5OHJPMi9jT3hLZndkdVMzcFdGSlNIaEhiZ0RwdVNsak9SN2pxUjFGMFBEa0xleTFORXIyVTFDZ0xKcApMb3FRR0IyTFZPZ2FzdnkvN0dFWDJIV0MyQlJyU0QwY0ZsYkpQbmVjMFZVYmp5L09Vd1RlYU1oejhqc3BIYmpmCklPd0ZTTERuM1duUFE5d1RZbmJLekNRd1Q2cGdsaDc5ZkdPamkvRmVnY3VFeEIxUlFiQzV6RnB3M1gzWnVvNksKMGRFbmJQR0Q1YjI2WU95cFA5MzhEaXNrUnJyejUxY2xISStuRWdHZVBSZzlKcVYxUmFGUW1taWk1bXJsaTNYaQpaWVZMVzlZU0JtaElnWHZFRHdKVWV0OU1ySDEwcmlkTTN3ZngvdlFBNlNuUUlaaEFtUFVaTmM5M2hPRmVCQTFVCkNTc2Fpd0lEQVFBQm95Y3dKVEFPQmdOVkhROEJBZjhFQkFNQ0JhQXdFd1lEVlIwbEJBd3dDZ1lJS3dZQkJRVUgKQXdJd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFEYWNaeVZaazFjSEhxVXk3Q09CK1MrdGpVeEI1VVVsUCt2VAp1aGV4WEwvVUJRYjh1YXhxeXc4L3JUZnMrNGVOUjFNN25hT3pYVEhwMEJkS3dwWlFMVmRFT2tZRkxXTmlIMmcrCjl1ZnlJa3pFcThIQ3Fud1hrT21COVpPSGRCMDBiRFBRWEw4ajE4T3NrZE1wQzYzZm9HMHhOYS8raGxxbzd1eGIKRjZPcENVbU14Ums5MnVWamRmVjdsOWF2dVl6ZTI3eUpMWkZOVjRNQnpBbExPZGI3c2ttalF0YzFFSUJ0RmVXegp4M2JJSno1RGlJcHpBOEdTZGN6NUEyMDZJTkFwV0tDcUVISXZBN1ZzWDIxT3JGajI3T2pzWXAxM05nRG1Kc1VaCk02aEpnRjhiQXQ0bklycitzeVUxajZ5YUMvN1BiVWJLZ0NvMUo1Mkw3SUI5eEJWZi9Saz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo= | base64 -d</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">MIIC8jCCAdqgAwIBAgIIKQRIZk1fiZ0wDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE</span><br><span class="line">AxMKa3ViZXJuZXRlczAeFw0xOTA1MDEwNDMwMDJaFw0yMDA0MzAwNDMwMDNaMDQx</span><br><span class="line">FzAVBgNVBAoTDnN5c3RlbTptYXN0ZXJzMRkwFwYDVQQDExBrdWJlcm5ldGVzLWFk</span><br><span class="line">bWluMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvVOdMiOzXJ5SRY9U</span><br><span class="line">D3NhH98rO2/cOxKfwduS3pWFJSHhHbgDpuSljOR7jqR1F0PDkLey1NEr2U1CgLJp</span><br><span class="line">LoqQGB2LVOgasvy/7GEX2HWC2BRrSD0cFlbJPnec0VUbjy/OUwTeaMhz8jspHbjf</span><br><span class="line">IOwFSLDn3WnPQ9wTYnbKzCQwT6pglh79fGOji/FegcuExB1RQbC5zFpw3X3Zuo6K</span><br><span class="line">0dEnbPGD5b26YOypP938DiskRrrz51clHI+nEgGePRg9JqV1RaFQmmii5mrli3Xi</span><br><span class="line">ZYVLW9YSBmhIgXvEDwJUet9MrH10ridM3wfx/vQA6SnQIZhAmPUZNc93hOFeBA1U</span><br><span class="line">CSsaiwIDAQABoycwJTAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUH</span><br><span class="line">AwIwDQYJKoZIhvcNAQELBQADggEBADacZyVZk1cHHqUy7COB+S+tjUxB5UUlP+vT</span><br><span class="line">uhexXL/UBQb8uaxqyw8/rTfs+4eNR1M7naOzXTHp0BdKwpZQLVdEOkYFLWNiH2g+</span><br><span class="line">9ufyIkzEq8HCqnwXkOmB9ZOHdB00bDPQXL8j18OskdMpC63foG0xNa/+hlqo7uxb</span><br><span class="line">F6OpCUmMxRk92uVjdfV7l9avuYze27yJLZFNV4MBzAlLOdb7skmjQtc1EIBtFeWz</span><br><span class="line">x3bIJz5DiIpzA8GSdcz5A206INApWKCqEHIvA7VsX21OrFj27OjsYp13NgDmJsUZ</span><br><span class="line">M6hJgF8bAt4nIrr+syU1j6yaC/7PbUbKgCo1J52L7IB9xBVf/Rk=</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##client key</span><br><span class="line">-----BEGIN RSA PRIVATE KEY-----</span><br><span class="line">MIIEpQIBAAKCAQEAvVOdMiOzXJ5SRY9UD3NhH98rO2/cOxKfwduS3pWFJSHhHbgD</span><br><span class="line">puSljOR7jqR1F0PDkLey1NEr2U1CgLJpLoqQGB2LVOgasvy/7GEX2HWC2BRrSD0c</span><br><span class="line">FlbJPnec0VUbjy/OUwTeaMhz8jspHbjfIOwFSLDn3WnPQ9wTYnbKzCQwT6pglh79</span><br><span class="line">fGOji/FegcuExB1RQbC5zFpw3X3Zuo6K0dEnbPGD5b26YOypP938DiskRrrz51cl</span><br><span class="line">HI+nEgGePRg9JqV1RaFQmmii5mrli3XiZYVLW9YSBmhIgXvEDwJUet9MrH10ridM</span><br><span class="line">3wfx/vQA6SnQIZhAmPUZNc93hOFeBA1UCSsaiwIDAQABAoIBAGpj/kYawcQeQ+VK</span><br><span class="line">8dXs5HtgkY7JAV1Azf3GQfZK15NSQorMyWCTxGQ0USqLSDFWpyM/14K4OIfYXrKr</span><br><span class="line">j2fT/b1PfOittbM3TTKsLRY6ktiSQOdLT+lNw7ESzlDkHqSMHMmSRtljK6THkgdd</span><br><span class="line">yCVb/Gwo3WMS/qIHne0LDFNDUtKw18EvmIXWlonuxl50e68yITkTnWb9kMVL0A9f</span><br><span class="line">s7giCpsNwCTwKQpWsGbFhJQ4/0jbwiCg7xALLqKe+X7k9TsYlcbZ6clxyV69EX7e</span><br><span class="line">sQIiaOkuTZqEFohnxxK0fClCwsvhNylqK2wzzwBaFQdLWcaaBVo9GBvw2PTRw9ua</span><br><span class="line">1QLQDEECgYEAzqwafnOB7xb4RCGcg5DIKDv6BEst74fQ3vhrGLNMrBCGPB4PTIIq</span><br><span class="line">G5NBPa4H46tECG8C7TOiDhXyYe9swVNJekXREzpzfpzY0DFVt/7xEbL/6DOYCXGf</span><br><span class="line">m/V9s690OWNATopS4orZt81vF1OfBzad6jOwJLg2cEmm1lq5OB+ZqOMCgYEA6oOs</span><br><span class="line">EI5EodoQCj2E0toYEeTl55Aq+kQnj+HBGyWDGbPV1Z9AOXfiNEVxUR4sZ1OfjMOF</span><br><span class="line">ISF+3BfabuU3rN+Gddhqfz/KTXZ8iG/lRo+03/ayIvpQALErCvh9KA2vVgcB50E1</span><br><span class="line">1od1TWCyVgqnY3/uKMQRMZlBzEX4YJYDYxThgDkCgYEAwqKicOQnQhvHw6JD3EPF</span><br><span class="line">vN5/HvwOTr8BnnsloSV617DYOlW04sDTFxUfJA95rpfkgmzJvMobnFhe5IyvR4JA</span><br><span class="line">eL63n/w0ONFN/wP3Tkjyj1CcYPn1/S7cuewAbfCW7FTkgxMR6/gIAmmebcF6yzhM</span><br><span class="line">j/wNrwctfaJfVRArzwczlzECgYEAv/ipkaPkatmm57sUT8ZYjc1ipfxOMjA4cn/L</span><br><span class="line">I/3BI/kiwoxqdqC8ey2dZVnd33eE1CX5hPV2c5TTKpRYzxrrZuyRwTjm0iJ8LvPq</span><br><span class="line">K6jX176KdDeT5f0hzwk66t7I+RMja7rl54dbbswJMIXoIHtI6fYWXROn2SAuAmLK</span><br><span class="line">wwEE14ECgYEAhY0yIlNjNgeUko5Ct21dwemuqe9NMZOEMle2owQXlFSGGPQhst3V</span><br><span class="line">Zl2JAmGIR31NOeRKDq8ElT48fPgIfueOqbe2jhUSjxsa4Hops8WF/SjKd4cY4ldH</span><br><span class="line">Jen273W2rmqlm83wFyad1uwTiy4MeFUtBkdigN/DE18TQ4OepbGBE6A=</span><br><span class="line">-----END RSA PRIVATE KEY-----</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.loli.net/2019/05/16/5cdd660c49be954657.png" alt></p>
+<p>配置完成后，可以直接点击<code>Deploy</code>(实际上前面的课程中我们都已经部署过相关的资源了)，然后点击<code>Save</code>，就可以获取到集群的监控资源信息了。</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin2.png" alt="grafana k8s plugins"></p>
+<p>可以看到上面展示了整个集群的状态，可以查看上面的一些 Dashboard: <img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin-cluster.png" alt="grafana k8s cluster dashboard"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/prometheus/" rel="tag"> <i class="fa fa-tag"></i> prometheus</a>
+          
+            <a href="/tags/grafana/" rel="tag"> <i class="fa fa-tag"></i> grafana</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/14/29.monitor Kubernetes/" rel="next" title="29.monitor Kubernetes">
+                <i class="fa fa-chevron-left"></i> 29.monitor Kubernetes
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">30</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据源"><span class="nav-number">1.</span> <span class="nav-text">数据源</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#插件"><span class="nav-number"></span> <span class="nav-text">插件</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
