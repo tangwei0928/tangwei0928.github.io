@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="harbor,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Hrbor环境1234567192.168.48.101 master01 etcd01 registry.tk8s.com192.168.48.102 master02 etcd02192.168.48.103 master03 etcd03192.168.48.201 node01192.168.48.202 node02192.168.48.203 node03192.168.48.54">
+<meta name="keywords" content="harbor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="34.Harbor">
+<meta property="og:url" content="http://yoursite.com/2019/06/08/34.Harbor/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="Hrbor环境1234567192.168.48.101 master01 etcd01 registry.tk8s.com192.168.48.102 master02 etcd02192.168.48.103 master03 etcd03192.168.48.201 node01192.168.48.202 node02192.168.48.203 node03192.168.48.54">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.loli.net/2019/06/08/5cfb6c8fec41474669.png">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/MA7tef.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/XieDpz.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/06/08/5cfb95ae8626628334.png">
+<meta property="og:updated_time" content="2019-06-08T11:35:32.689Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="34.Harbor">
+<meta name="twitter:description" content="Hrbor环境1234567192.168.48.101 master01 etcd01 registry.tk8s.com192.168.48.102 master02 etcd02192.168.48.103 master03 etcd03192.168.48.201 node01192.168.48.202 node02192.168.48.203 node03192.168.48.54">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/08/5cfb6c8fec41474669.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/08/34.Harbor/">
+
+
+
+
+
+  <title>34.Harbor | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/08/34.Harbor/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">34.Harbor</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-08T14:00:41+08:00">
+                2019-06-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/harbor/" itemprop="url" rel="index">
+                    <span itemprop="name">harbor</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Hrbor"><a href="#Hrbor" class="headerlink" title="Hrbor"></a>Hrbor</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">192.168.48.101 master01 etcd01 registry.tk8s.com</span><br><span class="line">192.168.48.102 master02 etcd02</span><br><span class="line">192.168.48.103 master03 etcd03</span><br><span class="line">192.168.48.201 node01</span><br><span class="line">192.168.48.202 node02</span><br><span class="line">192.168.48.203 node03</span><br><span class="line">192.168.48.54  nfs</span><br></pre></td></tr></table></figure>
+<h2 id="install"><a href="#install" class="headerlink" title="install"></a>install</h2><p>一种简单的安装方法：Helm，Harbor 官方提供了对应的 Helm Chart 包，所以我们可以很容易安装。</p>
+<h3 id="准备charts"><a href="#准备charts" class="headerlink" title="准备charts"></a>准备charts</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# git clone https://github.com/goharbor/harbor-helm</span><br></pre></td></tr></table></figure>
+<h3 id="准备values"><a href="#准备values" class="headerlink" title="准备values"></a>准备values</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# cd harbor-helm/</span><br><span class="line">[root@master01 harbor-helm]# ll</span><br><span class="line">total 120</span><br><span class="line">drwxr-xr-x  2 root root    36 Jun  8 14:36 cert</span><br><span class="line">-rw-r--r--  1 root root   498 Jun  8 14:36 Chart.yaml</span><br><span class="line">-rw-r--r--  1 root root   577 Jun  8 14:36 CONTRIBUTING.md</span><br><span class="line">drwxr-xr-x  3 root root    63 Jun  8 14:36 docs</span><br><span class="line">-rw-r--r--  1 root root 11357 Jun  8 14:36 LICENSE</span><br><span class="line">-rw-r--r--  1 root root 84170 Jun  8 14:36 README.md</span><br><span class="line">drwxr-xr-x 13 root root   206 Jun  8 14:36 templates</span><br><span class="line">-rw-r--r--  1 root root 14157 Jun  8 14:36 values.yaml</span><br><span class="line"></span><br><span class="line">[root@master01 harbor-helm]# vim tk8s-values.yaml</span><br><span class="line"></span><br><span class="line">expose:</span><br><span class="line">  type: ingress</span><br><span class="line">  tls:</span><br><span class="line">    enabled: true</span><br><span class="line">  ingress:</span><br><span class="line">    hosts:</span><br><span class="line">      core: registry.tk8s.com</span><br><span class="line">      notary: notary.tk8s.com</span><br><span class="line">    annotations:</span><br><span class="line">      kubernetes.io/ingress.class: &quot;traefik&quot;</span><br><span class="line">      ingress.kubernetes.io/ssl-redirect: &quot;true&quot;</span><br><span class="line">      ingress.kubernetes.io/proxy-body-size: &quot;0&quot;</span><br><span class="line"></span><br><span class="line">https://registry.tk8s.com:23457</span><br><span class="line">persistence:</span><br><span class="line">  enabled: true</span><br><span class="line">  resourcePolicy: &quot;keep&quot;</span><br><span class="line">  persistentVolumeClaim:</span><br><span class="line">    registry:</span><br><span class="line">      storageClass: &quot;harbor-data&quot;</span><br><span class="line">    chartmuseum:</span><br><span class="line">      storageClass: &quot;harbor-data&quot;</span><br><span class="line">    jobservice:</span><br><span class="line">      storageClass: &quot;harbor-data&quot;</span><br><span class="line">    database:</span><br><span class="line">      storageClass: &quot;harbor-data&quot;</span><br><span class="line">    redis:</span><br><span class="line">      storageClass: &quot;harbor-data&quot;</span><br></pre></td></tr></table></figure>
+<h3 id="准备traefik"><a href="#准备traefik" class="headerlink" title="准备traefik"></a>准备traefik</h3><p>首先，为安全起见我们这里使用 RBAC 安全认证方式：(traefik-rbac.yaml)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">vim traefik-rbac.yaml</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: traefik-ingress-controller</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: traefik-ingress-controller</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - services</span><br><span class="line">      - endpoints</span><br><span class="line">      - secrets</span><br><span class="line">    verbs:</span><br><span class="line">      - get</span><br><span class="line">      - list</span><br><span class="line">      - watch</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - extensions</span><br><span class="line">    resources:</span><br><span class="line">      - ingresses</span><br><span class="line">    verbs:</span><br><span class="line">      - get</span><br><span class="line">      - list</span><br><span class="line">      - watch</span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: traefik-ingress-controller</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: traefik-ingress-controller</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: traefik-ingress-controller</span><br><span class="line">  namespace: kube-system</span><br></pre></td></tr></table></figure>
+<p>配置ssl</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openssl req -newkey rsa:2048 -nodes -keyout tls.key -x509 -days 365 -out tls.crt</span><br><span class="line"></span><br><span class="line">kubectl create secret generic traefik-cert --from-file=tls.crt --from-file=tls.key -n kube-system</span><br></pre></td></tr></table></figure>
+<p>配置配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">vim traefik.toml</span><br><span class="line"></span><br><span class="line">defaultEntryPoints = [&quot;http&quot;, &quot;https&quot;]</span><br><span class="line"></span><br><span class="line">[entryPoints]</span><br><span class="line">  [entryPoints.http]</span><br><span class="line">  address = &quot;:80&quot;</span><br><span class="line">    [entryPoints.http.redirect]</span><br><span class="line">      entryPoint = &quot;https&quot;</span><br><span class="line">  [entryPoints.https]</span><br><span class="line">  address = &quot;:443&quot;</span><br><span class="line">    [entryPoints.https.tls]</span><br><span class="line">      [[entryPoints.https.tls.certificates]]</span><br><span class="line">      CertFile = &quot;/ssl/tls.crt&quot;</span><br><span class="line">      KeyFile = &quot;/ssl/tls.key&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create configmap traefik-conf --from-file=traefik.toml -n kube-system</span><br></pre></td></tr></table></figure>
+<p>然后使用 Deployment 来管理 Pod，直接使用官方的 traefik 镜像部署即可（traefik.yaml）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">vim traefik.yaml</span><br><span class="line"></span><br><span class="line">kind: Deployment</span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: traefik-ingress-controller</span><br><span class="line">  namespace: kube-system</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: traefik-ingress-lb</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      k8s-app: traefik-ingress-lb</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        k8s-app: traefik-ingress-lb</span><br><span class="line">        name: traefik-ingress-lb</span><br><span class="line">    spec:</span><br><span class="line">      serviceAccountName: traefik-ingress-controller</span><br><span class="line">      terminationGracePeriodSeconds: 60</span><br><span class="line">      volumes:</span><br><span class="line">      - name: ssl</span><br><span class="line">        secret:</span><br><span class="line">          secretName: traefik-cert</span><br><span class="line">      - name: config</span><br><span class="line">        configMap:</span><br><span class="line">          name: traefik-conf</span><br><span class="line">      tolerations:</span><br><span class="line">      - operator: &quot;Exists&quot;</span><br><span class="line">      nodeSelector:</span><br><span class="line">        kubernetes.io/hostname: master01</span><br><span class="line">      containers:</span><br><span class="line">      - image: traefik:latest</span><br><span class="line">        imagePullPolicy: IfNotPresent</span><br><span class="line">        name: traefik-ingress-lb</span><br><span class="line">        volumeMounts:</span><br><span class="line">        - mountPath: &quot;/ssl&quot;</span><br><span class="line">          name: &quot;ssl&quot;</span><br><span class="line">        - mountPath: &quot;/config&quot;</span><br><span class="line">          name: &quot;config&quot;</span><br><span class="line">        ports:</span><br><span class="line">        - name: http</span><br><span class="line">          containerPort: 80</span><br><span class="line">          hostPort: 80</span><br><span class="line">        - name: https</span><br><span class="line">          containerPort: 443</span><br><span class="line">          hostPort: 443</span><br><span class="line">        - name: admin</span><br><span class="line">          containerPort: 8080</span><br><span class="line">        args:</span><br><span class="line">        - --configfile=/config/traefik.toml</span><br><span class="line">        - --api</span><br><span class="line">        - --kubernetes</span><br><span class="line">        - --logLevel=INFO</span><br><span class="line">---</span><br><span class="line">kind: Service</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: traefik-ingress-service</span><br><span class="line">  namespace: kube-system</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    k8s-app: traefik-ingress-lb</span><br><span class="line">  ports:</span><br><span class="line">    - protocol: TCP</span><br><span class="line">      port: 80</span><br><span class="line">      name: web</span><br><span class="line">      nodePort: 23456</span><br><span class="line">    - protocol: TCP</span><br><span class="line">      port: 443</span><br><span class="line">      name: https</span><br><span class="line">      nodePort: 23457</span><br><span class="line">    - protocol: TCP</span><br><span class="line">      port: 8080</span><br><span class="line">      name: admin</span><br><span class="line">  type: NodePort</span><br></pre></td></tr></table></figure>
+<p>加载yaml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f traefik-rbac.yaml </span><br><span class="line"></span><br><span class="line">kubectl apply -f traefik.yaml</span><br></pre></td></tr></table></figure>
+<p>查看traefik</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl get svc -n kube-system </span><br><span class="line">NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                     AGE</span><br><span class="line">heapster                  ClusterIP   10.68.236.118   &lt;none&gt;        80/TCP                                      6d23h</span><br><span class="line">kube-dns                  ClusterIP   10.68.0.2       &lt;none&gt;        53/UDP,53/TCP,9153/TCP                      6d23h</span><br><span class="line">kubernetes-dashboard      NodePort    10.68.130.102   &lt;none&gt;        443:28044/TCP                               6d21h</span><br><span class="line">metrics-server            ClusterIP   10.68.154.61    &lt;none&gt;        443/TCP                                     6d23h</span><br><span class="line">tiller-deploy             ClusterIP   10.68.129.204   &lt;none&gt;        44134/TCP                                   6d20h</span><br><span class="line">traefik-ingress-service   NodePort    10.68.195.100   &lt;none&gt;        80:23456/TCP,443:23457/TCP,8080:21073/TCP   3h33m</span><br></pre></td></tr></table></figure>
+<h3 id="准备storageClass"><a href="#准备storageClass" class="headerlink" title="准备storageClass"></a>准备storageClass</h3><h4 id="配置nfs服务器"><a href="#配置nfs服务器" class="headerlink" title="配置nfs服务器"></a>配置nfs服务器</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@nfs ~]# mkdir /volume</span><br><span class="line">[root@nfs ~]# vim /etc/exports</span><br><span class="line">/volume   192.168.48.0/24(insecure,rw,async,no_root_squash)</span><br><span class="line"></span><br><span class="line">[root@node03 ~]# systemctl restart nfs</span><br></pre></td></tr></table></figure>
+<h4 id="准备deployment"><a href="#准备deployment" class="headerlink" title="准备deployment"></a>准备deployment</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">vim nfs-client.yaml</span><br><span class="line"></span><br><span class="line">kind: Deployment</span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  strategy:</span><br><span class="line">    type: Recreate</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nfs-client-provisioner</span><br><span class="line">    spec:</span><br><span class="line">      serviceAccountName: nfs-client-provisioner</span><br><span class="line">      containers:</span><br><span class="line">        - name: nfs-client-provisioner</span><br><span class="line">          image: quay.io/external_storage/nfs-client-provisioner:latest</span><br><span class="line">          imagePullPolicy: IfNotPresent</span><br><span class="line">          volumeMounts:</span><br><span class="line">            - name: nfs-client-root</span><br><span class="line">              mountPath: /persistentvolumes</span><br><span class="line">          env:</span><br><span class="line">            - name: PROVISIONER_NAME</span><br><span class="line">              value: nfs-provisioner</span><br><span class="line">            - name: NFS_SERVER</span><br><span class="line">              value: 192.168.48.54</span><br><span class="line">            - name: NFS_PATH</span><br><span class="line">              value: /volume</span><br><span class="line">      volumes:</span><br><span class="line">        - name: nfs-client-root</span><br><span class="line">          nfs:</span><br><span class="line">            server: 192.168.48.54</span><br><span class="line">            path: /volume</span><br></pre></td></tr></table></figure>
+<h4 id="创建sa"><a href="#创建sa" class="headerlink" title="创建sa"></a>创建sa</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">vim nfs-client-sa.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumes&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;delete&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;persistentvolumeclaims&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;update&quot;]</span><br><span class="line">  - apiGroups: [&quot;storage.k8s.io&quot;]</span><br><span class="line">    resources: [&quot;storageclasses&quot;]</span><br><span class="line">    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;events&quot;]</span><br><span class="line">    verbs: [&quot;list&quot;, &quot;watch&quot;, &quot;create&quot;, &quot;update&quot;, &quot;patch&quot;]</span><br><span class="line">  - apiGroups: [&quot;&quot;]</span><br><span class="line">    resources: [&quot;endpoints&quot;]</span><br><span class="line">    verbs: [&quot;create&quot;, &quot;delete&quot;, &quot;get&quot;, &quot;list&quot;, &quot;watch&quot;, &quot;patch&quot;, &quot;update&quot;]</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: run-nfs-client-provisioner</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: nfs-client-provisioner</span><br><span class="line">    namespace: default</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: nfs-client-provisioner-runner</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br></pre></td></tr></table></figure>
+<h4 id="编写storageclass-yaml"><a href="#编写storageclass-yaml" class="headerlink" title="编写storageclass yaml"></a>编写storageclass yaml</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim nfs-client-class.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">kind: StorageClass</span><br><span class="line">metadata:</span><br><span class="line">  name: harbor-data</span><br><span class="line">provisioner: nfs-provisioner</span><br></pre></td></tr></table></figure>
+<h4 id="创建storageclass"><a href="#创建storageclass" class="headerlink" title="创建storageclass"></a>创建storageclass</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@master ~]# kubectl apply -f nfs-client.yaml </span><br><span class="line">deployment.extensions/nfs-client-provisioner created</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl apply -f nfs-client-sa.yaml</span><br><span class="line">serviceaccount/nfs-client-provisioner created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/nfs-client-provisioner-runner created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/run-nfs-client-provisioner created</span><br><span class="line"></span><br><span class="line">[root@master ~]# kubectl apply -f nfs-client-class.yaml</span><br><span class="line">storageclass.storage.k8s.io/course-nfs-storage created</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl get pod </span><br><span class="line">NAME                                     READY   STATUS    RESTARTS   AGE</span><br><span class="line">nfs-client-provisioner-7bddc456f-jqr85   1/1     Running   0          23s</span><br><span class="line">[root@master01 ~]# kubectl get storageclasses.storage.k8s.io </span><br><span class="line">NAME          PROVISIONER       AGE</span><br><span class="line">harbor-data   nfs-provisioner   20s</span><br></pre></td></tr></table></figure>
+<h3 id="安装harbor"><a href="#安装harbor" class="headerlink" title="安装harbor"></a>安装harbor</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# cd harbor-helm/</span><br><span class="line">[root@master01 harbor-helm]# helm install --name harbor -f tk8s-values.yaml . --namespace kube-ops</span><br><span class="line"></span><br><span class="line">[root@master01 harbor-helm]# kubectl get pods -n kube-ops</span><br><span class="line">NAME                                           READY   STATUS              RESTARTS   AGE</span><br><span class="line">harbor-harbor-chartmuseum-697b7cdd9-5lcnq      0/1     ContainerCreating   0          43s</span><br><span class="line">harbor-harbor-clair-5949867d67-m2j6n           0/1     ContainerCreating   0          43s</span><br><span class="line">harbor-harbor-core-994977865-kt2tr             0/1     ContainerCreating   0          43s</span><br><span class="line">harbor-harbor-database-0                       0/1     Init:0/1            0          42s</span><br><span class="line">harbor-harbor-jobservice-8647fb7f99-v2hbk      0/1     ContainerCreating   0          43s</span><br><span class="line">harbor-harbor-notary-server-84bd68b594-fm2g6   0/1     ContainerCreating   0          43s</span><br><span class="line">harbor-harbor-notary-signer-8dcf5944f-n2g65    0/1     ContainerCreating   0          43s</span><br><span class="line">harbor-harbor-portal-849fdb497d-gvfbk          0/1     ContainerCreating   0          42s</span><br><span class="line">harbor-harbor-redis-0                          0/1     ContainerCreating   0          42s</span><br><span class="line">harbor-harbor-registry-557756d8d8-hxft4        0/2     ContainerCreating   0          42s</span><br></pre></td></tr></table></figure>
+<h2 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl get svc -n kube-system </span><br><span class="line">NAME                      TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                                     AGE</span><br><span class="line">heapster                  ClusterIP   10.68.236.118   &lt;none&gt;        80/TCP                                      6d20h</span><br><span class="line">kube-dns                  ClusterIP   10.68.0.2       &lt;none&gt;        53/UDP,53/TCP,9153/TCP                      6d20h</span><br><span class="line">kubernetes-dashboard      NodePort    10.68.130.102   &lt;none&gt;        443:28044/TCP                               6d19h</span><br><span class="line">metrics-server            ClusterIP   10.68.154.61    &lt;none&gt;        443/TCP                                     6d20h</span><br><span class="line">tiller-deploy             ClusterIP   10.68.129.204   &lt;none&gt;        44134/TCP                                   6d18h</span><br><span class="line">traefik-ingress-service   NodePort    10.68.195.100   &lt;none&gt;        80:23456/TCP,443:23457/TCP,8080:21073/TCP   47m</span><br></pre></td></tr></table></figure>
+<p>访问<a href="https://registry.tk8s.com:23457" target="_blank" rel="noopener">https://registry.tk8s.com:23457</a></p>
+<p><img src="https://i.loli.net/2019/06/08/5cfb6c8fec41474669.png" alt></p>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>输入用户名：admin，密码：Harbor12345</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/MA7tef.jpg" alt="Harbor Portal Home"></p>
+<p>我们可以看到有很多功能，默认情况下会有一个名叫<code>library</code>的项目，改项目默认是公开访问权限的，进入项目可以看到里面还有 Helm Chart 包的管理，可以手动在这里上传，也可以对改项目里面的镜像进行一些配置，比如是否开启自动扫描镜像功能：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/XieDpz.jpg" alt="Harbor project settings"></p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# docker login registry.tk8s.com:23457</span><br><span class="line">Username: admin</span><br><span class="line">Password: </span><br><span class="line">Error response from daemon: Get https://registry.tk8s.com:23457/v2/: x509: certificate signed by unknown authority</span><br></pre></td></tr></table></figure>
+<p>这是因为我们没有提供证书文件，我们将使用到的<code>ca.crt</code>文件复制到<code>/etc/docker/certs.d/registry.tk8s.com</code>目录下面，如果该目录不存在，则创建它。ca.crt 这个证书文件我们可以通过 Ingress 中使用的 Secret 资源对象来提供：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# mkdir /etc/docker/certs.d/registry.tk8s.com -p</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">kubectl get secret harbor-harbor-ingress -n kube-ops -o yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">data:</span><br><span class="line">  ca.crt: &lt;ca.crt&gt;</span><br><span class="line">  tls.crt: &lt;tls.crt&gt;</span><br><span class="line">  tls.key: &lt;tls.key&gt;</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: 2019-02-22T14:39:28Z</span><br><span class="line">  labels:</span><br><span class="line">    app: harbor</span><br><span class="line">    chart: harbor</span><br><span class="line">    heritage: Tiller</span><br><span class="line">    release: harbor</span><br><span class="line">  name: harbor-harbor-ingress</span><br><span class="line">  namespace: kube-ops</span><br><span class="line">  resourceVersion: &quot;50400208&quot;</span><br><span class="line">  selfLink: /api/v1/namespaces/kube-ops/secrets/harbor-harbor-ingress</span><br><span class="line">  uid: a899c57a-36af-11e9-bcd8-525400db4df7</span><br><span class="line">type: kubernetes.io/tls</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@master01 ~]# echo &quot;LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM5RENDQWR5Z0F3SUJBZ0lRUE96RklKQ1FtWFlYZmIvdmFmQjNYekFOQmdrcWhraUc5dzBCQVFzRkFEQVUKTVJJd0VBWURWUVFERXdsb1lYSmliM0l0WTJFd0hoY05NVGt3TmpBNE1UQXpPREU0V2hjTk1qQXdOakEzTVRBegpPREU0V2pBVU1SSXdFQVlEVlFRREV3bG9ZWEppYjNJdFkyRXdnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCCkR3QXdnZ0VLQW9JQkFRQzQyQnhxK3lSb2UxUFJxSFF1NXdvTVRxMkJ3Zll5c1N1NGNRNTlyS2pKZjVJcEp1ZVkKQUpGRzZvZ2UvRjFjeGNjTWI0YVZudXc2aHhac0xJUE9EcHlMbkRTcDNwNVZidzlmWlk1WVBFUUlBZldxcnJvbgo4NnA1azZZSlB5RW1QYTJ3ellaNzBZMHNESXpEMkNlVGNhUjJTZUlTUzRQVDI4RVFhVWIzcUFWcFpQT1ZwRmFaCkZBT25pUENqd3NsN2JDQVZWN0dNRURqTFZnbUJIZk1QMUJtdmg2UzVTOEtCNllsWmdtUW03Um83TnZuSEhnbEIKQStIcy9qTkdZdU41aE9IMFVwalQ0eVB6cFJKRFExdlhOdWpFSEtzSUpENnhhM1Bod1poc2w0c0NFVmJyWHFLdgppVkxrTFk3eHlyS1hzRjM5OXB0czM4N0ZyYnZSZXdwNnB2N3pBZ01CQUFHalFqQkFNQTRHQTFVZER3RUIvd1FFCkF3SUNwREFkQmdOVkhTVUVGakFVQmdnckJnRUZCUWNEQVFZSUt3WUJCUVVIQXdJd0R3WURWUjBUQVFIL0JBVXcKQXdFQi96QU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFyNzBNSjhNc1R0RjlwVUMvd3dCZmVqNnhjaUxnUzQ1VQo4QmlXZXVzck1JQWZPaU5RUnNIQjh3RXpuWStNR3l2ZStlZjlsM1c5anRnTytaM011NitBZ21oTTdDRVZ5d1RGCmlkL3I4UjI3SHNCY3NRQkRFcEVzZlMyWmdkVDFiSVQvVHNUYUcwbmtLdERHbE9TRUFoOFRQSzZxcU5SMU5qcHoKTk10SVBhRjFjSkQ4YktSbHpGdXdJcGlIUGZmVElka1FQVFZzL2EyS3lTSzJQMm5iNnpHZUJsdU85aWFNMHphSwpwdENTdys0bTgybUlHWnhtYmg5dWFpQmVRWnNDOC9SRnVmbk9qUEU0Z1NqeWNPVU44SmpDL2FHRmJWb1dvRGhCClpJeHQ3RndvUmcvMFRUNC9FNWdQWG9iblJaZXE2S0NNYWVGd2xWNGpNbHMrMmNGSmpDM2lOUT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K&quot; | base64 -d &gt; ca.crt</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# cat /etc/docker/certs.d/registry.tk8s.com/ca.crt </span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">MIIC9DCCAdygAwIBAgIQPOzFIJCQmXYXfb/vafB3XzANBgkqhkiG9w0BAQsFADAU</span><br><span class="line">MRIwEAYDVQQDEwloYXJib3ItY2EwHhcNMTkwNjA4MTAzODE4WhcNMjAwNjA3MTAz</span><br><span class="line">ODE4WjAUMRIwEAYDVQQDEwloYXJib3ItY2EwggEiMA0GCSqGSIb3DQEBAQUAA4IB</span><br><span class="line">DwAwggEKAoIBAQC42Bxq+yRoe1PRqHQu5woMTq2BwfYysSu4cQ59rKjJf5IpJueY</span><br><span class="line">AJFG6oge/F1cxccMb4aVnuw6hxZsLIPODpyLnDSp3p5Vbw9fZY5YPEQIAfWqrron</span><br><span class="line">86p5k6YJPyEmPa2wzYZ70Y0sDIzD2CeTcaR2SeISS4PT28EQaUb3qAVpZPOVpFaZ</span><br><span class="line">FAOniPCjwsl7bCAVV7GMEDjLVgmBHfMP1Bmvh6S5S8KB6YlZgmQm7Ro7NvnHHglB</span><br><span class="line">A+Hs/jNGYuN5hOH0UpjT4yPzpRJDQ1vXNujEHKsIJD6xa3PhwZhsl4sCEVbrXqKv</span><br><span class="line">iVLkLY7xyrKXsF399pts387FrbvRewp6pv7zAgMBAAGjQjBAMA4GA1UdDwEB/wQE</span><br><span class="line">AwICpDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDwYDVR0TAQH/BAUw</span><br><span class="line">AwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAr70MJ8MsTtF9pUC/wwBfej6xciLgS45U</span><br><span class="line">8BiWeusrMIAfOiNQRsHB8wEznY+MGyve+ef9l3W9jtgO+Z3Mu6+AgmhM7CEVywTF</span><br><span class="line">id/r8R27HsBcsQBDEpEsfS2ZgdT1bIT/TsTaG0nkKtDGlOSEAh8TPK6qqNR1Njpz</span><br><span class="line">NMtIPaF1cJD8bKRlzFuwIpiHPffTIdkQPTVs/a2KySK2P2nb6zGeBluO9iaM0zaK</span><br><span class="line">ptCSw+4m82mIGZxmbh9uaiBeQZsC8/RFufnOjPE4gSjycOUN8JjC/aGFbVoWoDhB</span><br><span class="line">ZIxt7FwoRg/0TT4/E5gPXobnRZeq6KCMaeFwlV4jMls+2cFJjC3iNQ==</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[root@node02 registry.tk8s.com]# cp ca.crt  /etc/pki/ca-trust/source/anchors/</span><br><span class="line">[root@node02 registry.tk8s.com]# cd /etc/pki/ca-trust/source/anchors/</span><br><span class="line">[root@node02 anchors]# ll</span><br><span class="line">total 4</span><br><span class="line">-rw-r--r-- 1 root root 1086 Jun  8 18:40 ca.crt</span><br><span class="line"></span><br><span class="line">[root@node02 anchors]# update-ca-trust </span><br><span class="line">[root@node02 ~]# systemctl restart docker</span><br><span class="line"></span><br><span class="line">[root@node02 ~]# docker login registry.tk8s.com:23457</span><br><span class="line">Username: admin	  </span><br><span class="line">Password: </span><br><span class="line">WARNING! Your password will be stored unencrypted in /root/.docker/config.json.</span><br><span class="line">Configure a credential helper to remove this warning. See</span><br><span class="line">https://docs.docker.com/engine/reference/commandline/login/#credentials-store</span><br><span class="line"></span><br><span class="line">Login Succeeded</span><br></pre></td></tr></table></figure>
+<h3 id="push和pull"><a href="#push和pull" class="headerlink" title="push和pull"></a>push和pull</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@node02 ~]# docker tag alpine:3.6 registry.tk8s.com:23457/library/alpine:3.6</span><br><span class="line"></span><br><span class="line">[root@node02 ~]# docker push registry.tk8s.com:23457/library/alpine:3.6</span><br><span class="line">The push refers to repository [registry.tk8s.com:23457/library/alpine]</span><br><span class="line">721384ec99e5: Pushed </span><br><span class="line">3.6: digest: sha256:36c3a913e62f77a82582eb7ce30d255f805c3d1e11d58e1f805e14d33c2bc5a5 size: 528</span><br></pre></td></tr></table></figure>
+<p>推送完成，在harbor看到</p>
+<p><img src="https://i.loli.net/2019/06/08/5cfb95ae8626628334.png" alt></p>
+<p>镜像 push 成功，同样可以测试下 pull：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@node01 ~]# docker login registry.tk8s.com:23457</span><br><span class="line">Username: admin</span><br><span class="line">Password: </span><br><span class="line">WARNING! Your password will be stored unencrypted in /root/.docker/config.json.</span><br><span class="line">Configure a credential helper to remove this warning. See</span><br><span class="line">https://docs.docker.com/engine/reference/commandline/login/#credentials-store</span><br><span class="line"></span><br><span class="line">Login Succeeded</span><br><span class="line"></span><br><span class="line">[root@node01 ~]# docker pull registry.tk8s.com:23457/library/alpine:3.6</span><br><span class="line">3.6: Pulling from library/alpine</span><br><span class="line">Digest: sha256:36c3a913e62f77a82582eb7ce30d255f805c3d1e11d58e1f805e14d33c2bc5a5</span><br><span class="line">Status: Downloaded newer image for registry.tk8s.com:23457/library/alpine:3.6</span><br></pre></td></tr></table></figure>
+<h2 id="pod使用"><a href="#pod使用" class="headerlink" title="pod使用"></a>pod使用</h2><h3 id="创建secret"><a href="#创建secret" class="headerlink" title="创建secret"></a>创建secret</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl create secret docker-registry registry-secret  --docker-server=registry.tk8s.com:23457  --docker-username=admin --docker-password=Harbor12345</span><br><span class="line">secret/registry-secret created</span><br></pre></td></tr></table></figure>
+<h3 id="创建pod"><a href="#创建pod" class="headerlink" title="创建pod"></a>创建pod</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">vim alpine.yaml</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: alpine</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: alpine</span><br><span class="line">    image: registry.tk8s.com:23457/library/alpine:3.6</span><br><span class="line">    command:</span><br><span class="line">    - &quot;/bin/sh&quot;</span><br><span class="line">    - &quot;-c&quot;</span><br><span class="line">    - &quot;while true;do date;sleep 1;done&quot;</span><br><span class="line">  imagePullSecrets:</span><br><span class="line">  - name: registry-secret</span><br></pre></td></tr></table></figure>
+<h3 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[root@master01 ~]# kubectl apply -f alpine.yaml </span><br><span class="line">pod/alpine created</span><br><span class="line">[root@master01 ~]# kubectl get pod -o wide</span><br><span class="line">NAME                                     READY   STATUS    RESTARTS   AGE     IP            NODE             NOMINATED NODE   READINESS GATES</span><br><span class="line">alpine                                   1/1     Running   0          11s     172.20.5.45   192.168.48.203   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">nfs-client-provisioner-7bddc456f-jqr85   1/1     Running   3          3h46m   172.20.3.59   192.168.48.202   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">[root@master01 ~]# kubectl logs -f alpine </span><br><span class="line">Sat Jun  8 11:31:52 UTC 2019</span><br><span class="line">Sat Jun  8 11:31:53 UTC 2019</span><br><span class="line">Sat Jun  8 11:31:54 UTC 2019</span><br><span class="line">Sat Jun  8 11:31:55 UTC 2019</span><br><span class="line">Sat Jun  8 11:31:56 UTC 2019</span><br><span class="line">Sat Jun  8 11:31:57 UTC 2019</span><br><span class="line">Sat Jun  8 11:31:58 UTC 2019</span><br><span class="line">Sat Jun  8 11:31:59 UTC 2019</span><br><span class="line">Sat Jun  8 11:32:00 UTC 2019</span><br><span class="line">Sat Jun  8 11:32:01 UTC 2019</span><br><span class="line">Sat Jun  8 11:32:02 UTC 2019</span><br><span class="line">Sat Jun  8 11:32:03 UTC 2019</span><br><span class="line">Sat Jun  8 11:32:04 UTC 2019</span><br><span class="line">Sat Jun  8 11:32:05 UTC 2019</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/harbor/" rel="tag"> <i class="fa fa-tag"></i> harbor</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/07/33.Jenkins pipeline/" rel="next" title="33.Jenkins pipeline">
+                <i class="fa fa-chevron-left"></i> 33.Jenkins pipeline
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hrbor"><span class="nav-number">1.</span> <span class="nav-text">Hrbor</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境"><span class="nav-number">1.1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#install"><span class="nav-number">1.2.</span> <span class="nav-text">install</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备charts"><span class="nav-number">1.2.1.</span> <span class="nav-text">准备charts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备values"><span class="nav-number">1.2.2.</span> <span class="nav-text">准备values</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备traefik"><span class="nav-number">1.2.3.</span> <span class="nav-text">准备traefik</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备storageClass"><span class="nav-number">1.2.4.</span> <span class="nav-text">准备storageClass</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#配置nfs服务器"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">配置nfs服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#准备deployment"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">准备deployment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建sa"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">创建sa</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编写storageclass-yaml"><span class="nav-number">1.2.4.4.</span> <span class="nav-text">编写storageclass yaml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建storageclass"><span class="nav-number">1.2.4.5.</span> <span class="nav-text">创建storageclass</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装harbor"><span class="nav-number">1.2.5.</span> <span class="nav-text">安装harbor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问"><span class="nav-number">1.3.</span> <span class="nav-text">访问</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#登录"><span class="nav-number">1.3.1.</span> <span class="nav-text">登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">1.3.2.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#push和pull"><span class="nav-number">1.3.3.</span> <span class="nav-text">push和pull</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pod使用"><span class="nav-number">1.4.</span> <span class="nav-text">pod使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建secret"><span class="nav-number">1.4.1.</span> <span class="nav-text">创建secret</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建pod"><span class="nav-number">1.4.2.</span> <span class="nav-text">创建pod</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试-1"><span class="nav-number">1.4.3.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

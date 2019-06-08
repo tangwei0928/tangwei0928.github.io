@@ -104,7 +104,15 @@
 <meta property="og:image" content="https://i.loli.net/2019/05/16/5cdd660c49be954657.png">
 <meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin2.png">
 <meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin-cluster.png">
-<meta property="og:updated_time" content="2019-05-16T13:32:56.433Z">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-alert-email.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-email-alert.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-add-dingtalk-robot.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-alert-dingtalk-robot.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-graph-alert.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-graph-notify.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-email-alert2.png">
+<meta property="og:image" content="https://www.qikqiak.com/k8s-book/docs/images/grafana-dingtalk-alert2.png">
+<meta property="og:updated_time" content="2019-05-24T13:36:08.377Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="30.Grafana Install">
 <meta name="twitter:description" content="grafana 是一个可视化面板，有着非常漂亮的图表和布局展示，功能齐全的度量仪表盘和图形编辑器，支持 Graphite、zabbix、InfluxDB、Prometheus、OpenTSDB、Elasticsearch 等作为数据源，比 Prometheus 自带的图表展示功能强大太多，更加灵活，有丰富的插件，功能更加强大。 接下来我们就来直接安装，同样的，我们将 grafana 安装到 Kub">
@@ -504,6 +512,40 @@
 <p>配置完成后，可以直接点击<code>Deploy</code>(实际上前面的课程中我们都已经部署过相关的资源了)，然后点击<code>Save</code>，就可以获取到集群的监控资源信息了。</p>
 <p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin2.png" alt="grafana k8s plugins"></p>
 <p>可以看到上面展示了整个集群的状态，可以查看上面的一些 Dashboard: <img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-k8s-plugin-cluster.png" alt="grafana k8s cluster dashboard"></p>
+<h2 id="报警"><a href="#报警" class="headerlink" title="报警"></a>报警</h2><p>grafana 4 版本以上就支持了报警功能，这使得我们利用 grafana 作为监控面板更为完整，因为报警是监控系统中必不可少的环节，grafana 支持很多种形式的报警功能，比如 email、钉钉、slack、webhook 等等，我们这里来测试下 email 和 钉钉。</p>
+<h3 id="email-报警"><a href="#email-报警" class="headerlink" title="email 报警"></a>email 报警</h3><p>要启用 email 报警需要在启动配置文件中<code>/etc/grafana/grafan.ini</code>开启 SMTP 服务，我们这里同样利用一个 ConfigMap 资源对象挂载到 grafana Pod 中：（grafana-cm.yaml）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">grafana-config</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-ops</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="string">grafana.ini:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    [server]</span></span><br><span class="line"><span class="string">    root_url = http://&lt;你grafana的url地址&gt;</span></span><br><span class="line"><span class="string">    [smtp]</span></span><br><span class="line"><span class="string">    enabled = true</span></span><br><span class="line"><span class="string">    host = smtp.163.com:25</span></span><br><span class="line"><span class="string">    user = ych_1024@163.com</span></span><br><span class="line"><span class="string">    password = &lt;邮箱密码&gt;</span></span><br><span class="line"><span class="string">    skip_verify = true</span></span><br><span class="line"><span class="string">    from_address = ych_1024@163.com</span></span><br><span class="line"><span class="string">    [alerting]</span></span><br><span class="line"><span class="string">    enabled = true</span></span><br><span class="line"><span class="string">    execute_alerts = true</span></span><br></pre></td></tr></table></figure>
+<p>上面配置了我的 163 邮箱，开启报警功能，当然我们还得将这个 ConfigMap 文件挂载到 Pod 中去：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">  volumeMounts:</span></span><br><span class="line"><span class="attr">  - mountPath:</span> <span class="string">"/etc/grafana"</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">config</span></span><br><span class="line"><span class="attr">volumes:</span></span><br><span class="line"><span class="attr">- name:</span> <span class="string">config</span></span><br><span class="line"><span class="attr">  configMap:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">grafana-config</span></span><br></pre></td></tr></table></figure>
+<p>创建 ConfigMap 对象，更新 Deployment：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl create -f grafana-cm.yaml</span><br><span class="line"><span class="meta">$</span> kubectl apply -f grafana-deploy.yaml</span><br></pre></td></tr></table></figure>
+<p>更新完成后，在 grafana 的 webui 中<code>Alert</code>页面测试邮件报警：</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-alert-email.png" alt="grafana email alert">grafana email alert</p>
+<p>发送测试后，正常情况下就可以收到测试报警邮件：</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-email-alert.png" alt="grafana alert email">grafana alert email</p>
+<h3 id="钉钉报警"><a href="#钉钉报警" class="headerlink" title="钉钉报警"></a>钉钉报警</h3><p>上面我们也说了 grafana 也是支持钉钉报警的，在钉钉群里面添加群机器人，选择最后的自定义机器人：</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-add-dingtalk-robot.png" alt="grafana add dingtalk robot">grafana add dingtalk robot</p>
+<p>添加完成后可以得到一个 webhook 的地址，然后将这个 webhook 地址添加到上面 grafana webui 的报警测试页面进行测试，就可以在钉钉群里面收到报警测试信息了：</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-alert-dingtalk-robot.png" alt="grafana dingtalk alert">grafana dingtalk alert</p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>目前只有 Graph 支持报警功能，所以我们选择 Graph 相关图表，点击编辑，进入 Graph 编辑页面可以看到有一个 Alert 模块，切换过来创建报警：</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-graph-alert.png" alt="grafana graph alert">grafana graph alert</p>
+<p>然后配置相关参数：</p>
+<ul>
+<li>1、Alert 名称，可以自定义。</li>
+<li>2、执行的频率，这里我选择每60s检测一次。</li>
+<li>3、判断标准，默认是 avg，这里是下拉框，自己按需求选择。</li>
+<li>4、query（A,5m,now），字母A代表选择的metrics 中设置的 sql，也可以选择其它在 metrics中设置的，但这里是单选。<code>5m</code>代表从现在起往之前的五分钟，即<code>5m</code>之前的那个点为时间的起始点，<code>now</code>为时间的结束点，此外这里可以自己手动输入时间。</li>
+<li>5、设置的预警临界点，这里手动输入，和6是同样功能，6可以手动移动，两种操作是等同的。</li>
+</ul>
+<p>然后需要设置报警发送信息，点击侧边的<code>Notifications</code>:</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-graph-notify.png" alt="grafana graph notify">grafana graph notify</p>
+<p>其中<code>Send to</code>就是前面我们配置过的发送邮件和钉钉的报警频道的名称。</p>
+<p>配置完成后需要保存下这个 graph，否则发送报警可能会失败，然后点击 Alert 区域的<code>Test Rule</code>可以来测试报警规则，然后邮件和钉钉正常来说就可以收到报警信息了。</p>
+<p>邮件报警信息：</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-email-alert2.png" alt="grafana test rule email">grafana test rule email</p>
+<p>钉钉报警信息：</p>
+<p><img src="https://www.qikqiak.com/k8s-book/docs/images/grafana-dingtalk-alert2.png" alt="grafana test rule dingtalk">grafana test rule dingtalk</p>
+<p>到这里就完成了使用 grafana 来展示 Kubernetes 集群的监控图表信息以及报警配置，但是我们明显可以感觉到 grafana 的优势在于图表的展示，报警功能有点弱，所以一般来说，在生产环境我们不会直接使用 grafana 的报警功能，更多的是使用功能更加强大的 <code>AlertManager</code>，下节课我们再来和大家介绍了。</p>
 
       
     </div>
@@ -656,7 +698,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">31</span>
+                  <span class="site-state-item-count">34</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -667,7 +709,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-count">46</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -678,7 +720,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-count">46</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -741,7 +783,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据源"><span class="nav-number">1.</span> <span class="nav-text">数据源</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#插件"><span class="nav-number"></span> <span class="nav-text">插件</span></a></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据源"><span class="nav-number">1.</span> <span class="nav-text">数据源</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#插件"><span class="nav-number"></span> <span class="nav-text">插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#报警"><span class="nav-number"></span> <span class="nav-text">报警</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#email-报警"><span class="nav-number">1.</span> <span class="nav-text">email 报警</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#钉钉报警"><span class="nav-number">2.</span> <span class="nav-text">钉钉报警</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">3.</span> <span class="nav-text">配置</span></a></li></ol></li></div>
             
 
           </div>
