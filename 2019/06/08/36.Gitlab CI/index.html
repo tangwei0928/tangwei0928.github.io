@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="gitlab,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介从 Gitlab 8.0 开始，Gitlab CI 就已经集成在 Gitlab 中，我们只要在项目中添加一个.gitlab-ci.yml文件，然后添加一个Runner，即可进行持续集成。在介绍 Gitlab CI 之前，我们先看看一些 Gitlab CI 的一些相关概念。 Pipeline一次 Pipeline 其实相当于一次构建任务，里面可以包含很多个流程，如安装依赖、运行测试、编译、部署测">
+<meta name="keywords" content="gitlab">
+<meta property="og:type" content="article">
+<meta property="og:title" content="36.Gitlab CI">
+<meta property="og:url" content="http://yoursite.com/2019/06/08/36.Gitlab CI/index.html">
+<meta property="og:site_name" content="Kubernetes">
+<meta property="og:description" content="简介从 Gitlab 8.0 开始，Gitlab CI 就已经集成在 Gitlab 中，我们只要在项目中添加一个.gitlab-ci.yml文件，然后添加一个Runner，即可进行持续集成。在介绍 Gitlab CI 之前，我们先看看一些 Gitlab CI 的一些相关概念。 Pipeline一次 Pipeline 其实相当于一次构建任务，里面可以包含很多个流程，如安装依赖、运行测试、编译、部署测">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/zQbFp1.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/QgxSq3.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/iN2HFV.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/iveZ6o.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/ErhBLn.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/wwr2FR.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/D54xTd.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/kXE6e7.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/pArnyz.jpg">
+<meta property="og:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/Q2yPG9.jpg">
+<meta property="og:updated_time" content="2019-06-09T08:39:18.547Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="36.Gitlab CI">
+<meta name="twitter:description" content="简介从 Gitlab 8.0 开始，Gitlab CI 就已经集成在 Gitlab 中，我们只要在项目中添加一个.gitlab-ci.yml文件，然后添加一个Runner，即可进行持续集成。在介绍 Gitlab CI 之前，我们先看看一些 Gitlab CI 的一些相关概念。 Pipeline一次 Pipeline 其实相当于一次构建任务，里面可以包含很多个流程，如安装依赖、运行测试、编译、部署测">
+<meta name="twitter:image" content="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/zQbFp1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/06/08/36.Gitlab CI/">
+
+
+
+
+
+  <title>36.Gitlab CI | Kubernetes</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Kubernetes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/08/36.Gitlab CI/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="TangWei">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/me.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Kubernetes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">36.Gitlab CI</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-08T14:00:41+08:00">
+                2019-06-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/gitlab/" itemprop="url" rel="index">
+                    <span itemprop="name">gitlab</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>从 Gitlab 8.0 开始，Gitlab CI 就已经集成在 Gitlab 中，我们只要在项目中添加一个<code>.gitlab-ci.yml</code>文件，然后添加一个<code>Runner</code>，即可进行持续集成。在介绍 Gitlab CI 之前，我们先看看一些 Gitlab CI 的一些相关概念。</p>
+<h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p>一次 Pipeline 其实相当于一次构建任务，里面可以包含很多个流程，如安装依赖、运行测试、编译、部署测试服务器、部署生产服务器等流程。任何提交或者 Merge Request 的合并都可以触发 Pipeline 构建，如下图所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+------------------+           +----------------+</span><br><span class="line">|                  |  trigger  |                |</span><br><span class="line">|   Commit / MR    +----------&gt;+    Pipeline    |</span><br><span class="line">|                  |           |                |</span><br><span class="line">+------------------+           +----------------+</span><br></pre></td></tr></table></figure>
+<h3 id="Stages"><a href="#Stages" class="headerlink" title="Stages"></a>Stages</h3><p>Stages 表示一个构建阶段，也就是上面提到的一个流程。我们可以在一次 Pipeline 中定义多个 Stages，这些 Stages 会有以下特点：</p>
+<ul>
+<li>所有 Stages 会按照顺序运行，即当一个 Stage 完成后，下一个 Stage 才会开始</li>
+<li>只有当所有 Stages 完成后，该构建任务 (Pipeline) 才会成功</li>
+<li>如果任何一个 Stage 失败，那么后面的 Stages 不会执行，该构建任务 (Pipeline) 失败</li>
+</ul>
+<p>Stages 和 Pipeline 的关系如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">|                                                        |</span><br><span class="line">|  Pipeline                                              |</span><br><span class="line">|                                                        |</span><br><span class="line">|  +-----------+     +------------+      +------------+  |</span><br><span class="line">|  |  Stage 1  |----&gt;|   Stage 2  |-----&gt;|   Stage 3  |  |</span><br><span class="line">|  +-----------+     +------------+      +------------+  |</span><br><span class="line">|                                                        |</span><br><span class="line">+--------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<h3 id="Jobs"><a href="#Jobs" class="headerlink" title="Jobs"></a>Jobs</h3><p>Jobs 表示构建工作，表示某个 Stage 里面执行的工作。我们可以在 Stages 里面定义多个 Jobs，这些 Jobs 会有以下特点：</p>
+<ul>
+<li>相同 Stage 中的 Jobs 会并行执行</li>
+<li>相同 Stage 中的 Jobs 都执行成功时，该 Stage 才会成功</li>
+<li>如果任何一个 Job 失败，那么该 Stage 失败，即该构建任务 (Pipeline) 失败</li>
+</ul>
+<p>Jobs 和 Stage 的关系如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">|                                          |</span><br><span class="line">|  Stage 1                                 |</span><br><span class="line">|                                          |</span><br><span class="line">|  +---------+  +---------+  +---------+   |</span><br><span class="line">|  |  Job 1  |  |  Job 2  |  |  Job 3  |   |</span><br><span class="line">|  +---------+  +---------+  +---------+   |</span><br><span class="line">|                                          |</span><br><span class="line">+------------------------------------------+</span><br></pre></td></tr></table></figure>
+<h2 id="Gitlab-Runner"><a href="#Gitlab-Runner" class="headerlink" title="Gitlab Runner"></a>Gitlab Runner</h2><p>如果理解了上面的基本概念之后，可能我们就会发现一个问题，我们的构建任务在什么地方来执行呢，以前用 Jenkins 在 Master 和 Slave 节点都可以用来运行构建任务，而来执行我们的 Gitlab CI 构建任务的就是 Gitlab Runner。</p>
+<p>我们知道大多数情况下构建任务都是会占用大量的系统资源的，如果直接让 Gitlab 本身来运行构建任务的话，显然 Gitlab 的性能会大幅度下降的。GitLab CI 最大的作用是管理各个项目的构建状态，因此，运行构建任务这种浪费资源的事情交给一个独立的 Gitlab Runner 来做就会好很多，更重要的是 Gitlab Runner 可以安装到不同的机器上，甚至是我们本机，这样完全就不会影响到 Gitlab 本身了。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>安装 Gitlab Runner 非常简单，我们可以完全安装官方文档：<a href="https://docs.gitlab.com/runner/install/" target="_blank" rel="noopener">https://docs.gitlab.com/runner/install/</a>即可，比如可以直接使用二进制、Docker 等来安装。同样的，我们这里还是将 Gitlab Runner 安装到 Kubernetes 集群中来，让我们的集群来统一管理 Gitlab 相关的服务。</p>
+<p>1.验证 Kubernetes 集群</p>
+<p>执行下面的命令验证 Kubernetes 集群：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl cluster-info</span><br><span class="line">Kubernetes master is running at https://10.151.30.11:6443</span><br><span class="line">KubeDNS is running at https://10.151.30.11:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</span><br><span class="line"></span><br><span class="line">To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.</span><br></pre></td></tr></table></figure>
+<p><code>cluster-info</code>这个命令会显示当前链接的集群状态和可用的集群服务列表。</p>
+<p>2.获取 Gitlab CI Register Token</p>
+<p>前面的章节中我们已经成功安装了 Gitlab，在浏览器中打开<code>gitlab.tk8s.com:23456</code>页面，然后登录后进入到管理页面<code>http://gitlab.tk8s.com:23456/admin</code>，然后点击导航栏中的<code>Runner</code>，可以看到该页面中有两个总要的参数，一个是 URL，另外一个就是 Register Token，下面的步骤中需要用到这两个参数值。</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/zQbFp1.jpg" alt="gitlab runner">gitlab runner</p>
+<blockquote>
+<p>注意：不要随便泄露 Token</p>
+</blockquote>
+<p>3.编写 Gitlab CI Runner 资源清单文件</p>
+<p>同样我们将 Runner 相关的资源对象都安装到<code>kube-ops</code>这个 namespace 下面，首先，我们通过 ConfigMap 资源来传递 Runner 镜像所需的环境变量（runner-cm.yaml）:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line"><span class="attr">  REGISTER_NON_INTERACTIVE:</span> <span class="string">"true"</span></span><br><span class="line"><span class="attr">  REGISTER_LOCKED:</span> <span class="string">"false"</span></span><br><span class="line"><span class="attr">  METRICS_SERVER:</span> <span class="string">"0.0.0.0:9100"</span></span><br><span class="line"><span class="attr">  CI_SERVER_URL:</span> <span class="string">"http://gitlab/ci"</span></span><br><span class="line"><span class="attr">  RUNNER_REQUEST_CONCURRENCY:</span> <span class="string">"4"</span></span><br><span class="line"><span class="attr">  RUNNER_EXECUTOR:</span> <span class="string">"kubernetes"</span></span><br><span class="line"><span class="attr">  KUBERNETES_NAMESPACE:</span> <span class="string">"kube-ops"</span></span><br><span class="line"><span class="attr">  KUBERNETES_PRIVILEGED:</span> <span class="string">"true"</span></span><br><span class="line"><span class="attr">  KUBERNETES_CPU_LIMIT:</span> <span class="string">"1"</span></span><br><span class="line"><span class="attr">  KUBERNETES_CPU_REQUEST:</span> <span class="string">"500m"</span></span><br><span class="line"><span class="attr">  KUBERNETES_MEMORY_LIMIT:</span> <span class="string">"1Gi"</span></span><br><span class="line"><span class="attr">  KUBERNETES_SERVICE_CPU_LIMIT:</span> <span class="string">"1"</span></span><br><span class="line"><span class="attr">  KUBERNETES_SERVICE_MEMORY_LIMIT:</span> <span class="string">"1Gi"</span></span><br><span class="line"><span class="attr">  KUBERNETES_HELPER_CPU_LIMIT:</span> <span class="string">"500m"</span></span><br><span class="line"><span class="attr">  KUBERNETES_HELPER_MEMORY_LIMIT:</span> <span class="string">"100Mi"</span></span><br><span class="line"><span class="attr">  KUBERNETES_PULL_POLICY:</span> <span class="string">"if-not-present"</span></span><br><span class="line"><span class="attr">  KUBERNETES_TERMINATIONGRACEPERIODSECONDS:</span> <span class="string">"10"</span></span><br><span class="line"><span class="attr">  KUBERNETES_POLL_INTERVAL:</span> <span class="string">"5"</span></span><br><span class="line"><span class="attr">  KUBERNETES_POLL_TIMEOUT:</span> <span class="string">"360"</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">gitlab-ci-runner</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-ci-runner-cm</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-ops</span></span><br></pre></td></tr></table></figure>
+<p>要注意<code>CI_SERVER_URL</code>对应的值需要指向我们的 Gitlab 实例的 URL，并加上<code>/ci</code>（ <a href="http://git.qikqiak.com/ci" target="_blank" rel="noopener">http://git.qikqiak.com/ci</a> ）。此外还添加了一些构建容器运行的资源限制，我们可以自己根据需要进行更改即可。</p>
+<blockquote>
+<p>注意：在向 ConfigMap 添加新选项后，需要删除 GitLab CI Runner Pod。因为我们是使用 <code>envFrom</code>来注入上面的这些环境变量而不是直接使用<code>env</code>的（envFrom 通过将环境变量放置到<code>ConfigMaps</code>或<code>Secrets</code>来帮助减小清单文件。</p>
+</blockquote>
+<p>另外如果要添加其他选项的话，我们可以在 Pod 中运行<code>gitlab-ci-multi-runner register --help</code>命令来查看所有可使用的选项，只需为要配置的标志添加 env 变量即可，如下所示：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">gitlab-runner@gitlab-ci-runner-0:/$ gitlab-ci-multi-runner register --help</span><br><span class="line">[...]</span><br><span class="line">--kubernetes-cpu-limit value                          The CPU allocation given to build containers (default: "1") [$KUBERNETES_CPU_LIMIT]</span><br><span class="line">--kubernetes-memory-limit value                       The amount of memory allocated to build containers (default: "4Gi") [$KUBERNETES_MEMORY_LIMIT]</span><br><span class="line">--kubernetes-service-cpu-limit value                  The CPU allocation given to build service containers (default: "1") [$KUBERNETES_SERVICE_CPU_LIMIT]</span><br><span class="line">--kubernetes-service-memory-limit value               The amount of memory allocated to build service containers (default: "1Gi") [$KUBERNETES_SERVICE_MEMORY_LIMIT]</span><br><span class="line">--kubernetes-helper-cpu-limit value                   The CPU allocation given to build helper containers (default: "500m") [$KUBERNETES_HELPER_CPU_LIMIT]</span><br><span class="line">--kubernetes-helper-memory-limit value                The amount of memory allocated to build helper containers (default: "3Gi") [$KUBERNETES_HELPER_MEMORY_LIMIT]</span><br><span class="line">--kubernetes-cpu-request value                        The CPU allocation requested for build containers [$KUBERNETES_CPU_REQUEST]</span><br><span class="line">...</span><br><span class="line">--pre-clone-script value                              Runner-specific command script executed before code is pulled [$RUNNER_PRE_CLONE_SCRIPT]</span><br><span class="line">[...]</span><br></pre></td></tr></table></figure>
+<p>如果定义的 Gitlab 域名并不是通过外网的 DNS 进行解析的，而是通过 /etc/hosts 俩进行映射的，那么我们就需要在 runner 的 Pod 中去添加 gitlab.tk8s.com 对应的 hosts 了，那么如何添加呢？我们可以想到的是 Pod 的 hostAlias 可以实现这个需求，但是 runner 的 Pod 是自动生成的，没办法直接去定义 hostAlias。这里我们就可以通过上面的<code>--pre-clone-script</code>参数来指定一段脚本来添加 hosts 信息，也就是在上面的 ConfigMap 中添加环境变量<code>RUNNER_PRE_CLONE_SCRIPT</code>的值即可：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">RUNNER_PRE_CLONE_SCRIPT</span> <span class="string">=</span> <span class="string">"echo 'xx.xx.xxx.xx gitlab.tk8s.com' &gt;&gt; /etc/hosts"</span></span><br></pre></td></tr></table></figure>
+<p>除了上面的一些环境变量相关的配置外，还需要一个用于注册、运行和取消注册 Gitlab CI Runner 的小脚本。只有当 Pod 正常通过 Kubernetes（TERM信号）终止时，才会触发转轮取消注册。 如果强制终止 Pod（SIGKILL信号），Runner 将不会注销自身。必须手动完成对这种<strong>被杀死的</strong> Runner 的清理，配置清单文件如下：（runner-scripts-cm.yaml）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="string">run.sh:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    #!/bin/bash</span></span><br><span class="line"><span class="string">    unregister() &#123;</span></span><br><span class="line"><span class="string">        kill %1</span></span><br><span class="line"><span class="string">        echo "Unregistering runner $&#123;RUNNER_NAME&#125; ..."</span></span><br><span class="line"><span class="string">        /usr/bin/gitlab-ci-multi-runner unregister -t "$(/usr/bin/gitlab-ci-multi-runner list 2&gt;&amp;1 | tail -n1 | awk '&#123;print $4&#125;' | cut -d'=' -f2)" -n $&#123;RUNNER_NAME&#125;</span></span><br><span class="line"><span class="string">        exit $?</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    trap 'unregister' EXIT HUP INT QUIT PIPE TERM</span></span><br><span class="line"><span class="string">    echo "Registering runner $&#123;RUNNER_NAME&#125; ..."</span></span><br><span class="line"><span class="string">    /usr/bin/gitlab-ci-multi-runner register -r $&#123;GITLAB_CI_TOKEN&#125;</span></span><br><span class="line"><span class="string">    sed -i 's/^concurrent.*/concurrent = '"$&#123;RUNNER_REQUEST_CONCURRENCY&#125;"'/' /home/gitlab-runner/.gitlab-runner/config.toml</span></span><br><span class="line"><span class="string">    echo "Starting runner $&#123;RUNNER_NAME&#125; ..."</span></span><br><span class="line"><span class="string">    /usr/bin/gitlab-ci-multi-runner run -n $&#123;RUNNER_NAME&#125; &amp;</span></span><br><span class="line"><span class="string">    wait</span></span><br><span class="line"><span class="string"></span><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">gitlab-ci-runner</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-ci-runner-scripts</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-ops</span></span><br></pre></td></tr></table></figure>
+<p>我们可以看到需要一个 GITLAB_CI_TOKEN，然后我们用 Gitlab CI runner token 来创建一个 Kubernetes secret 对象。将 token 进行 base64 编码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> echo rcVZF-mdHt9qCyyrCDgS | base64 -w0</span><br><span class="line">cmNWWkYtbWRIdDlxQ3l5ckNEZ1MK</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>base64 命令在大部分 Linux 发行版中都是可用的。</p>
+</blockquote>
+<p>然后使用上面的 token 创建一个 Secret 对象：(gitlab-ci-token-secret.yaml)</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Secret</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-ci-token</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-ops</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">gitlab-ci-runner</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line"><span class="attr">  GITLAB_CI_TOKEN:</span> <span class="string">cmNWWkYtbWRIdDlxQ3l5ckNEZ1MK</span></span><br></pre></td></tr></table></figure>
+<p>然后接下来我们就可以来编写一个用于真正运行 Runner 的控制器对象，我们这里使用 Statefulset。首先，在开始运行的时候，尝试取消注册所有的同名 Runner，当节点丢失时（即<code>NodeLost</code>事件），这尤其有用。然后再尝试重新注册自己并开始运行。在正常停止 Pod 的时候，Runner 将会运行<code>unregister</code>命令来尝试取消自己，所以 Gitlab 就不能再使用这个 Runner 了，这个是通过 Kubernetes Pod 生命周期中的<code>hooks</code>来完成的。</p>
+<p>另外我们通过使用<code>envFrom</code>来指定<code>Secrets</code>和<code>ConfigMaps</code>来用作环境变量，对应的资源清单文件如下：(runner-statefulset.yaml)</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StatefulSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-ci-runner</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-ops</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">gitlab-ci-runner</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  updateStrategy:</span></span><br><span class="line"><span class="attr">    type:</span> <span class="string">RollingUpdate</span></span><br><span class="line"><span class="attr">  replicas:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">  serviceName:</span> <span class="string">gitlab-ci-runner</span></span><br><span class="line"><span class="attr">  template:</span></span><br><span class="line"><span class="attr">    metadata:</span></span><br><span class="line"><span class="attr">      labels:</span></span><br><span class="line"><span class="attr">        app:</span> <span class="string">gitlab-ci-runner</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      volumes:</span></span><br><span class="line"><span class="attr">      - name:</span> <span class="string">gitlab-ci-runner-scripts</span></span><br><span class="line"><span class="attr">        projected:</span></span><br><span class="line"><span class="attr">          sources:</span></span><br><span class="line"><span class="attr">          - configMap:</span></span><br><span class="line"><span class="attr">              name:</span> <span class="string">gitlab-ci-runner-scripts</span></span><br><span class="line"><span class="attr">              items:</span></span><br><span class="line"><span class="attr">              - key:</span> <span class="string">run.sh</span></span><br><span class="line"><span class="attr">                path:</span> <span class="string">run.sh</span></span><br><span class="line"><span class="attr">                mode:</span> <span class="number">0755</span></span><br><span class="line"><span class="attr">      serviceAccountName:</span> <span class="string">gitlab-ci</span></span><br><span class="line"><span class="attr">      securityContext:</span></span><br><span class="line"><span class="attr">        runAsNonRoot:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">        runAsUser:</span> <span class="number">999</span></span><br><span class="line"><span class="attr">        supplementalGroups:</span> <span class="string">[999]</span></span><br><span class="line"><span class="attr">      containers:</span></span><br><span class="line"><span class="attr">      - image:</span> <span class="string">gitlab/gitlab-runner:latest</span></span><br><span class="line"><span class="attr">        name:</span> <span class="string">gitlab-ci-runner</span></span><br><span class="line"><span class="attr">        command:</span></span><br><span class="line"><span class="bullet">        -</span> <span class="string">/scripts/run.sh</span></span><br><span class="line"><span class="attr">        envFrom:</span></span><br><span class="line"><span class="attr">        - configMapRef:</span></span><br><span class="line"><span class="attr">            name:</span> <span class="string">gitlab-ci-runner-cm</span></span><br><span class="line"><span class="attr">        - secretRef:</span></span><br><span class="line"><span class="attr">            name:</span> <span class="string">gitlab-ci-token</span></span><br><span class="line"><span class="attr">        env:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">RUNNER_NAME</span></span><br><span class="line"><span class="attr">          valueFrom:</span></span><br><span class="line"><span class="attr">            fieldRef:</span></span><br><span class="line"><span class="attr">              fieldPath:</span> <span class="string">metadata.name</span></span><br><span class="line"><span class="attr">        ports:</span></span><br><span class="line"><span class="attr">        - containerPort:</span> <span class="number">9100</span></span><br><span class="line"><span class="attr">          name:</span> <span class="string">http-metrics</span></span><br><span class="line"><span class="attr">          protocol:</span> <span class="string">TCP</span></span><br><span class="line"><span class="attr">        volumeMounts:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">gitlab-ci-runner-scripts</span></span><br><span class="line"><span class="attr">          mountPath:</span> <span class="string">"/scripts"</span></span><br><span class="line"><span class="attr">          readOnly:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">      restartPolicy:</span> <span class="string">Always</span></span><br></pre></td></tr></table></figure>
+<p>可以看到上面我们使用了一个名为 gitlab-ci 的 serviceAccount，新建一个 rbac 资源清单文件：(runner-rbac.yaml)</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-ci</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-ops</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Role</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-ci</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-ops</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="attr">  - apiGroups:</span> <span class="string">[""]</span></span><br><span class="line"><span class="attr">    resources:</span> <span class="string">["*"]</span></span><br><span class="line"><span class="attr">    verbs:</span> <span class="string">["*"]</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">RoleBinding</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-ci</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">kube-ops</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="attr">  - kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">gitlab-ci</span></span><br><span class="line"><span class="attr">    namespace:</span> <span class="string">kube-ops</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line"><span class="attr">  kind:</span> <span class="string">Role</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-ci</span></span><br><span class="line"><span class="attr">  apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br></pre></td></tr></table></figure>
+<p>4.创建 Runner 资源对象</p>
+<p>资源清单文件准备好后，我们直接创建上面的资源对象：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> ls</span><br><span class="line">gitlab-ci-token-secret.yaml  runner-cm.yaml  runner-rbac.yaml  runner-scripts-cm.yaml  runner-statefulset.yaml</span><br><span class="line"><span class="meta">$</span> kubectl create -f .</span><br><span class="line">secret "gitlab-ci-token" created</span><br><span class="line">configmap "gitlab-ci-runner-cm" created</span><br><span class="line">serviceaccount "gitlab-ci" created</span><br><span class="line">role.rbac.authorization.k8s.io "gitlab-ci" created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io "gitlab-ci" created</span><br><span class="line">configmap "gitlab-ci-runner-scripts" created</span><br><span class="line">statefulset.apps "gitlab-ci-runner" created</span><br></pre></td></tr></table></figure>
+<p>创建完成后，可以通过查看 Pod 状态判断 Runner 是否运行成功：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl get pods -n kube-ops</span><br><span class="line">NAME                                           READY     STATUS    RESTARTS   AGE</span><br><span class="line">gitlab-7bff969fbc-k5zl4                        1/1       Running   0          4d</span><br><span class="line">gitlab-ci-runner-0                             1/1       Running   0          3m</span><br><span class="line">gitlab-ci-runner-1                             1/1       Running   0          3m</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>可以看到已经成功运行了两个（具体取决于<code>StatefulSet</code>清单中的副本数) Runner 实例，然后切换到 Gitlab Admin 页面下面的 Runner 页面：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/QgxSq3.jpg" alt="gitlab runner list">gitlab runner list</p>
+<p>当然我们也可以根据需要更改 Runner 的一些配置，比如添加 tag 标签等。</p>
+<h2 id="Gitlab-CI"><a href="#Gitlab-CI" class="headerlink" title="Gitlab CI"></a>Gitlab CI</h2><h3 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h3><p>接下来使用 Gitlab CI 所用到的代码库可以从 Github 上获得：<a href="https://github.com/cnych/presentation-gitlab-k8s" target="_blank" rel="noopener">cnych/presentation-gitlab-k8s</a>，可以在 Gitlab 上新建一个项目导入该仓库，当然也可以新建一个空白的仓库，然后将 Github 上面的项目 Clone 到本地后，更改远程仓库地址即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> git clone https://github.com/cnych/presentation-gitlab-k8s.git</span><br><span class="line"><span class="meta">$</span> cd presentation-gitlab-k8s</span><br><span class="line"><span class="meta">#</span> Change the remote of the repository</span><br><span class="line"><span class="meta">$</span> git remote set-url origin ssh://git@gitlab.tk8s.com:30022/root/presentation-gitlab-k8s.git</span><br><span class="line"><span class="meta">#</span> Now to push/"import" the repository run:</span><br><span class="line"><span class="meta">$</span> git push -u origin master</span><br></pre></td></tr></table></figure>
+<p>当我们把仓库推送到 Gitlab 以后，应该可以看到 Gitlab CI 开始执行构建任务了: <img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/iN2HFV.jpg" alt="gitlab ci"></p>
+<p>此时 Runner Pod 所在的 namespace 下面也会出现两个新的 Pod：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl get pods -n kube-ops</span><br><span class="line">NAME                                           READY     STATUS              RESTARTS   AGE</span><br><span class="line">gitlab-7bff969fbc-k5zl4                        1/1       Running             0          4d</span><br><span class="line">gitlab-ci-runner-0                             1/1       Running             0          4m</span><br><span class="line">gitlab-ci-runner-1                             1/1       Running             0          4m</span><br><span class="line">runner-9rixsyft-project-2-concurrent-06g5w4    0/2       ContainerCreating   0          4m</span><br><span class="line">runner-9rixsyft-project-2-concurrent-1t74t9    0/2       ContainerCreating   0          4m</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>这两个新的 Pod 就是用来执行具体的 Job 任务的，这里同时出现两个证明第一步是并行执行的两个任务，从上面的 Pipeline 中也可以看到是 test 和 test2 这两个 Job。我们可以看到在执行 image_build 任务的时候出现了错误：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/iveZ6o.jpg" alt="pipeline">pipeline</p>
+<p>我们可以点击查看这个 Job 失败详细信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> docker login -u "$&#123;CI_REGISTRY_USER&#125;" -p "$&#123;CI_REGISTRY_PASSWORD&#125;" "$&#123;CI_REGISTRY&#125;"</span><br><span class="line">WARNING! Using --password via the CLI is insecure. Use --password-stdin.</span><br><span class="line">Error response from daemon: Get https://registry-1.docker.io/v2/: unauthorized: incorrect username or password</span><br><span class="line">ERROR: Job failed: command terminated with exit code 1</span><br></pre></td></tr></table></figure>
+<p>出现上面的错误是因为我们并没有在 Gitlab 中开启 Container Registry，所以环境变量中并没有这些值，还记得前面章节中我们安装的 Harbor 吗？我们这里使用 Harbor 来作为我们的镜像仓库，这里我们只需要把 Harbor 相关的配置以参数的形式配置到环境中就可以了。</p>
+<p>定位到项目 -&gt; 设置 -&gt; CI/CD，展开<code>Environment variables</code>栏目，配置镜像仓库相关的参数值：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/ErhBLn.jpg" alt="gitlab ci env">gitlab ci env</p>
+<p>配置上后，我们在上面失败的 Job 任务上点击“重试”，在重试过后依然可以看到会出现下面的错误信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> docker login -u "$&#123;CI_REGISTRY_USER&#125;" -p "$&#123;CI_REGISTRY_PASSWORD&#125;" "$&#123;CI_REGISTRY&#125;"</span><br><span class="line">WARNING! Using --password via the CLI is insecure. Use --password-stdin.</span><br><span class="line">Error response from daemon: Get https://registry.qikqiak.com/v2/: x509: certificate signed by unknown authority</span><br><span class="line">ERROR: Job failed: command terminated with exit code 1</span><br></pre></td></tr></table></figure>
+<p>从错误信息可以看出这是因为登录私有镜像仓库的时候证书验证错误，因为我们根本就没有提供任何证书，所以肯定会失败的，还记得我们之前在介绍 Harbor 的时候的解决方法吗？第一种是在 Docker 的启动参数中添加上<code>insecure-registries</code>，另外一种是在目录<code>/etc/docker/certs.d/</code>下面添加上私有仓库的 CA 证书，同样，我们只需要在 dind 中添加 insecure 的参数即可：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line"><span class="attr">- name:</span> <span class="attr">docker:dind</span></span><br><span class="line"><span class="attr">  command:</span> <span class="string">["--insecure-registry=registry.qikqiak.com"]</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>其中<code>registry.qikqiak.com</code>就是我们之前配置的私有镜像仓库地址。</p>
+</blockquote>
+<p>然后保存<code>.gitlab-ci.yml</code>文件，重新提交到代码仓库，可以看到又触发了正常的流水线构建了，在最后的阶段<code>deploy_review</code>仍然可以看到失败了，这是因为在最后的部署阶段我们使用<code>kubectl</code>工具操作集群的时候并没有关联上任何集群。</p>
+<p>我们在 Gitlab CI 中部署阶段使用到的镜像是<code>cnych/kubectl</code>，该镜像的<code>Dockerfile</code>文件可以在仓库<code>https://github.com/cnych/docker-kubectl</code>中获取：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">FROM</span> <span class="attr">alpine:3.8</span></span><br><span class="line"></span><br><span class="line"><span class="string">MAINTAINER</span> <span class="string">cnych</span> <span class="string">&lt;icnych@gmail.com&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="string">ENV</span> <span class="string">KUBE_LATEST_VERSION="v1.13.4"</span></span><br><span class="line"></span><br><span class="line"><span class="string">RUN</span> <span class="string">apk</span> <span class="string">add</span> <span class="bullet">--update</span> <span class="string">ca-certificates</span> <span class="string">\</span></span><br><span class="line"> <span class="string">&amp;&amp;</span> <span class="string">apk</span> <span class="string">add</span> <span class="bullet">--update</span> <span class="bullet">-t</span> <span class="string">deps</span> <span class="string">curl</span> <span class="string">\</span></span><br><span class="line"> <span class="string">&amp;&amp;</span> <span class="string">apk</span> <span class="string">add</span> <span class="bullet">--update</span> <span class="string">gettext</span> <span class="string">\</span></span><br><span class="line"> <span class="string">&amp;&amp;</span> <span class="string">apk</span> <span class="string">add</span> <span class="bullet">--update</span> <span class="string">git</span> <span class="string">\</span></span><br><span class="line"> <span class="string">&amp;&amp;</span> <span class="string">curl</span> <span class="bullet">-L</span> <span class="attr">https://storage.googleapis.com/kubernetes-release/release/$&#123;KUBE_LATEST_VERSION&#125;/bin/linux/amd64/kubectl</span> <span class="bullet">-o</span> <span class="string">/usr/local/bin/kubectl</span> <span class="string">\</span></span><br><span class="line"> <span class="string">&amp;&amp;</span> <span class="string">chmod</span> <span class="string">+x</span> <span class="string">/usr/local/bin/kubectl</span> <span class="string">\</span></span><br><span class="line"> <span class="string">&amp;&amp;</span> <span class="string">apk</span> <span class="string">del</span> <span class="bullet">--purge</span> <span class="string">deps</span> <span class="string">\</span></span><br><span class="line"> <span class="string">&amp;&amp;</span> <span class="string">rm</span> <span class="string">/var/cache/apk/*</span></span><br><span class="line"></span><br><span class="line"> <span class="string">ENTRYPOINT</span> <span class="string">["kubectl"]</span></span><br><span class="line"> <span class="string">CMD</span> <span class="string">["--help"]</span></span><br></pre></td></tr></table></figure>
+<p>我们知道<code>kubectl</code>在使用的时候默认会读取当前用户目录下面的<code>~/.kube/config</code>文件来链接集群，当然我们可以把连接集群的信息直接内置到上面的这个镜像中去，这样就可以直接操作集群了，但是也有一个不好的地方就是不方便操作，假如要切换一个集群还得重新制作一个镜像。所以一般我们这里直接在 Gitlab 上配置集成 Kubernetes 集群。</p>
+<p>在项目页面点击<code>Add Kubernetes Cluster</code> -&gt; <code>Add existing cluster</code>：</p>
+<p>1.Kubernetes cluster name 可以随便填</p>
+<p>2.API URL 是你的集群的<code>apiserver</code>的地址， 一般可以通过输入<code>kubectl cluster-info</code>获取，Kubernetes master 地址就是需要的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl cluster-info</span><br><span class="line">Kubernetes master is running at https://10.151.30.11:6443</span><br><span class="line">KubeDNS is running at https://10.151.30.11:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy</span><br><span class="line"></span><br><span class="line">To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.</span><br></pre></td></tr></table></figure>
+<p>3.CA证书、Token、项目命名空间</p>
+<p>对于我们这个项目准备部署在一个名为<code>gitlab</code>的 namespace 下面，所以首先我们需要到目标集群中创建一个 namespace:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl create ns gitlab</span><br></pre></td></tr></table></figure>
+<p>由于我们在部署阶段需要去创建、删除一些资源对象，所以我们也需要对象的 RBAC 权限，这里为了简单，我们直接新建一个 ServiceAccount，绑定上一个<code>cluster-admin</code>的权限：(gitlab-sa.yaml)</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">gitlab</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">gitlab</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="attr">  - kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">gitlab</span></span><br><span class="line"><span class="attr">    namespace:</span> <span class="string">gitlab</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line"><span class="attr">  kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">cluster-admin</span></span><br></pre></td></tr></table></figure>
+<p>然后创建上面的 ServiceAccount 对象：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl apply -f sa.yaml</span><br><span class="line">serviceaccount "gitlab" created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io "gitlab" created</span><br></pre></td></tr></table></figure>
+<p>可以通过上面创建的 ServiceAccount 获取 CA 证书和 Token：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl get serviceaccount gitlab -n gitlab -o json | jq -r '.secrets[0].name'</span><br><span class="line">gitlab-token-f9zp7</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 然后根据上面的Secret找到CA证书</span><br><span class="line"><span class="meta">$</span> kubectl get secret gitlab-token-f9zp7 -n gitlab -o json | jq -r '.data["ca.crt"]' | base64 -d</span><br><span class="line">xxxxxCA证书内容xxxxx</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 当然要找到对应的 Token 也很简单</span><br><span class="line"><span class="meta">$</span> kubectl get secret gitlab-token-f9zp7  -n gitlab -o json | jq -r '.data.token' | base64 -d</span><br><span class="line">xxxxxxtoken值xxxx</span><br></pre></td></tr></table></figure>
+<p>填写上面对应的值添加集群：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/wwr2FR.jpg" alt="add k8s cluster">add k8s cluster</p>
+<h3 id="gitlab-ci-yml"><a href="#gitlab-ci-yml" class="headerlink" title=".gitlab-ci.yml"></a>.gitlab-ci.yml</h3><p>现在 Gitlab CI 的环境都准备好了，我们可以来看下用于描述 Gitlab CI 的<code>.gitlab-ci.yml</code>文件。</p>
+<p>一个 Job 在<code>.gitlab-ci.yml</code>文件中一般如下定义：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 运行golang测试用例</span></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">go</span> <span class="string">test</span> <span class="string">./...</span></span><br></pre></td></tr></table></figure>
+<p>上面这个 Job 会在 test 这个 Stage 阶段运行。</p>
+<p>为了指定运行的 Stage 阶段，可以在<code>.gitlab-ci.yml</code>文件中放置任意一个简单的列表：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 所有 Stage</span></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">test</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">build</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">release</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">deploy</span></span><br></pre></td></tr></table></figure>
+<p>你可以指定用于在全局或者每个作业上执行命令的镜像：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 对于未指定镜像的作业，会使用下面的镜像</span></span><br><span class="line"><span class="attr">image:</span> <span class="attr">golang:1.10.3-stretch</span></span><br><span class="line"><span class="comment"># 或者对于特定的job使用指定的镜像</span></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">  image:</span> <span class="attr">python:3</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">echo</span> <span class="string">Something</span> <span class="string">in</span> <span class="string">the</span> <span class="string">test</span> <span class="string">step</span> <span class="string">in</span> <span class="string">a</span> <span class="attr">python:3</span> <span class="string">image</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>对于<code>.gitlab-ci.yml</code>文件的的其他部分，请查看如下文档介绍：<a href="https://www.qikqiak.com/k8s-book/docs/https：/docs.gitlab.com/ce/ci/yaml/README.html" target="_blank" rel="noopener">https：//docs.gitlab.com/ce/ci/yaml/README.html</a>。</p>
+</blockquote>
+<p>在我们当前的项目中定义了 4 个构建阶段：test、build、release、review、deploy，完整的<code>.gitlab-ci.yml</code>文件如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">image:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="attr">golang:1.10.3-stretch</span></span><br><span class="line"><span class="attr">  entrypoint:</span> <span class="string">["/bin/sh",</span> <span class="string">"-c"</span><span class="string">]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 为了能够使用go get，需要将代码放在 $GOPATH 中，比如你的 gitlab 域名是 mydomain.com，你的代码仓库是 repos/projectname，默认的 GOPATH 是 /go，然后你就需要将你的代码放置到 GOPATH 下面，/go/src/mydomain.com/repos/projectname，用一个软链接指过来就可以了</span></span><br><span class="line"><span class="attr">before_script:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">mkdir</span> <span class="bullet">-p</span> <span class="string">"/go/src/git.qikqiak.com/$&#123;CI_PROJECT_NAMESPACE&#125;"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">ln</span> <span class="bullet">-sf</span> <span class="string">"$&#123;CI_PROJECT_DIR&#125;"</span> <span class="string">"/go/src/git.qikqiak.com/$&#123;CI_PROJECT_PATH&#125;"</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">cd</span> <span class="string">"/go/src/git.qikqiak.com/$&#123;CI_PROJECT_PATH&#125;/"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">stages:</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">test</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">build</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">release</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">review</span></span><br><span class="line"><span class="bullet">  -</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">make</span> <span class="string">test</span></span><br><span class="line"></span><br><span class="line"><span class="attr">test2:</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">sleep</span> <span class="number">3</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">echo</span> <span class="string">"We did it! Something else runs in parallel!"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">compile:</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">build</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line">    <span class="comment"># 添加所有的依赖，或者使用 glide/govendor/...</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">make</span> <span class="string">build</span></span><br><span class="line"><span class="attr">  artifacts:</span></span><br><span class="line"><span class="attr">    paths:</span></span><br><span class="line"><span class="bullet">      -</span> <span class="string">app</span></span><br><span class="line"></span><br><span class="line"><span class="attr">image_build:</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">release</span></span><br><span class="line"><span class="attr">  image:</span> <span class="attr">docker:latest</span></span><br><span class="line"><span class="attr">  variables:</span></span><br><span class="line"><span class="attr">    DOCKER_DRIVER:</span> <span class="string">overlay</span></span><br><span class="line"><span class="attr">    DOCKER_HOST:</span> <span class="attr">tcp://localhost:2375</span></span><br><span class="line"><span class="attr">  services:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="attr">docker:17.03-dind</span></span><br><span class="line"><span class="attr">      command:</span> <span class="string">["--insecure-registry=registry.qikqiak.com"]</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">docker</span> <span class="string">info</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">docker</span> <span class="string">login</span> <span class="bullet">-u</span> <span class="string">"$&#123;CI_REGISTRY_USER&#125;"</span> <span class="bullet">-p</span> <span class="string">"$&#123;CI_REGISTRY_PASSWORD&#125;"</span> <span class="string">registry.qikqiak.com</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">docker</span> <span class="string">build</span> <span class="bullet">-t</span> <span class="string">"$&#123;CI_REGISTRY_IMAGE&#125;:latest"</span> <span class="string">.</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">docker</span> <span class="string">tag</span> <span class="string">"$&#123;CI_REGISTRY_IMAGE&#125;:latest"</span> <span class="string">"$&#123;CI_REGISTRY_IMAGE&#125;:$&#123;CI_COMMIT_REF_NAME&#125;"</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">test</span> <span class="string">!</span> <span class="bullet">-z</span> <span class="string">"$&#123;CI_COMMIT_TAG&#125;"</span> <span class="string">&amp;&amp;</span> <span class="string">docker</span> <span class="string">push</span> <span class="string">"$&#123;CI_REGISTRY_IMAGE&#125;:latest"</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">docker</span> <span class="string">push</span> <span class="string">"$&#123;CI_REGISTRY_IMAGE&#125;:$&#123;CI_COMMIT_REF_NAME&#125;"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy_review:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">cnych/kubectl</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">review</span></span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">branches</span></span><br><span class="line"><span class="attr">  except:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">tags</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">dev</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">https://dev-gitlab-k8s-demo.qikqiak.com</span></span><br><span class="line"><span class="attr">    on_stop:</span> <span class="string">stop_review</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">version</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">cd</span> <span class="string">manifests/</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">sed</span> <span class="bullet">-i</span> <span class="string">"s/__CI_ENVIRONMENT_SLUG__/$&#123;CI_ENVIRONMENT_SLUG&#125;/"</span> <span class="string">deployment.yaml</span> <span class="string">ingress.yaml</span> <span class="string">service.yaml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">sed</span> <span class="bullet">-i</span> <span class="string">"s/__VERSION__/$&#123;CI_COMMIT_REF_NAME&#125;/"</span> <span class="string">deployment.yaml</span> <span class="string">ingress.yaml</span> <span class="string">service.yaml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">|</span></span><br><span class="line"><span class="string">      if kubectl apply -f deployment.yaml | grep -q unchanged; then</span></span><br><span class="line"><span class="string">          echo "=&gt; Patching deployment to force image update."</span></span><br><span class="line"><span class="string">          kubectl patch -f deployment.yaml -p "&#123;\"spec\":&#123;\"template\":&#123;\"metadata\":&#123;\"annotations\":&#123;\"ci-last-updated\":\"$(date +'%s')\"&#125;&#125;&#125;&#125;&#125;"</span></span><br><span class="line"><span class="string">      else</span></span><br><span class="line"><span class="string">          echo "=&gt; Deployment apply has changed the object, no need to force image update."</span></span><br><span class="line"><span class="string">      fi</span></span><br><span class="line"><span class="string">    - kubectl apply -f service.yaml || true</span></span><br><span class="line"><span class="string">    - kubectl apply -f ingress.yaml</span></span><br><span class="line"><span class="string">    - kubectl rollout status -f deployment.yaml</span></span><br><span class="line"><span class="string">    - kubectl get all,ing -l ref=$&#123;CI_ENVIRONMENT_SLUG&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span><span class="attr">stop_review:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">cnych/kubectl</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">review</span></span><br><span class="line"><span class="attr">  variables:</span></span><br><span class="line"><span class="attr">    GIT_STRATEGY:</span> <span class="string">none</span></span><br><span class="line"><span class="attr">  when:</span> <span class="string">manual</span></span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">branches</span></span><br><span class="line"><span class="attr">  except:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">master</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">tags</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">dev</span></span><br><span class="line"><span class="attr">    action:</span> <span class="string">stop</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">version</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">delete</span> <span class="string">ing</span> <span class="bullet">-l</span> <span class="string">ref=$&#123;CI_ENVIRONMENT_SLUG&#125;</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">delete</span> <span class="string">all</span> <span class="bullet">-l</span> <span class="string">ref=$&#123;CI_ENVIRONMENT_SLUG&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">deploy_live:</span></span><br><span class="line"><span class="attr">  image:</span> <span class="string">cnych/kubectl</span></span><br><span class="line"><span class="attr">  stage:</span> <span class="string">deploy</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">live</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">https://live-gitlab-k8s-demo.qikqiak.com</span></span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">tags</span></span><br><span class="line"><span class="attr">  when:</span> <span class="string">manual</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">version</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">cd</span> <span class="string">manifests/</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">sed</span> <span class="bullet">-i</span> <span class="string">"s/__CI_ENVIRONMENT_SLUG__/$&#123;CI_ENVIRONMENT_SLUG&#125;/"</span> <span class="string">deployment.yaml</span> <span class="string">ingress.yaml</span> <span class="string">service.yaml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">sed</span> <span class="bullet">-i</span> <span class="string">"s/__VERSION__/$&#123;CI_COMMIT_REF_NAME&#125;/"</span> <span class="string">deployment.yaml</span> <span class="string">ingress.yaml</span> <span class="string">service.yaml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">apply</span> <span class="bullet">-f</span> <span class="string">deployment.yaml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">apply</span> <span class="bullet">-f</span> <span class="string">service.yaml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">apply</span> <span class="bullet">-f</span> <span class="string">ingress.yaml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">rollout</span> <span class="string">status</span> <span class="bullet">-f</span> <span class="string">deployment.yaml</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">kubectl</span> <span class="string">get</span> <span class="string">all,ing</span> <span class="bullet">-l</span> <span class="string">ref=$&#123;CI_ENVIRONMENT_SLUG&#125;</span></span><br></pre></td></tr></table></figure>
+<p>上面的<code>.gitlab-ci.yml</code>文件中还有一些特殊的属性，如限制运行的的<code>when</code>和<code>only</code>参数，例如<code>only: [&quot;tags&quot;]</code>表示只为创建的标签运行，更多的信息，我可以通过查看 Gitlab CI YAML 文件查看：<a href="https://docs.gitlab.com/ce/ci/yaml/README.html" target="_blank" rel="noopener">https://docs.gitlab.com/ce/ci/yaml/README.html</a></p>
+<p>由于我们在<code>.gitlab-ci.yml</code>文件中将应用的镜像构建完成后推送到了我们的私有仓库，而 Kubernetes 资源清单文件中使用的私有镜像，所以我们需要配置一个<code>imagePullSecret</code>，否则在 Kubernetes 集群中是无法拉取我们的私有镜像的：(替换下面相关信息为自己的)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> kubectl create secret docker-registry myregistry --docker-server=registry.qikqiak.com --docker-username=xxxx --docker-password=xxxxxx --docker-email=xxxx -n gitlab</span><br><span class="line">secret "myregistry" created</span><br></pre></td></tr></table></figure>
+<p>在下面的 Deployment 的资源清单文件中会使用到创建的<code>myregistry</code>。</p>
+<p>接下来为应用创建 Kubernetes 资源清单文件，添加到代码仓库中。首先创建 Deployment 资源：（deployment.yaml）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-k8s-demo-__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">gitlab</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">gitlab-k8s-demo</span></span><br><span class="line"><span class="attr">    ref:</span> <span class="string">__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">    track:</span> <span class="string">stable</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  replicas:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    matchLabels:</span></span><br><span class="line"><span class="attr">      app:</span> <span class="string">gitlab-k8s-demo</span></span><br><span class="line"><span class="attr">      ref:</span> <span class="string">__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">  template:</span></span><br><span class="line"><span class="attr">    metadata:</span></span><br><span class="line"><span class="attr">      labels:</span></span><br><span class="line"><span class="attr">        app:</span> <span class="string">gitlab-k8s-demo</span></span><br><span class="line"><span class="attr">        ref:</span> <span class="string">__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">        track:</span> <span class="string">stable</span></span><br><span class="line"><span class="attr">    spec:</span></span><br><span class="line"><span class="attr">      imagePullSecrets:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">myregistry</span></span><br><span class="line"><span class="attr">      containers:</span></span><br><span class="line"><span class="attr">      - name:</span> <span class="string">app</span></span><br><span class="line"><span class="attr">        image:</span> <span class="string">registry.qikqiak.com/gitdemo/gitlab-k8s:__VERSION__</span></span><br><span class="line"><span class="attr">        imagePullPolicy:</span> <span class="string">Always</span></span><br><span class="line"><span class="attr">        ports:</span></span><br><span class="line"><span class="attr">        - name:</span> <span class="string">http-metrics</span></span><br><span class="line"><span class="attr">          protocol:</span> <span class="string">TCP</span></span><br><span class="line"><span class="attr">          containerPort:</span> <span class="number">8000</span></span><br><span class="line"><span class="attr">        livenessProbe:</span></span><br><span class="line"><span class="attr">          httpGet:</span></span><br><span class="line"><span class="attr">            path:</span> <span class="string">/health</span></span><br><span class="line"><span class="attr">            port:</span> <span class="number">8000</span></span><br><span class="line"><span class="attr">          initialDelaySeconds:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">          timeoutSeconds:</span> <span class="number">2</span></span><br><span class="line"><span class="attr">        readinessProbe:</span></span><br><span class="line"><span class="attr">          httpGet:</span></span><br><span class="line"><span class="attr">            path:</span> <span class="string">/health</span></span><br><span class="line"><span class="attr">            port:</span> <span class="number">8000</span></span><br><span class="line"><span class="attr">          initialDelaySeconds:</span> <span class="number">3</span></span><br><span class="line"><span class="attr">          timeoutSeconds:</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意用上面创建的 myregistry 替换 imagePullSecrets。</p>
+</blockquote>
+<p>这是一个基本的 Deployment 资源清单的描述，像<code>__CI_ENVIRONMENT_SLUG__</code>和<code>__VERSION__</code>这样的占位符用于区分不同的环境，<code>__CI_ENVIRONMENT_SLUG__</code>将由 dev 或 live（环境名称）和<code>__VERSION__</code>替换为镜像标签。</p>
+<p>为了能够连接到部署的 Pod，还需要 Service。对应的 Service 资源清单如下（service.yaml）：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-k8s-demo-__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">gitlab</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">gitlab-k8s-demo</span></span><br><span class="line"><span class="attr">    ref:</span> <span class="string">__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">  annotations:</span></span><br><span class="line">    <span class="string">prometheus.io/scrape:</span> <span class="string">"true"</span></span><br><span class="line">    <span class="string">prometheus.io/port:</span> <span class="string">"8000"</span></span><br><span class="line">    <span class="string">prometheus.io/scheme:</span> <span class="string">"http"</span></span><br><span class="line">    <span class="string">prometheus.io/path:</span> <span class="string">"/metrics"</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  type:</span> <span class="string">ClusterIP</span></span><br><span class="line"><span class="attr">  ports:</span></span><br><span class="line"><span class="attr">    - name:</span> <span class="string">http-metrics</span></span><br><span class="line"><span class="attr">      port:</span> <span class="number">8000</span></span><br><span class="line"><span class="attr">      protocol:</span> <span class="string">TCP</span></span><br><span class="line"><span class="attr">  selector:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">gitlab-k8s-demo</span></span><br><span class="line"><span class="attr">    ref:</span> <span class="string">__CI_ENVIRONMENT_SLUG__</span></span><br></pre></td></tr></table></figure>
+<p>我们的应用程序运行8000端口上，端口名为<code>http-metrics</code>，如果你还记得前面我们监控的课程中应该还记得我们使用<code>prometheus-operator</code>为 Prometheus 创建了<code>自动发现</code>的配置，所以我们在<code>annotations</code>里面配置上上面的这几个注释后，Prometheus 就可以自动获取我们应用的监控指标数据了。</p>
+<p>现在 Service 创建成功了，但是外部用户还不能访问到我们的应用，当然我们可以把 Service 设置成 NodePort 类型，另外一个常见的方式当然就是使用 Ingress 了，我们可以通过 Ingress 来将应用暴露给外面用户使用，对应的资源清单文件如下：（ingress.yaml）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Ingress</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">gitlab-k8s-demo-__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">  namespace:</span> <span class="string">gitlab</span></span><br><span class="line"><span class="attr">  labels:</span></span><br><span class="line"><span class="attr">    app:</span> <span class="string">gitlab-k8s-demo</span></span><br><span class="line"><span class="attr">    ref:</span> <span class="string">__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">  annotations:</span></span><br><span class="line">    <span class="string">kubernetes.io/ingress.class:</span> <span class="string">"traefik"</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  rules:</span></span><br><span class="line"><span class="attr">  - host:</span> <span class="string">__CI_ENVIRONMENT_SLUG__-gitlab-k8s-demo.qikqiak.com</span></span><br><span class="line"><span class="attr">    http:</span></span><br><span class="line"><span class="attr">      paths:</span></span><br><span class="line"><span class="attr">      - path:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">        backend:</span></span><br><span class="line"><span class="attr">          serviceName:</span> <span class="string">gitlab-k8s-demo-__CI_ENVIRONMENT_SLUG__</span></span><br><span class="line"><span class="attr">          servicePort:</span> <span class="number">8000</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>当然如果想配置 https 访问的话我们可以自己用 CA 证书创建一个 tls 密钥，也可以使用<code>cert-manager</code>来自动为我们的应用程序添加 https。</p>
+</blockquote>
+<p>当然要通过上面的域名进行访问，还需要进行 DNS 解析的，<code>__CI_ENVIRONMENT_SLUG__-gitlab-k8s-demo.qikqiak.com</code>其中<code>__CI_ENVIRONMENT_SLUG__</code>值为 live 或 dev，所以需要创建<code>dev-gitlab-k8s-demo.qikqiak.com</code> 和 <code>live-gitlab-k8s-demo.qikqiak.com</code> 两个域名的解析。</p>
+<blockquote>
+<p>我们可以使用 DNS 解析服务商的 API 来自动创建域名解析，也可以使用 <a href="https://github.com/kubernetes-incubator" target="_blank" rel="noopener">Kubernetes incubator</a> 孵化的项目 <a href="https://github.com/kubernetes-incubator/external-dns" target="_blank" rel="noopener">external-dns operator</a> 来进行操作。</p>
+</blockquote>
+<p>所需要的资源清单和<code>.gitlab-ci.yml</code>文件已经准备好了，我们可以小小的添加一个文件去触发下 Gitlab CI 构建：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> touch test1</span><br><span class="line"><span class="meta">$</span> git add .</span><br><span class="line"><span class="meta">$</span> git commit -m"Testing the GitLab CI functionality #1"</span><br><span class="line"><span class="meta">$</span> git push origin master</span><br></pre></td></tr></table></figure>
+<p>现在回到 Gitlab 中可以看到我们的项目触发了一个新的 Pipeline 的构建：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/D54xTd.jpg" alt="gitlab pipeline">gitlab pipeline</p>
+<p>可以查看最后一个阶段（stage）是否正确，如果通过了，证明我们已经成功将应用程序部署到 Kubernetes 集群中了，一个成功的<code>review</code>阶段如下所示：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/kXE6e7.jpg" alt="review success">review success</p>
+<p>整个 Pipeline 构建成功后，我们可以在项目的环境菜单下面看到多了一个环境：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/pArnyz.jpg" alt="env">env</p>
+<p>如果我们点击<code>终止</code>，就会调用<code>.gitlab-ci.yml</code>中定义的钩子<code>on_stop: stop_review</code>，点击<code>View deployment</code>就可以看到这次我们的部署结果（前提是DNS解析已经完成）：</p>
+<p><img src="https://bxdc-static.oss-cn-beijing.aliyuncs.com/images/Q2yPG9.jpg" alt="view deployment"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>Donate me, big brother</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="TangWei WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="TangWei Alipay">
+        <p>Alipay</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gitlab/" rel="tag"> <i class="fa fa-tag"></i> gitlab</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/08/34.Harbor/" rel="next" title="34.Harbor">
+                <i class="fa fa-chevron-left"></i> 34.Harbor
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/me.png" alt="TangWei">
+            
+              <p class="site-author-name" itemprop="name">TangWei</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/tangwei0928" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://weibo.com/u/5304895321" target="_blank" title="Weibo">
+                      
+                        <i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/" title="Kubernetes" target="_blank">Kubernetes</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pipeline"><span class="nav-number">1.1.</span> <span class="nav-text">Pipeline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stages"><span class="nav-number">1.2.</span> <span class="nav-text">Stages</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Jobs"><span class="nav-number">1.3.</span> <span class="nav-text">Jobs</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gitlab-Runner"><span class="nav-number">2.</span> <span class="nav-text">Gitlab Runner</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">2.1.</span> <span class="nav-text">安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gitlab-CI"><span class="nav-number">3.</span> <span class="nav-text">Gitlab CI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本配置"><span class="nav-number">3.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gitlab-ci-yml"><span class="nav-number">3.2.</span> <span class="nav-text">.gitlab-ci.yml</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">TangWei</span>
+
+  
+</div>
+
+<!--
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+ -->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
